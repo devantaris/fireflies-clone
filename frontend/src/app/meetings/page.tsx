@@ -25,15 +25,15 @@ function MeetingsSkeleton() {
       {Array.from({ length: 6 }).map((_, i) => (
         <div
           key={i}
-          className="bg-[#1a1a1a] border border-[#252525] rounded-xl overflow-hidden animate-pulse"
+          className="bg-[var(--bg-elevated)] border border-[var(--border)] rounded-xl overflow-hidden animate-pulse"
         >
-          <div className="h-[72px] bg-[#242424]" />
+          <div className="h-[72px] bg-[var(--bg-elevated)]" />
           <div className="p-4 space-y-3">
-            <div className="h-4 bg-[#2a2a2a] rounded w-3/4" />
-            <div className="h-3 bg-[#242424] rounded w-1/2" />
+            <div className="h-4 bg-[var(--border)] rounded w-3/4" />
+            <div className="h-3 bg-[var(--bg-elevated)] rounded w-1/2" />
             <div className="flex gap-1.5 mt-4">
               {[1, 2].map((j) => (
-                <div key={j} className="w-6 h-6 rounded-full bg-[#2a2a2a]" />
+                <div key={j} className="w-6 h-6 rounded-full bg-[var(--border)]" />
               ))}
             </div>
           </div>
@@ -46,22 +46,22 @@ function MeetingsSkeleton() {
 function EmptyState({ filtered, onNew }: { filtered: boolean; onNew: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center py-24 text-center">
-      <div className="w-16 h-16 rounded-2xl bg-[#1a1a1a] border border-[#2e2e2e] flex items-center justify-center mb-4">
-        <Mic2 size={28} className="text-[#444]" />
+      <div className="w-16 h-16 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border-strong)] flex items-center justify-center mb-4">
+        <Mic2 size={28} className="text-[var(--text-4)]" />
       </div>
       {filtered ? (
         <>
-          <h3 className="text-base font-medium text-[#f0f0f0] mb-1">
+          <h3 className="text-base font-medium text-[var(--text-1)] mb-1">
             No meetings match your filters
           </h3>
-          <p className="text-sm text-[#666] max-w-xs">
+          <p className="text-sm text-[var(--text-3)] max-w-xs">
             Try adjusting your search or date range.
           </p>
         </>
       ) : (
         <>
-          <h3 className="text-base font-medium text-[#f0f0f0] mb-1">No meetings yet</h3>
-          <p className="text-sm text-[#666] mb-5 max-w-xs">
+          <h3 className="text-base font-medium text-[var(--text-1)] mb-1">No meetings yet</h3>
+          <p className="text-sm text-[var(--text-3)] mb-5 max-w-xs">
             Create your first meeting to get started.
           </p>
           <button
@@ -80,18 +80,18 @@ function EmptyState({ filtered, onNew }: { filtered: boolean; onNew: () => void 
 function FetchErrorState({ onRetry }: { onRetry: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center py-24 text-center">
-      <div className="w-16 h-16 rounded-2xl bg-[#1a1a1a] border border-[#2e2e2e] flex items-center justify-center mb-4">
+      <div className="w-16 h-16 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border-strong)] flex items-center justify-center mb-4">
         <AlertTriangle size={28} className="text-[#ef4444]" />
       </div>
-      <h3 className="text-base font-medium text-[#f0f0f0] mb-1">
+      <h3 className="text-base font-medium text-[var(--text-1)] mb-1">
         Failed to load meetings
       </h3>
-      <p className="text-sm text-[#666] mb-5 max-w-xs">
+      <p className="text-sm text-[var(--text-3)] mb-5 max-w-xs">
         Check your connection and try again.
       </p>
       <button
         onClick={onRetry}
-        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#1e1e1e] hover:bg-[#2a2a2a] text-sm text-[#c0c0c0] transition-colors border border-[#2e2e2e]"
+        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--bg-hover)] hover:bg-[var(--border)] text-sm text-[var(--text-2)] transition-colors border border-[var(--border-strong)]"
       >
         <RefreshCw size={14} />
         Retry
@@ -180,12 +180,12 @@ function MeetingsList() {
   return (
     <div className="min-h-full flex flex-col">
       {/* Top header */}
-      <div className="sticky top-0 z-10 bg-[#0f0f0f]/95 backdrop-blur-sm border-b border-[#1e1e1e] px-6 py-4">
+      <div className="sticky top-0 z-10 bg-[var(--bg)]/95 backdrop-blur-sm border-b border-[var(--border)] px-6 py-4">
         <div className="flex items-center justify-between gap-4 mb-4">
           <div>
-            <h1 className="text-xl font-semibold text-[#f0f0f0]">Meetings</h1>
+            <h1 className="text-xl font-semibold text-[var(--text-1)]">Meetings</h1>
             {!loading && !fetchError && (
-              <p className="text-xs text-[#666] mt-0.5">
+              <p className="text-xs text-[var(--text-3)] mt-0.5">
                 {meetings.length} meeting{meetings.length !== 1 ? "s" : ""}
                 {hasActiveFilters ? " (filtered)" : ""}
               </p>
@@ -195,7 +195,7 @@ function MeetingsList() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => fetchMeetings(filters)}
-              className="p-2 rounded-lg text-[#666] hover:text-[#f0f0f0] hover:bg-[#1e1e1e] transition-colors"
+              className="p-2 rounded-lg text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[var(--bg-hover)] transition-colors"
               title="Refresh"
             >
               <RefreshCw size={15} />
@@ -269,8 +269,8 @@ export default function MeetingsPage() {
     <Suspense
       fallback={
         <div className="min-h-full flex flex-col">
-          <div className="border-b border-[#1e1e1e] px-6 py-4">
-            <div className="h-7 w-28 bg-[#1e1e1e] rounded animate-pulse" />
+          <div className="border-b border-[var(--border)] px-6 py-4">
+            <div className="h-7 w-28 bg-[var(--border)] rounded animate-pulse" />
           </div>
           <div className="flex-1 px-6 py-6">
             <MeetingsSkeleton />

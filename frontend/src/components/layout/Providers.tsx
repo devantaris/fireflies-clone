@@ -10,14 +10,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
         position="bottom-right"
         toastOptions={{
           style: {
-            background: "#1a1a1a",
-            color: "#f0f0f0",
-            border: "1px solid #2e2e2e",
+            background: "var(--bg-elevated)",
+            color: "var(--text-1)",
+            border: "1px solid var(--border-strong)",
             borderRadius: "8px",
             fontSize: "14px",
           },
-          success: { iconTheme: { primary: "#22c55e", secondary: "#1a1a1a" } },
-          error: { iconTheme: { primary: "#ef4444", secondary: "#1a1a1a" } },
+          success: { iconTheme: { primary: "#22c55e", secondary: "var(--bg-elevated)" } },
+          error: { iconTheme: { primary: "#ef4444", secondary: "var(--bg-elevated)" } },
         }}
       />
     </>

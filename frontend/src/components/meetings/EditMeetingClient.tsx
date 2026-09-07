@@ -20,14 +20,14 @@ interface Props {
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
-    <label className="block text-xs font-medium text-[#8a8a8a] uppercase tracking-wide mb-1.5">
+    <label className="block text-xs font-medium text-[var(--text-2)] uppercase tracking-wide mb-1.5">
       {children}
     </label>
   );
 }
 
 const INPUT_CLS =
-  "w-full bg-[#111] border border-[#2e2e2e] rounded-lg px-3 py-2.5 text-sm text-[#f0f0f0] placeholder-[#555] focus:outline-none focus:border-[#6c47ff] transition-colors";
+  "w-full bg-[var(--bg-sub)] border border-[var(--border-strong)] rounded-lg px-3 py-2.5 text-sm text-[var(--text-1)] placeholder-[var(--text-3)] focus:outline-none focus:border-[#6c47ff] transition-colors";
 
 export function EditMeetingClient({ meetingId }: Props) {
   const router = useRouter();
@@ -119,11 +119,11 @@ export function EditMeetingClient({ meetingId }: Props) {
   if (loading) {
     return (
       <div className="max-w-xl mx-auto px-6 py-8 animate-pulse space-y-4">
-        <div className="h-3 w-28 bg-[#2a2a2a] rounded" />
-        <div className="h-6 w-40 bg-[#2a2a2a] rounded mt-4" />
+        <div className="h-3 w-28 bg-[var(--border)] rounded" />
+        <div className="h-6 w-40 bg-[var(--border)] rounded mt-4" />
         <div className="space-y-3 mt-6">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-10 bg-[#1e1e1e] rounded-lg" />
+            <div key={i} className="h-10 bg-[var(--border)] rounded-lg" />
           ))}
         </div>
       </div>
@@ -134,7 +134,7 @@ export function EditMeetingClient({ meetingId }: Props) {
   if (fetchError || !meeting) {
     return (
       <div className="max-w-xl mx-auto px-6 py-16 flex flex-col items-center gap-3 text-center">
-        <p className="text-sm text-[#c0c0c0]">Could not load meeting.</p>
+        <p className="text-sm text-[var(--text-2)]">Could not load meeting.</p>
         <Link href="/meetings" className="text-xs text-[#6c47ff] hover:underline">
           ← Back to meetings
         </Link>
@@ -148,14 +148,14 @@ export function EditMeetingClient({ meetingId }: Props) {
       {/* Back link */}
       <Link
         href={`/meetings/${meetingId}`}
-        className="inline-flex items-center gap-1.5 text-xs text-[#555] hover:text-[#c0c0c0] transition-colors mb-6"
+        className="inline-flex items-center gap-1.5 text-xs text-[var(--text-3)] hover:text-[var(--text-2)] transition-colors mb-6"
       >
         <ArrowLeft size={13} />
         Back to meeting
       </Link>
 
-      <h1 className="text-xl font-semibold text-[#f0f0f0] mb-1">Edit Meeting</h1>
-      <p className="text-sm text-[#555] mb-7">{meeting.title}</p>
+      <h1 className="text-xl font-semibold text-[var(--text-1)] mb-1">Edit Meeting</h1>
+      <p className="text-sm text-[var(--text-3)] mb-7">{meeting.title}</p>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Title */}
@@ -204,20 +204,20 @@ export function EditMeetingClient({ meetingId }: Props) {
                   value={p.name}
                   onChange={(e) => updateParticipantField(p.id, "name", e.target.value)}
                   placeholder="Name"
-                  className="flex-1 bg-[#111] border border-[#2e2e2e] rounded-lg px-3 py-2 text-sm text-[#f0f0f0] placeholder-[#555] focus:outline-none focus:border-[#6c47ff] transition-colors"
+                  className="flex-1 bg-[var(--bg-sub)] border border-[var(--border-strong)] rounded-lg px-3 py-2 text-sm text-[var(--text-1)] placeholder-[var(--text-3)] focus:outline-none focus:border-[#6c47ff] transition-colors"
                 />
                 <input
                   type="email"
                   value={p.email}
                   onChange={(e) => updateParticipantField(p.id, "email", e.target.value)}
                   placeholder="Email (optional)"
-                  className="flex-1 bg-[#111] border border-[#2e2e2e] rounded-lg px-3 py-2 text-sm text-[#f0f0f0] placeholder-[#555] focus:outline-none focus:border-[#6c47ff] transition-colors"
+                  className="flex-1 bg-[var(--bg-sub)] border border-[var(--border-strong)] rounded-lg px-3 py-2 text-sm text-[var(--text-1)] placeholder-[var(--text-3)] focus:outline-none focus:border-[#6c47ff] transition-colors"
                 />
                 {participants.length > 1 && (
                   <button
                     type="button"
                     onClick={() => removeParticipant(p.id)}
-                    className="p-1.5 rounded text-[#555] hover:text-[#ef4444] hover:bg-[#2e2e2e] transition-colors shrink-0"
+                    className="p-1.5 rounded text-[var(--text-3)] hover:text-[#ef4444] hover:bg-[var(--border-strong)] transition-colors shrink-0"
                   >
                     <X size={14} />
                   </button>
@@ -228,7 +228,7 @@ export function EditMeetingClient({ meetingId }: Props) {
           <button
             type="button"
             onClick={addParticipant}
-            className="flex items-center gap-1.5 text-xs text-[#6c47ff] hover:text-[#9b7cff] transition-colors mt-2"
+            className="flex items-center gap-1.5 text-xs text-[#6c47ff] hover:text-[var(--accent-text)] transition-colors mt-2"
           >
             <Plus size={13} />
             Add participant
@@ -236,15 +236,15 @@ export function EditMeetingClient({ meetingId }: Props) {
         </div>
 
         {/* Info note */}
-        <div className="rounded-lg border border-[#2a2a2a] bg-[#141414] px-4 py-3 text-xs text-[#555] leading-relaxed">
+        <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3 text-xs text-[var(--text-3)] leading-relaxed">
           Transcript, summary, and action items can be managed from the meeting detail page.
         </div>
 
         {/* Actions */}
-        <div className="flex gap-3 justify-end pt-2 border-t border-[#2e2e2e]">
+        <div className="flex gap-3 justify-end pt-2 border-t border-[var(--border-strong)]">
           <Link
             href={`/meetings/${meetingId}`}
-            className="px-4 py-2 rounded-lg text-sm text-[#8a8a8a] hover:text-[#f0f0f0] hover:bg-[#2e2e2e] transition-colors"
+            className="px-4 py-2 rounded-lg text-sm text-[var(--text-2)] hover:text-[var(--text-1)] hover:bg-[var(--border-strong)] transition-colors"
           >
             Cancel
           </Link>

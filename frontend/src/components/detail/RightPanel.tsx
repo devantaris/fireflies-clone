@@ -55,10 +55,10 @@ function OverviewSection({
   if (!summary) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center px-4">
-        <div className="w-10 h-10 rounded-xl bg-[#1a1a1a] border border-[#2e2e2e] flex items-center justify-center mb-3">
-          <FileText size={18} className="text-[#444]" />
+        <div className="w-10 h-10 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-strong)] flex items-center justify-center mb-3">
+          <FileText size={18} className="text-[var(--text-4)]" />
         </div>
-        <p className="text-xs text-[#555] mb-4">No summary available.</p>
+        <p className="text-xs text-[var(--text-3)] mb-4">No summary available.</p>
         <button
           onClick={handleRegenerate}
           disabled={regenerating}
@@ -87,7 +87,7 @@ function OverviewSection({
         <button
           onClick={handleRegenerate}
           disabled={regenerating}
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] text-[#888] hover:text-[#f0f0f0] hover:bg-[#1e1e1e] transition-colors border border-[#2e2e2e] disabled:opacity-50"
+          className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] text-[var(--text-2)] hover:text-[var(--text-1)] hover:bg-[var(--bg-hover)] transition-colors border border-[var(--border-strong)] disabled:opacity-50"
         >
           <RefreshCw size={11} className={regenerating ? "animate-spin" : ""} />
           {regenerating ? "Regenerating…" : "Regenerate"}
@@ -97,7 +97,7 @@ function OverviewSection({
       {/* Overview */}
       {summary.overview && (
         <div>
-          <h3 className="text-[11px] font-semibold uppercase tracking-widest text-[#555] mb-2">
+          <h3 className="text-[11px] font-semibold uppercase tracking-widest text-[var(--text-3)] mb-2">
             Overview
           </h3>
           <p className="text-sm text-[#b0b0b0] leading-relaxed">{summary.overview}</p>
@@ -107,7 +107,7 @@ function OverviewSection({
       {/* Key Topics */}
       {keyTopics.length > 0 && (
         <div>
-          <h3 className="text-[11px] font-semibold uppercase tracking-widest text-[#555] mb-2">
+          <h3 className="text-[11px] font-semibold uppercase tracking-widest text-[var(--text-3)] mb-2">
             Key Topics
           </h3>
           <div className="flex flex-wrap gap-1.5">
@@ -115,7 +115,7 @@ function OverviewSection({
               <div
                 key={i}
                 title={topic.description}
-                className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] bg-[#6c47ff]/10 text-[#9b7cff] border border-[#6c47ff]/20 cursor-default"
+                className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] bg-[#6c47ff]/10 text-[var(--accent-text)] border border-[#6c47ff]/20 cursor-default"
               >
                 <Tag size={9} />
                 {topic.title}
@@ -128,7 +128,7 @@ function OverviewSection({
       {/* Chapters */}
       {chapters.length > 0 && (
         <div>
-          <h3 className="text-[11px] font-semibold uppercase tracking-widest text-[#555] mb-2">
+          <h3 className="text-[11px] font-semibold uppercase tracking-widest text-[var(--text-3)] mb-2">
             Outline
           </h3>
           <div className="space-y-1">
@@ -136,12 +136,12 @@ function OverviewSection({
               <button
                 key={i}
                 onClick={() => onChapterSeek(ch.start_time)}
-                className="flex items-center gap-3 w-full text-left px-3 py-2 rounded-lg hover:bg-[#1e1e1e] transition-colors group"
+                className="flex items-center gap-3 w-full text-left px-3 py-2 rounded-lg hover:bg-[var(--bg-hover)] transition-colors group"
               >
                 <span className="text-[11px] tabular-nums text-[#6c47ff] font-medium shrink-0">
                   {formatTimestamp(ch.start_time)}
                 </span>
-                <span className="text-sm text-[#a0a0a0] group-hover:text-[#f0f0f0] transition-colors">
+                <span className="text-sm text-[#a0a0a0] group-hover:text-[var(--text-1)] transition-colors">
                   {ch.title}
                 </span>
               </button>
@@ -236,13 +236,13 @@ function ActionItemsSection({ items, onToggle, onAdd, onEdit, onDelete }: Action
       {/* Progress bar */}
       {items.length > 0 && (
         <div>
-          <div className="flex justify-between text-[11px] text-[#555] mb-1.5">
+          <div className="flex justify-between text-[11px] text-[var(--text-3)] mb-1.5">
             <span>
               {done}/{items.length} completed
             </span>
             <span>{Math.round((done / items.length) * 100)}%</span>
           </div>
-          <div className="h-1.5 bg-[#2a2a2a] rounded-full">
+          <div className="h-1.5 bg-[var(--border)] rounded-full">
             <div
               className="h-1.5 bg-[#22c55e] rounded-full transition-all"
               style={{ width: `${(done / items.length) * 100}%` }}
@@ -254,10 +254,10 @@ function ActionItemsSection({ items, onToggle, onAdd, onEdit, onDelete }: Action
       {/* Empty state */}
       {items.length === 0 && !adding && (
         <div className="flex flex-col items-center justify-center py-8 text-center">
-          <div className="w-10 h-10 rounded-xl bg-[#1a1a1a] border border-[#2e2e2e] flex items-center justify-center mb-3">
-            <ListTodo size={18} className="text-[#444]" />
+          <div className="w-10 h-10 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-strong)] flex items-center justify-center mb-3">
+            <ListTodo size={18} className="text-[var(--text-4)]" />
           </div>
-          <p className="text-xs text-[#555]">No action items yet.</p>
+          <p className="text-xs text-[var(--text-3)]">No action items yet.</p>
         </div>
       )}
 
@@ -266,11 +266,11 @@ function ActionItemsSection({ items, onToggle, onAdd, onEdit, onDelete }: Action
         {items.map((item) =>
           editingId === item.id ? (
             /* Edit form */
-            <div key={item.id} className="bg-[#1a1a1a] rounded-lg p-3 space-y-2">
+            <div key={item.id} className="bg-[var(--bg-elevated)] rounded-lg p-3 space-y-2">
               <textarea
                 value={editText}
                 onChange={(e) => setEditText(e.target.value)}
-                className="w-full bg-[#111] border border-[#2e2e2e] rounded-lg px-3 py-2 text-xs text-[#f0f0f0] resize-none focus:outline-none focus:border-[#6c47ff] transition-colors"
+                className="w-full bg-[var(--bg-sub)] border border-[var(--border-strong)] rounded-lg px-3 py-2 text-xs text-[var(--text-1)] resize-none focus:outline-none focus:border-[#6c47ff] transition-colors"
                 rows={2}
                 autoFocus
               />
@@ -279,18 +279,18 @@ function ActionItemsSection({ items, onToggle, onAdd, onEdit, onDelete }: Action
                 value={editAssignee}
                 onChange={(e) => setEditAssignee(e.target.value)}
                 placeholder="Assignee (optional)"
-                className="w-full bg-[#111] border border-[#2e2e2e] rounded-lg px-3 py-1.5 text-xs text-[#f0f0f0] placeholder-[#444] focus:outline-none focus:border-[#6c47ff] transition-colors"
+                className="w-full bg-[var(--bg-sub)] border border-[var(--border-strong)] rounded-lg px-3 py-1.5 text-xs text-[var(--text-1)] placeholder-[var(--text-4)] focus:outline-none focus:border-[#6c47ff] transition-colors"
               />
               <input
                 type="date"
                 value={editDueDate}
                 onChange={(e) => setEditDueDate(e.target.value)}
-                className="w-full bg-[#111] border border-[#2e2e2e] rounded-lg px-3 py-1.5 text-xs text-[#f0f0f0] focus:outline-none focus:border-[#6c47ff] transition-colors"
+                className="w-full bg-[var(--bg-sub)] border border-[var(--border-strong)] rounded-lg px-3 py-1.5 text-xs text-[var(--text-1)] focus:outline-none focus:border-[#6c47ff] transition-colors"
               />
               <div className="flex justify-end gap-2">
                 <button
                   onClick={cancelEdit}
-                  className="px-2.5 py-1 rounded text-xs text-[#666] hover:text-[#aaa] transition-colors"
+                  className="px-2.5 py-1 rounded text-xs text-[var(--text-3)] hover:text-[var(--text-2)] transition-colors"
                 >
                   Cancel
                 </button>
@@ -307,12 +307,12 @@ function ActionItemsSection({ items, onToggle, onAdd, onEdit, onDelete }: Action
             /* Display row */
             <div
               key={item.id}
-              className="group flex items-start gap-2.5 px-2 py-2 rounded-lg hover:bg-[#1a1a1a] transition-colors"
+              className="group flex items-start gap-2.5 px-2 py-2 rounded-lg hover:bg-[var(--bg-elevated)] transition-colors"
             >
               <button
                 onClick={() => handleToggle(item)}
                 disabled={savingId === item.id}
-                className="mt-0.5 shrink-0 text-[#444] hover:text-[#6c47ff] transition-colors disabled:opacity-50"
+                className="mt-0.5 shrink-0 text-[var(--text-4)] hover:text-[#6c47ff] transition-colors disabled:opacity-50"
               >
                 {item.completed ? (
                   <CheckCircle2 size={16} className="text-[#22c55e]" />
@@ -324,17 +324,17 @@ function ActionItemsSection({ items, onToggle, onAdd, onEdit, onDelete }: Action
               <div className="flex-1 min-w-0">
                 <p
                   className={`text-sm leading-snug ${
-                    item.completed ? "line-through text-[#555]" : "text-[#c0c0c0]"
+                    item.completed ? "line-through text-[var(--text-3)]" : "text-[var(--text-2)]"
                   }`}
                 >
                   {item.text}
                 </p>
                 <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                   {item.assignee && (
-                    <p className="text-[11px] text-[#555]">→ {item.assignee}</p>
+                    <p className="text-[11px] text-[var(--text-3)]">→ {item.assignee}</p>
                   )}
                   {item.due_date && (
-                    <p className="text-[11px] text-[#444]">due {item.due_date}</p>
+                    <p className="text-[11px] text-[var(--text-4)]">due {item.due_date}</p>
                   )}
                 </div>
               </div>
@@ -342,7 +342,7 @@ function ActionItemsSection({ items, onToggle, onAdd, onEdit, onDelete }: Action
               <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
                 <button
                   onClick={() => startEdit(item)}
-                  className="p-1 rounded text-[#555] hover:text-[#aaa] hover:bg-[#222] transition-colors"
+                  className="p-1 rounded text-[var(--text-3)] hover:text-[var(--text-2)] hover:bg-[var(--border)] transition-colors"
                   title="Edit"
                 >
                   <Edit2 size={12} />
@@ -350,7 +350,7 @@ function ActionItemsSection({ items, onToggle, onAdd, onEdit, onDelete }: Action
                 <button
                   onClick={() => handleDelete(item.id)}
                   disabled={savingId === item.id}
-                  className="p-1 rounded text-[#555] hover:text-red-400 hover:bg-[#222] transition-colors disabled:opacity-50"
+                  className="p-1 rounded text-[var(--text-3)] hover:text-red-400 hover:bg-[var(--border)] transition-colors disabled:opacity-50"
                   title="Delete"
                 >
                   <Trash2 size={12} />
@@ -363,12 +363,12 @@ function ActionItemsSection({ items, onToggle, onAdd, onEdit, onDelete }: Action
 
       {/* Add form / Add button */}
       {adding ? (
-        <div className="bg-[#1a1a1a] rounded-lg p-3 space-y-2">
+        <div className="bg-[var(--bg-elevated)] rounded-lg p-3 space-y-2">
           <textarea
             value={newText}
             onChange={(e) => setNewText(e.target.value)}
             placeholder="Action item text…"
-            className="w-full bg-[#111] border border-[#2e2e2e] rounded-lg px-3 py-2 text-xs text-[#f0f0f0] placeholder-[#444] resize-none focus:outline-none focus:border-[#6c47ff] transition-colors"
+            className="w-full bg-[var(--bg-sub)] border border-[var(--border-strong)] rounded-lg px-3 py-2 text-xs text-[var(--text-1)] placeholder-[var(--text-4)] resize-none focus:outline-none focus:border-[#6c47ff] transition-colors"
             rows={2}
             autoFocus
           />
@@ -377,13 +377,13 @@ function ActionItemsSection({ items, onToggle, onAdd, onEdit, onDelete }: Action
             value={newAssignee}
             onChange={(e) => setNewAssignee(e.target.value)}
             placeholder="Assignee (optional)"
-            className="w-full bg-[#111] border border-[#2e2e2e] rounded-lg px-3 py-1.5 text-xs text-[#f0f0f0] placeholder-[#444] focus:outline-none focus:border-[#6c47ff] transition-colors"
+            className="w-full bg-[var(--bg-sub)] border border-[var(--border-strong)] rounded-lg px-3 py-1.5 text-xs text-[var(--text-1)] placeholder-[var(--text-4)] focus:outline-none focus:border-[#6c47ff] transition-colors"
           />
           <input
             type="date"
             value={newDueDate}
             onChange={(e) => setNewDueDate(e.target.value)}
-            className="w-full bg-[#111] border border-[#2e2e2e] rounded-lg px-3 py-1.5 text-xs text-[#f0f0f0] focus:outline-none focus:border-[#6c47ff] transition-colors"
+            className="w-full bg-[var(--bg-sub)] border border-[var(--border-strong)] rounded-lg px-3 py-1.5 text-xs text-[var(--text-1)] focus:outline-none focus:border-[#6c47ff] transition-colors"
           />
           <div className="flex justify-end gap-2">
             <button
@@ -393,7 +393,7 @@ function ActionItemsSection({ items, onToggle, onAdd, onEdit, onDelete }: Action
                 setNewAssignee("");
                 setNewDueDate("");
               }}
-              className="px-2.5 py-1 rounded text-xs text-[#666] hover:text-[#aaa] transition-colors"
+              className="px-2.5 py-1 rounded text-xs text-[var(--text-3)] hover:text-[var(--text-2)] transition-colors"
             >
               Cancel
             </button>
@@ -409,7 +409,7 @@ function ActionItemsSection({ items, onToggle, onAdd, onEdit, onDelete }: Action
       ) : (
         <button
           onClick={() => setAdding(true)}
-          className="flex items-center gap-1.5 w-full px-3 py-2 rounded-lg text-xs text-[#555] hover:text-[#aaa] hover:bg-[#1a1a1a] transition-colors border border-dashed border-[#2e2e2e]"
+          className="flex items-center gap-1.5 w-full px-3 py-2 rounded-lg text-xs text-[var(--text-3)] hover:text-[var(--text-2)] hover:bg-[var(--bg-elevated)] transition-colors border border-dashed border-[var(--border-strong)]"
         >
           <Plus size={12} />
           Add action item
@@ -491,15 +491,15 @@ export function RightPanel({ summary: initialSummary, actionItems: initialItems,
   return (
     <div className="flex flex-col h-full">
       {/* Tabs */}
-      <div className="shrink-0 flex border-b border-[#1e1e1e] px-4">
+      <div className="shrink-0 flex border-b border-[var(--border)] px-4">
         {TABS.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-1.5 px-1 py-3 mr-4 text-sm border-b-2 transition-colors ${
               activeTab === tab.id
-                ? "border-[#6c47ff] text-[#f0f0f0] font-medium"
-                : "border-transparent text-[#666] hover:text-[#aaa]"
+                ? "border-[#6c47ff] text-[var(--text-1)] font-medium"
+                : "border-transparent text-[var(--text-3)] hover:text-[var(--text-2)]"
             }`}
           >
             {tab.label}
@@ -507,8 +507,8 @@ export function RightPanel({ summary: initialSummary, actionItems: initialItems,
               <span
                 className={`text-[10px] px-1.5 py-0.5 rounded-full ${
                   activeTab === tab.id
-                    ? "bg-[#6c47ff]/20 text-[#9b7cff]"
-                    : "bg-[#222] text-[#666]"
+                    ? "bg-[#6c47ff]/20 text-[var(--accent-text)]"
+                    : "bg-[var(--border)] text-[var(--text-3)]"
                 }`}
               >
                 {tab.count}

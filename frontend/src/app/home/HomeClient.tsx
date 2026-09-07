@@ -48,7 +48,7 @@ export function HomeClient() {
   const recentMeetings = meetings.slice(0, 5);
 
   return (
-    <div className="min-h-full bg-[#0e0e0e]">
+    <div className="min-h-full bg-[var(--bg)]">
       {/* Hero banner */}
       <div
         className="relative overflow-hidden px-8 pt-10 pb-8"
@@ -88,44 +88,44 @@ export function HomeClient() {
       <div className="px-8 py-6 max-w-5xl">
         {/* Stat cards */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
-          <div className="bg-[#141414] border border-[#1e1e1e] rounded-xl p-4">
+          <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-7 h-7 rounded-md bg-[#6c47ff]/15 flex items-center justify-center">
-                <Video size={14} className="text-[#9b7cff]" />
+                <Video size={14} className="text-[var(--accent-text)]" />
               </div>
-              <span className="text-xs text-[#666] font-medium">
+              <span className="text-xs text-[var(--text-3)] font-medium">
                 Total Meetings
               </span>
             </div>
-            <p className="text-2xl font-bold text-[#f0f0f0]">
+            <p className="text-2xl font-bold text-[var(--text-1)]">
               {loading ? "–" : meetings.length}
             </p>
           </div>
 
-          <div className="bg-[#141414] border border-[#1e1e1e] rounded-xl p-4">
+          <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-7 h-7 rounded-md bg-[#0ea5e9]/10 flex items-center justify-center">
                 <Clock size={14} className="text-[#0ea5e9]" />
               </div>
-              <span className="text-xs text-[#666] font-medium">
+              <span className="text-xs text-[var(--text-3)] font-medium">
                 Hours Recorded
               </span>
             </div>
-            <p className="text-2xl font-bold text-[#f0f0f0]">
+            <p className="text-2xl font-bold text-[var(--text-1)]">
               {loading ? "–" : totalHours}
             </p>
           </div>
 
-          <div className="bg-[#141414] border border-[#1e1e1e] rounded-xl p-4 col-span-2 sm:col-span-1">
+          <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4 col-span-2 sm:col-span-1">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-7 h-7 rounded-md bg-[#10b981]/10 flex items-center justify-center">
                 <Calendar size={14} className="text-[#10b981]" />
               </div>
-              <span className="text-xs text-[#666] font-medium">
+              <span className="text-xs text-[var(--text-3)] font-medium">
                 Meetings This Month
               </span>
             </div>
-            <p className="text-2xl font-bold text-[#f0f0f0]">
+            <p className="text-2xl font-bold text-[var(--text-1)]">
               {loading
                 ? "–"
                 : meetings.filter((m) => {
@@ -142,10 +142,10 @@ export function HomeClient() {
 
         {/* Quick Start */}
         <div className="mb-8">
-          <h2 className="text-sm font-semibold text-[#f0f0f0] mb-0.5">
+          <h2 className="text-sm font-semibold text-[var(--text-1)] mb-0.5">
             Quick Start
           </h2>
-          <p className="text-xs text-[#555] mb-4">
+          <p className="text-xs text-[var(--text-3)] mb-4">
             Capture your first meeting or upload a recording to see Fireflies in
             action.
           </p>
@@ -176,7 +176,7 @@ export function HomeClient() {
               <Link
                 key={label}
                 href={href}
-                className="flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl bg-[#141414] border border-[#1e1e1e] hover:border-[#2e2e2e] hover:bg-[#1a1a1a] transition-all group"
+                className="flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl bg-[var(--bg-card)] border border-[var(--border)] hover:border-[var(--border-strong)] hover:bg-[var(--bg-elevated)] transition-all group"
               >
                 <div className="flex items-center gap-3">
                   <div
@@ -185,13 +185,13 @@ export function HomeClient() {
                   >
                     <Icon size={15} style={{ color }} />
                   </div>
-                  <span className="text-sm text-[#d0d0d0] font-medium">
+                  <span className="text-sm text-[var(--text-1)] font-medium">
                     {label}
                   </span>
                 </div>
                 <ChevronRight
                   size={14}
-                  className="text-[#444] group-hover:text-[#888] transition-colors"
+                  className="text-[var(--text-4)] group-hover:text-[var(--text-2)] transition-colors"
                 />
               </Link>
             ))}
@@ -200,15 +200,15 @@ export function HomeClient() {
 
         {/* Recent / Upcoming tabs */}
         <div>
-          <div className="flex items-center gap-1 mb-4 border-b border-[#1e1e1e]">
+          <div className="flex items-center gap-1 mb-4 border-b border-[var(--border)]">
             {(["recent", "upcoming"] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`px-4 pb-2.5 text-sm font-medium border-b-2 -mb-px transition-colors ${
                   activeTab === tab
-                    ? "border-[#6c47ff] text-[#f0f0f0]"
-                    : "border-transparent text-[#555] hover:text-[#aaa]"
+                    ? "border-[#6c47ff] text-[var(--text-1)]"
+                    : "border-transparent text-[var(--text-3)] hover:text-[var(--text-2)]"
                 }`}
               >
                 {tab === "recent" ? "Recent" : "Upcoming"}
@@ -221,17 +221,17 @@ export function HomeClient() {
               {[1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className="h-14 rounded-lg bg-[#141414] animate-pulse"
+                  className="h-14 rounded-lg bg-[var(--bg-card)] animate-pulse"
                 />
               ))}
             </div>
           ) : activeTab === "upcoming" ? (
-            <div className="py-12 text-center text-[#555] text-sm">
+            <div className="py-12 text-center text-[var(--text-3)] text-sm">
               No upcoming meetings
             </div>
           ) : recentMeetings.length === 0 ? (
             <div className="py-12 text-center">
-              <p className="text-[#555] text-sm mb-4">No meetings yet</p>
+              <p className="text-[var(--text-3)] text-sm mb-4">No meetings yet</p>
               <Link
                 href="/meetings/new"
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#6c47ff] hover:bg-[#7c5aff] text-white text-sm font-medium transition-colors"
@@ -246,22 +246,22 @@ export function HomeClient() {
                 <Link
                   key={m.id}
                   href={`/meetings/${m.id}`}
-                  className="flex items-center gap-4 px-3 py-3 rounded-lg hover:bg-[#141414] transition-colors group"
+                  className="flex items-center gap-4 px-3 py-3 rounded-lg hover:bg-[var(--bg-card)] transition-colors group"
                 >
                   <div className="w-9 h-9 rounded-lg bg-[#6c47ff]/10 flex items-center justify-center shrink-0">
-                    <Video size={16} className="text-[#9b7cff]" />
+                    <Video size={16} className="text-[var(--accent-text)]" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-[#e0e0e0] truncate group-hover:text-white transition-colors">
+                    <p className="text-sm font-medium text-[var(--text-1)] truncate transition-colors">
                       {m.title}
                     </p>
-                    <p className="text-xs text-[#555] mt-0.5">
+                    <p className="text-xs text-[var(--text-3)] mt-0.5">
                       {formatDate(m.date)} &middot; {formatDuration(m.duration)}
                     </p>
                   </div>
                   <ChevronRight
                     size={14}
-                    className="text-[#444] opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="text-[var(--text-4)] opacity-0 group-hover:opacity-100 transition-opacity"
                   />
                 </Link>
               ))}
@@ -269,7 +269,7 @@ export function HomeClient() {
                 <div className="pt-2">
                   <Link
                     href="/meetings"
-                    className="flex items-center justify-center gap-1.5 py-2.5 text-xs font-medium text-[#9b7cff] hover:text-[#7c5aff] transition-colors"
+                    className="flex items-center justify-center gap-1.5 py-2.5 text-xs font-medium text-[var(--accent-text)] hover:text-[var(--accent-hover)] transition-colors"
                   >
                     View all {meetings.length} meetings
                     <ChevronRight size={12} />

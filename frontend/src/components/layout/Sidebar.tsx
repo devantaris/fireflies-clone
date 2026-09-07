@@ -14,6 +14,7 @@ import {
   BarChart2,
   Puzzle,
 } from "lucide-react";
+import { ThemeToggle } from "./ThemeToggle";
 
 interface Props {
   onNavClick?: () => void;
@@ -34,8 +35,8 @@ const PRODUCT_NAV = [
 
 function UserAvatar() {
   return (
-    <div className="px-3 pb-4 pt-2 border-t border-[#242424]">
-      <div className="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-[#242424] cursor-pointer transition-colors">
+    <div className="px-3 pb-4 pt-2 border-t border-[var(--border)]">
+      <div className="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-[var(--bg-hover)] cursor-pointer transition-colors">
         <div
           className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
           style={{ background: "#6c47ff" }}
@@ -43,8 +44,8 @@ function UserAvatar() {
           D
         </div>
         <div className="min-w-0">
-          <p className="text-sm font-medium text-[#f0f0f0] truncate">My Workspace</p>
-          <p className="text-xs text-[#8a8a8a] truncate">user@company.com</p>
+          <p className="text-sm font-medium text-[var(--text-1)] truncate">My Workspace</p>
+          <p className="text-xs text-[var(--text-2)] truncate">user@company.com</p>
         </div>
       </div>
     </div>
@@ -70,8 +71,8 @@ function NavLink({
       onClick={onNavClick}
       className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
         isActive
-          ? "bg-[#6c47ff]/15 text-[#9b7cff] font-medium"
-          : "text-[#8a8a8a] hover:text-[#f0f0f0] hover:bg-[#1e1e1e]"
+          ? "bg-[#6c47ff]/15 text-[var(--accent-text)] font-medium"
+          : "text-[var(--text-2)] hover:text-[var(--text-1)] hover:bg-[var(--bg-hover)]"
       }`}
     >
       <Icon size={16} />
@@ -90,16 +91,16 @@ export function Sidebar({ onNavClick }: Props) {
   }
 
   return (
-    <aside className="w-[220px] shrink-0 flex flex-col h-full bg-[#111111] border-r border-[#1e1e1e]">
+    <aside className="w-[220px] shrink-0 flex flex-col h-full bg-[var(--bg-sub)] border-r border-[var(--border)]">
       {/* Logo */}
       <div className="flex items-center gap-2 px-5 py-5">
         <div className="w-7 h-7 rounded-lg bg-[#6c47ff] flex items-center justify-center">
           <Flame size={15} className="text-white" />
         </div>
-        <span className="text-[15px] font-semibold text-[#f0f0f0] tracking-tight">
+        <span className="text-[15px] font-semibold text-[var(--text-1)] tracking-tight">
           fireflies
         </span>
-        <span className="ml-1 text-[10px] font-medium bg-[#6c47ff]/20 text-[#9b7cff] px-1.5 py-0.5 rounded">
+        <span className="ml-1 text-[10px] font-medium bg-[#6c47ff]/20 text-[var(--accent-text)] px-1.5 py-0.5 rounded">
           beta
         </span>
       </div>
@@ -131,7 +132,7 @@ export function Sidebar({ onNavClick }: Props) {
           ))}
         </div>
 
-        <div className="my-3 border-t border-[#1e1e1e]" />
+        <div className="my-3 border-t border-[var(--border)]" />
 
         <div className="space-y-0.5">
           {PRODUCT_NAV.map(({ label, href, icon }) => (
@@ -146,6 +147,11 @@ export function Sidebar({ onNavClick }: Props) {
           ))}
         </div>
       </nav>
+
+      {/* Theme toggle */}
+      <div className="px-3 pb-1">
+        <ThemeToggle />
+      </div>
 
       {/* Settings at bottom */}
       <div className="px-3 pb-1">

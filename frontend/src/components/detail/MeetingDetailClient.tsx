@@ -32,17 +32,17 @@ interface Props {
 function LoadingState() {
   return (
     <div className="h-full flex flex-col overflow-hidden">
-      <div className="shrink-0 border-b border-[#1e1e1e] px-6 py-4">
+      <div className="shrink-0 border-b border-[var(--border)] px-6 py-4">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-[#1e1e1e] rounded-lg animate-pulse" />
+          <div className="w-8 h-8 bg-[var(--border)] rounded-lg animate-pulse" />
           <div className="space-y-2">
-            <div className="h-4 bg-[#1e1e1e] rounded w-48 animate-pulse" />
-            <div className="h-3 bg-[#1a1a1a] rounded w-32 animate-pulse" />
+            <div className="h-4 bg-[var(--border)] rounded w-48 animate-pulse" />
+            <div className="h-3 bg-[var(--bg-elevated)] rounded w-32 animate-pulse" />
           </div>
         </div>
       </div>
       <div className="flex-1 flex items-center justify-center">
-        <Loader2 size={22} className="text-[#3a3a3a] animate-spin" />
+        <Loader2 size={22} className="text-[var(--border-strong)] animate-spin" />
       </div>
     </div>
   );
@@ -51,7 +51,7 @@ function LoadingState() {
 function ErrorState({ onBack }: { onBack: () => void }) {
   return (
     <div className="h-full flex flex-col items-center justify-center gap-3">
-      <p className="text-sm text-[#c0c0c0]">Meeting not found.</p>
+      <p className="text-sm text-[var(--text-2)]">Meeting not found.</p>
       <button
         onClick={onBack}
         className="text-xs text-[#6c47ff] hover:underline"
@@ -99,29 +99,29 @@ export function MeetingDetailClient({ meetingId }: Props) {
   return (
     <div className="h-full flex flex-col overflow-hidden">
       {/* ── Header ──────────────────────────────────────────────────────────── */}
-      <header className="shrink-0 border-b border-[#1e1e1e] px-5 py-3 flex items-center justify-between gap-4 bg-[#0f0f0f]/80 backdrop-blur-sm">
+      <header className="shrink-0 border-b border-[var(--border)] px-5 py-3 flex items-center justify-between gap-4 bg-[var(--bg)]/80 backdrop-blur-sm">
         {/* Left: back + title */}
         <div className="flex items-center gap-3 min-w-0">
           <Link
             href="/meetings"
-            className="p-1.5 rounded-lg text-[#555] hover:text-[#e0e0e0] hover:bg-[#1e1e1e] transition-colors shrink-0"
+            className="p-1.5 rounded-lg text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[var(--bg-hover)] transition-colors shrink-0"
             title="Back to meetings"
           >
             <ArrowLeft size={15} />
           </Link>
 
           <div className="min-w-0">
-            <h1 className="text-[15px] font-semibold text-[#f0f0f0] truncate leading-tight">
+            <h1 className="text-[15px] font-semibold text-[var(--text-1)] truncate leading-tight">
               {meeting.title}
             </h1>
-            <div className="flex items-center gap-3 mt-0.5 text-[11px] text-[#555]">
+            <div className="flex items-center gap-3 mt-0.5 text-[11px] text-[var(--text-3)]">
               <span className="flex items-center gap-1">
                 <Calendar size={10} />
                 {formatMeetingDate(meeting.date)}
               </span>
               {duration > 0 && (
                 <>
-                  <span className="w-0.5 h-0.5 rounded-full bg-[#3a3a3a]" />
+                  <span className="w-0.5 h-0.5 rounded-full bg-[var(--border-strong)]" />
                   <span className="flex items-center gap-1">
                     <Clock size={10} />
                     {formatDuration(duration)}
@@ -130,7 +130,7 @@ export function MeetingDetailClient({ meetingId }: Props) {
               )}
               {meeting.participants.length > 0 && (
                 <>
-                  <span className="w-0.5 h-0.5 rounded-full bg-[#3a3a3a]" />
+                  <span className="w-0.5 h-0.5 rounded-full bg-[var(--border-strong)]" />
                   <span className="flex items-center gap-1">
                     <Users size={10} />
                     {meeting.participants.length}{" "}
@@ -150,14 +150,14 @@ export function MeetingDetailClient({ meetingId }: Props) {
                 <div
                   key={p.id}
                   title={p.name}
-                  className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white ring-2 ring-[#0f0f0f] shrink-0"
+                  className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white ring-2 ring-[var(--bg)] shrink-0"
                   style={{ background: getAvatarColor(p.name) }}
                 >
                   {getInitials(p.name)}
                 </div>
               ))}
               {extraCount > 0 && (
-                <div className="w-7 h-7 rounded-full bg-[#2a2a2a] flex items-center justify-center text-[10px] text-[#888] ring-2 ring-[#0f0f0f]">
+                <div className="w-7 h-7 rounded-full bg-[var(--border)] flex items-center justify-center text-[10px] text-[var(--text-2)] ring-2 ring-[var(--bg)]">
                   +{extraCount}
                 </div>
               )}
@@ -166,7 +166,7 @@ export function MeetingDetailClient({ meetingId }: Props) {
 
           <Link
             href={`/meetings/${meetingId}/edit`}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-[#888] hover:text-[#f0f0f0] hover:bg-[#1e1e1e] transition-colors border border-[#2a2a2a] hover:border-[#3a3a3a]"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-[var(--text-2)] hover:text-[var(--text-1)] hover:bg-[var(--bg-hover)] transition-colors border border-[var(--border)] hover:border-[var(--border-strong)]"
           >
             <Pencil size={11} />
             Edit
@@ -175,15 +175,15 @@ export function MeetingDetailClient({ meetingId }: Props) {
       </header>
 
       {/* Mobile panel tabs — hidden on lg+ */}
-      <div className="flex lg:hidden shrink-0 border-b border-[#1e1e1e]">
+      <div className="flex lg:hidden shrink-0 border-b border-[var(--border)]">
         {(["transcript", "summary"] as const).map((panel) => (
           <button
             key={panel}
             onClick={() => setMobilePanel(panel)}
             className={`flex-1 py-2.5 text-xs font-medium transition-colors border-b-2 -mb-px ${
               mobilePanel === panel
-                ? "text-[#f0f0f0] border-[#6c47ff]"
-                : "text-[#555] border-transparent hover:text-[#aaa]"
+                ? "text-[var(--text-1)] border-[#6c47ff]"
+                : "text-[var(--text-3)] border-transparent hover:text-[var(--text-2)]"
             }`}
           >
             {panel === "transcript" ? "Transcript" : "Summary & Actions"}
@@ -195,11 +195,11 @@ export function MeetingDetailClient({ meetingId }: Props) {
       <div className="flex-1 flex overflow-hidden">
         {/* Left: player + transcript */}
         <div
-          className={`flex flex-col overflow-hidden min-w-0 border-r border-[#1e1e1e] ${
+          className={`flex flex-col overflow-hidden min-w-0 border-r border-[var(--border)] ${
             mobilePanel === "transcript" ? "flex-1" : "hidden lg:flex lg:flex-1"
           }`}
         >
-          <div className="shrink-0 p-4 border-b border-[#1e1e1e]">
+          <div className="shrink-0 p-4 border-b border-[var(--border)]">
             <MediaPlayer player={player} hasDuration={duration > 0} />
           </div>
 

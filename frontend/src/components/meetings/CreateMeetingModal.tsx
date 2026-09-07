@@ -101,7 +101,7 @@ export function CreateMeetingModal({ open, onClose, onCreated }: Props) {
       <form onSubmit={handleSubmit} className="p-6 space-y-5">
         {/* Title */}
         <div className="space-y-1.5">
-          <label className="text-xs font-medium text-[#8a8a8a] uppercase tracking-wide">
+          <label className="text-xs font-medium text-[var(--text-2)] uppercase tracking-wide">
             Meeting Title *
           </label>
           <input
@@ -109,25 +109,25 @@ export function CreateMeetingModal({ open, onClose, onCreated }: Props) {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="e.g. Q4 Product Roadmap Planning"
-            className="w-full bg-[#111] border border-[#2e2e2e] rounded-lg px-3 py-2.5 text-sm text-[#f0f0f0] placeholder-[#555] focus:outline-none focus:border-[#6c47ff] transition-colors"
+            className="w-full bg-[var(--bg-sub)] border border-[var(--border-strong)] rounded-lg px-3 py-2.5 text-sm text-[var(--text-1)] placeholder-[var(--text-3)] focus:outline-none focus:border-[#6c47ff] transition-colors"
           />
         </div>
 
         {/* Date + Duration row */}
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-[#8a8a8a] uppercase tracking-wide">
+            <label className="text-xs font-medium text-[var(--text-2)] uppercase tracking-wide">
               Date & Time
             </label>
             <input
               type="datetime-local"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full bg-[#111] border border-[#2e2e2e] rounded-lg px-3 py-2.5 text-sm text-[#f0f0f0] focus:outline-none focus:border-[#6c47ff] transition-colors [color-scheme:dark]"
+              className="w-full bg-[var(--bg-sub)] border border-[var(--border-strong)] rounded-lg px-3 py-2.5 text-sm text-[var(--text-1)] focus:outline-none focus:border-[#6c47ff] transition-colors [color-scheme:dark]"
             />
           </div>
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-[#8a8a8a] uppercase tracking-wide">
+            <label className="text-xs font-medium text-[var(--text-2)] uppercase tracking-wide">
               Duration (minutes)
             </label>
             <input
@@ -135,14 +135,14 @@ export function CreateMeetingModal({ open, onClose, onCreated }: Props) {
               min="1"
               value={duration}
               onChange={(e) => setDuration(e.target.value)}
-              className="w-full bg-[#111] border border-[#2e2e2e] rounded-lg px-3 py-2.5 text-sm text-[#f0f0f0] focus:outline-none focus:border-[#6c47ff] transition-colors"
+              className="w-full bg-[var(--bg-sub)] border border-[var(--border-strong)] rounded-lg px-3 py-2.5 text-sm text-[var(--text-1)] focus:outline-none focus:border-[#6c47ff] transition-colors"
             />
           </div>
         </div>
 
         {/* Participants */}
         <div className="space-y-2">
-          <label className="text-xs font-medium text-[#8a8a8a] uppercase tracking-wide">
+          <label className="text-xs font-medium text-[var(--text-2)] uppercase tracking-wide">
             Participants
           </label>
           <div className="space-y-2">
@@ -153,20 +153,20 @@ export function CreateMeetingModal({ open, onClose, onCreated }: Props) {
                   value={p.name}
                   onChange={(e) => updateParticipant(p.id, "name", e.target.value)}
                   placeholder="Name"
-                  className="flex-1 bg-[#111] border border-[#2e2e2e] rounded-lg px-3 py-2 text-sm text-[#f0f0f0] placeholder-[#555] focus:outline-none focus:border-[#6c47ff] transition-colors"
+                  className="flex-1 bg-[var(--bg-sub)] border border-[var(--border-strong)] rounded-lg px-3 py-2 text-sm text-[var(--text-1)] placeholder-[var(--text-3)] focus:outline-none focus:border-[#6c47ff] transition-colors"
                 />
                 <input
                   type="email"
                   value={p.email}
                   onChange={(e) => updateParticipant(p.id, "email", e.target.value)}
                   placeholder="Email (optional)"
-                  className="flex-1 bg-[#111] border border-[#2e2e2e] rounded-lg px-3 py-2 text-sm text-[#f0f0f0] placeholder-[#555] focus:outline-none focus:border-[#6c47ff] transition-colors"
+                  className="flex-1 bg-[var(--bg-sub)] border border-[var(--border-strong)] rounded-lg px-3 py-2 text-sm text-[var(--text-1)] placeholder-[var(--text-3)] focus:outline-none focus:border-[#6c47ff] transition-colors"
                 />
                 {participants.length > 1 && (
                   <button
                     type="button"
                     onClick={() => removeParticipant(p.id)}
-                    className="p-1.5 rounded text-[#555] hover:text-[#ef4444] hover:bg-[#2e2e2e] transition-colors"
+                    className="p-1.5 rounded text-[var(--text-3)] hover:text-[#ef4444] hover:bg-[var(--border-strong)] transition-colors"
                   >
                     <X size={14} />
                   </button>
@@ -177,7 +177,7 @@ export function CreateMeetingModal({ open, onClose, onCreated }: Props) {
           <button
             type="button"
             onClick={addParticipant}
-            className="flex items-center gap-1.5 text-xs text-[#6c47ff] hover:text-[#9b7cff] transition-colors"
+            className="flex items-center gap-1.5 text-xs text-[#6c47ff] hover:text-[var(--accent-text)] transition-colors"
           >
             <Plus size={13} />
             Add participant
@@ -186,7 +186,7 @@ export function CreateMeetingModal({ open, onClose, onCreated }: Props) {
 
         {/* Transcript */}
         <div className="space-y-1.5">
-          <label className="text-xs font-medium text-[#8a8a8a] uppercase tracking-wide">
+          <label className="text-xs font-medium text-[var(--text-2)] uppercase tracking-wide">
             Transcript (optional)
           </label>
           <textarea
@@ -194,22 +194,22 @@ export function CreateMeetingModal({ open, onClose, onCreated }: Props) {
             onChange={(e) => setTranscript(e.target.value)}
             rows={5}
             placeholder={"Paste transcript text here…\nSupports formats:\n  [0:00] Speaker: text\n  Speaker: text"}
-            className="w-full bg-[#111] border border-[#2e2e2e] rounded-lg px-3 py-2.5 text-sm text-[#f0f0f0] placeholder-[#444] font-mono focus:outline-none focus:border-[#6c47ff] transition-colors resize-y"
+            className="w-full bg-[var(--bg-sub)] border border-[var(--border-strong)] rounded-lg px-3 py-2.5 text-sm text-[var(--text-1)] placeholder-[var(--text-4)] font-mono focus:outline-none focus:border-[#6c47ff] transition-colors resize-y"
           />
           {transcript && (
-            <p className="text-xs text-[#6a6a6a]">
+            <p className="text-xs text-[var(--text-3)]">
               ~{parseTranscriptText(transcript).length} lines detected
             </p>
           )}
         </div>
 
         {/* Actions */}
-        <div className="flex gap-3 justify-end pt-1 border-t border-[#2e2e2e]">
+        <div className="flex gap-3 justify-end pt-1 border-t border-[var(--border-strong)]">
           <button
             type="button"
             onClick={handleClose}
             disabled={loading}
-            className="px-4 py-2 rounded-lg text-sm text-[#8a8a8a] hover:text-[#f0f0f0] hover:bg-[#2e2e2e] transition-colors disabled:opacity-50"
+            className="px-4 py-2 rounded-lg text-sm text-[var(--text-2)] hover:text-[var(--text-1)] hover:bg-[var(--border-strong)] transition-colors disabled:opacity-50"
           >
             Cancel
           </button>

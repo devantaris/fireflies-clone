@@ -11,7 +11,7 @@ interface Props {
 }
 
 const INPUT_CLS =
-  "bg-[#141414] border border-[#2a2a2a] rounded-lg text-sm text-[#e0e0e0] placeholder-[#444] focus:outline-none focus:border-[#6c47ff] transition-colors";
+  "bg-[var(--bg-card)] border border-[var(--border)] rounded-lg text-sm text-[var(--text-1)] placeholder-[var(--text-4)] focus:outline-none focus:border-[#6c47ff] transition-colors";
 
 export function MeetingFiltersBar({ filters, onChange, onClear, searchInputRef }: Props) {
   const hasActiveFilters =
@@ -23,7 +23,7 @@ export function MeetingFiltersBar({ filters, onChange, onClear, searchInputRef }
       <div className="relative flex-1 min-w-[180px] max-w-xs">
         <Search
           size={13}
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-[#444] pointer-events-none"
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-4)] pointer-events-none"
         />
         <input
           ref={searchInputRef}
@@ -36,7 +36,7 @@ export function MeetingFiltersBar({ filters, onChange, onClear, searchInputRef }
         {filters.search && (
           <button
             onClick={() => onChange({ search: "" })}
-            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#444] hover:text-[#aaa] transition-colors"
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--text-4)] hover:text-[var(--text-2)] transition-colors"
           >
             <X size={12} />
           </button>
@@ -61,7 +61,7 @@ export function MeetingFiltersBar({ filters, onChange, onClear, searchInputRef }
         title="From date"
       />
 
-      <span className="text-[#444] text-xs shrink-0">–</span>
+      <span className="text-[var(--text-4)] text-xs shrink-0">–</span>
 
       {/* Date to */}
       <input
@@ -84,7 +84,7 @@ export function MeetingFiltersBar({ filters, onChange, onClear, searchInputRef }
         </select>
         <ChevronDown
           size={12}
-          className="absolute right-2 top-1/2 -translate-y-1/2 text-[#444] pointer-events-none"
+          className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--text-4)] pointer-events-none"
         />
       </div>
 
@@ -92,7 +92,7 @@ export function MeetingFiltersBar({ filters, onChange, onClear, searchInputRef }
       {hasActiveFilters && (
         <button
           onClick={onClear}
-          className="flex items-center gap-1 text-xs text-[#666] hover:text-[#c0c0c0] transition-colors px-2 py-1.5 rounded-lg hover:bg-[#1e1e1e]"
+          className="flex items-center gap-1 text-xs text-[var(--text-3)] hover:text-[var(--text-2)] transition-colors px-2 py-1.5 rounded-lg hover:bg-[var(--bg-hover)]"
         >
           <X size={11} />
           Clear

@@ -15,11 +15,11 @@ interface ParticipantEntry {
 }
 
 const INPUT_CLS =
-  "w-full bg-[#111] border border-[#2e2e2e] rounded-lg px-3 py-2.5 text-sm text-[#f0f0f0] placeholder-[#555] focus:outline-none focus:border-[#6c47ff] transition-colors";
+  "w-full bg-[var(--bg-sub)] border border-[var(--border-strong)] rounded-lg px-3 py-2.5 text-sm text-[var(--text-1)] placeholder-[var(--text-3)] focus:outline-none focus:border-[#6c47ff] transition-colors";
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
-    <label className="block text-xs font-medium text-[#8a8a8a] uppercase tracking-wide mb-1.5">
+    <label className="block text-xs font-medium text-[var(--text-2)] uppercase tracking-wide mb-1.5">
       {children}
     </label>
   );
@@ -86,14 +86,14 @@ export function NewMeetingClient() {
     <div className="max-w-xl mx-auto px-6 py-8">
       <Link
         href="/meetings"
-        className="inline-flex items-center gap-1.5 text-xs text-[#555] hover:text-[#c0c0c0] transition-colors mb-6"
+        className="inline-flex items-center gap-1.5 text-xs text-[var(--text-3)] hover:text-[var(--text-2)] transition-colors mb-6"
       >
         <ArrowLeft size={13} />
         Back to meetings
       </Link>
 
-      <h1 className="text-xl font-semibold text-[#f0f0f0] mb-1">New Meeting</h1>
-      <p className="text-sm text-[#555] mb-7">Add a meeting manually or paste a transcript.</p>
+      <h1 className="text-xl font-semibold text-[var(--text-1)] mb-1">New Meeting</h1>
+      <p className="text-sm text-[var(--text-3)] mb-7">Add a meeting manually or paste a transcript.</p>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Title */}
@@ -143,20 +143,20 @@ export function NewMeetingClient() {
                   value={p.name}
                   onChange={(e) => updateParticipant(p.id, "name", e.target.value)}
                   placeholder="Name"
-                  className="flex-1 bg-[#111] border border-[#2e2e2e] rounded-lg px-3 py-2 text-sm text-[#f0f0f0] placeholder-[#555] focus:outline-none focus:border-[#6c47ff] transition-colors"
+                  className="flex-1 bg-[var(--bg-sub)] border border-[var(--border-strong)] rounded-lg px-3 py-2 text-sm text-[var(--text-1)] placeholder-[var(--text-3)] focus:outline-none focus:border-[#6c47ff] transition-colors"
                 />
                 <input
                   type="email"
                   value={p.email}
                   onChange={(e) => updateParticipant(p.id, "email", e.target.value)}
                   placeholder="Email (optional)"
-                  className="flex-1 bg-[#111] border border-[#2e2e2e] rounded-lg px-3 py-2 text-sm text-[#f0f0f0] placeholder-[#555] focus:outline-none focus:border-[#6c47ff] transition-colors"
+                  className="flex-1 bg-[var(--bg-sub)] border border-[var(--border-strong)] rounded-lg px-3 py-2 text-sm text-[var(--text-1)] placeholder-[var(--text-3)] focus:outline-none focus:border-[#6c47ff] transition-colors"
                 />
                 {participants.length > 1 && (
                   <button
                     type="button"
                     onClick={() => removeParticipant(p.id)}
-                    className="p-1.5 rounded text-[#555] hover:text-[#ef4444] hover:bg-[#2e2e2e] transition-colors shrink-0"
+                    className="p-1.5 rounded text-[var(--text-3)] hover:text-[#ef4444] hover:bg-[var(--border-strong)] transition-colors shrink-0"
                   >
                     <X size={14} />
                   </button>
@@ -167,7 +167,7 @@ export function NewMeetingClient() {
           <button
             type="button"
             onClick={addParticipant}
-            className="flex items-center gap-1.5 text-xs text-[#6c47ff] hover:text-[#9b7cff] transition-colors mt-2"
+            className="flex items-center gap-1.5 text-xs text-[#6c47ff] hover:text-[var(--accent-text)] transition-colors mt-2"
           >
             <Plus size={13} />
             Add participant
@@ -182,20 +182,20 @@ export function NewMeetingClient() {
             onChange={(e) => setTranscript(e.target.value)}
             rows={5}
             placeholder={"Paste transcript text here…\nSupports:\n  [0:00] Speaker: text\n  Speaker: text"}
-            className="w-full bg-[#111] border border-[#2e2e2e] rounded-lg px-3 py-2.5 text-sm text-[#f0f0f0] placeholder-[#444] font-mono focus:outline-none focus:border-[#6c47ff] transition-colors resize-y"
+            className="w-full bg-[var(--bg-sub)] border border-[var(--border-strong)] rounded-lg px-3 py-2.5 text-sm text-[var(--text-1)] placeholder-[var(--text-4)] font-mono focus:outline-none focus:border-[#6c47ff] transition-colors resize-y"
           />
           {transcript && (
-            <p className="text-xs text-[#555] mt-1">
+            <p className="text-xs text-[var(--text-3)] mt-1">
               ~{parseTranscriptText(transcript).length} lines detected
             </p>
           )}
         </div>
 
         {/* Actions */}
-        <div className="flex gap-3 justify-end pt-2 border-t border-[#2e2e2e]">
+        <div className="flex gap-3 justify-end pt-2 border-t border-[var(--border-strong)]">
           <Link
             href="/meetings"
-            className="px-4 py-2 rounded-lg text-sm text-[#8a8a8a] hover:text-[#f0f0f0] hover:bg-[#2e2e2e] transition-colors"
+            className="px-4 py-2 rounded-lg text-sm text-[var(--text-2)] hover:text-[var(--text-1)] hover:bg-[var(--border-strong)] transition-colors"
           >
             Cancel
           </Link>

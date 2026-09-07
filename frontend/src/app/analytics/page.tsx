@@ -19,9 +19,9 @@ function StatCard({
   color: string;
 }) {
   return (
-    <div className="bg-[#141414] border border-[#1e1e1e] rounded-xl p-5">
+    <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-5">
       <div className="flex items-center justify-between mb-4">
-        <span className="text-xs text-[#555] font-medium">{label}</span>
+        <span className="text-xs text-[var(--text-3)] font-medium">{label}</span>
         <div
           className="w-7 h-7 rounded-md flex items-center justify-center"
           style={{ background: `${color}20` }}
@@ -31,8 +31,8 @@ function StatCard({
           </span>
         </div>
       </div>
-      <p className="text-3xl font-bold text-[#f0f0f0] mb-1">{value}</p>
-      {sub && <p className="text-xs text-[#444]">{sub}</p>}
+      <p className="text-3xl font-bold text-[var(--text-1)] mb-1">{value}</p>
+      {sub && <p className="text-xs text-[var(--text-4)]">{sub}</p>}
     </div>
   );
 }
@@ -69,11 +69,11 @@ export default function AnalyticsPage() {
   }).length;
 
   return (
-    <div className="min-h-full flex flex-col bg-[#0e0e0e]">
+    <div className="min-h-full flex flex-col bg-[var(--bg)]">
       {/* Header */}
-      <div className="border-b border-[#1e1e1e] px-6 py-4 flex items-center gap-3">
-        <BarChart2 size={18} className="text-[#9b7cff]" />
-        <h1 className="text-xl font-semibold text-[#f0f0f0]">Analytics</h1>
+      <div className="border-b border-[var(--border)] px-6 py-4 flex items-center gap-3">
+        <BarChart2 size={18} className="text-[var(--accent-text)]" />
+        <h1 className="text-xl font-semibold text-[var(--text-1)]">Analytics</h1>
       </div>
 
       <div className="px-6 py-6 max-w-5xl">
@@ -82,7 +82,7 @@ export default function AnalyticsPage() {
             {[1, 2, 3, 4].map((i) => (
               <div
                 key={i}
-                className="h-28 rounded-xl bg-[#141414] animate-pulse"
+                className="h-28 rounded-xl bg-[var(--bg-card)] animate-pulse"
               />
             ))}
           </div>
@@ -128,12 +128,12 @@ export default function AnalyticsPage() {
             </div>
 
             {/* Recent activity */}
-            <div className="bg-[#141414] border border-[#1e1e1e] rounded-xl p-5">
-              <h2 className="text-sm font-semibold text-[#f0f0f0] mb-4">
+            <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-5">
+              <h2 className="text-sm font-semibold text-[var(--text-1)] mb-4">
                 Meetings by Month
               </h2>
               {meetings.length === 0 ? (
-                <p className="text-sm text-[#555] py-8 text-center">
+                <p className="text-sm text-[var(--text-3)] py-8 text-center">
                   No data yet — record your first meeting to see analytics.
                 </p>
               ) : (
@@ -165,16 +165,16 @@ export default function AnalyticsPage() {
                       const pct = Math.round((count / max) * 100);
                       return (
                         <div key={month} className="flex items-center gap-3">
-                          <span className="text-xs text-[#555] w-20 shrink-0">
+                          <span className="text-xs text-[var(--text-3)] w-20 shrink-0">
                             {month}
                           </span>
-                          <div className="flex-1 h-2 rounded-full bg-[#1e1e1e]">
+                          <div className="flex-1 h-2 rounded-full bg-[var(--border)]">
                             <div
                               className="h-2 rounded-full bg-[#6c47ff]"
                               style={{ width: `${pct}%` }}
                             />
                           </div>
-                          <span className="text-xs text-[#666] w-6 text-right">
+                          <span className="text-xs text-[var(--text-3)] w-6 text-right">
                             {count}
                           </span>
                         </div>

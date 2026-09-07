@@ -1,21 +1,73 @@
 @import "tailwindcss";
 
+/* ── Light theme (default) ──────────────────────────────────────────────────── */
 :root {
-  /* Fireflies dark palette */
-  --ff-bg: #0f0f0f;
-  --ff-surface: #1a1a1a;
-  --ff-surface-2: #242424;
-  --ff-border: #2e2e2e;
-  --ff-text: #f0f0f0;
-  --ff-text-muted: #8a8a8a;
-  --ff-purple: #6c47ff;
-  --ff-purple-light: #8b6bff;
-  --ff-purple-dim: rgba(108, 71, 255, 0.15);
-  --ff-green: #22c55e;
-  --ff-red: #ef4444;
+  --bg:           #ffffff;
+  --bg-sub:       #f5f4fc;
+  --bg-card:      #ffffff;
+  --bg-elevated:  #f0effe;
+  --bg-hover:     #ede9ff;
+  --bg-active:    rgba(108, 71, 255, 0.09);
 
-  --background: var(--ff-bg);
-  --foreground: var(--ff-text);
+  --border:       #e5e4f0;
+  --border-strong: #d4d3e8;
+
+  --text-1:  #0d0d14;
+  --text-2:  #6b6b80;
+  --text-3:  #9999b0;
+  --text-4:  #c4c3d0;
+
+  --accent:        #6c47ff;
+  --accent-hover:  #5535ee;
+  --accent-text:   #6c47ff;
+  --accent-bg:     rgba(108, 71, 255, 0.08);
+  --accent-active: rgba(108, 71, 255, 0.11);
+
+  --scrollbar-thumb:       #d4d3e8;
+  --scrollbar-thumb-hover: #b5b4c8;
+
+  /* Legacy ff-* aliases so old callers still work */
+  --ff-bg:         var(--bg);
+  --ff-surface:    var(--bg-card);
+  --ff-surface-2:  var(--bg-elevated);
+  --ff-border:     var(--border);
+  --ff-text:       var(--text-1);
+  --ff-text-muted: var(--text-2);
+  --ff-purple:     var(--accent);
+  --ff-purple-light: var(--accent-text);
+  --ff-purple-dim: var(--accent-bg);
+  --ff-green:      #22c55e;
+  --ff-red:        #ef4444;
+
+  --background: var(--bg);
+  --foreground: var(--text-1);
+}
+
+/* ── Dark theme ─────────────────────────────────────────────────────────────── */
+:root.dark {
+  --bg:           #0e0e0e;
+  --bg-sub:       #111111;
+  --bg-card:      #141414;
+  --bg-elevated:  #1a1a1a;
+  --bg-hover:     #1e1e1e;
+  --bg-active:    rgba(108, 71, 255, 0.15);
+
+  --border:       #1e1e1e;
+  --border-strong: #2e2e2e;
+
+  --text-1:  #f0f0f0;
+  --text-2:  #8a8a8a;
+  --text-3:  #555555;
+  --text-4:  #333333;
+
+  --accent:        #6c47ff;
+  --accent-hover:  #7c5aff;
+  --accent-text:   #9b7cff;
+  --accent-bg:     rgba(108, 71, 255, 0.15);
+  --accent-active: rgba(108, 71, 255, 0.15);
+
+  --scrollbar-thumb:       #333;
+  --scrollbar-thumb-hover: #444;
 }
 
 @theme inline {
@@ -32,8 +84,8 @@
 html,
 body {
   height: 100%;
-  background-color: var(--ff-bg);
-  color: var(--ff-text);
+  background-color: var(--bg);
+  color: var(--text-1);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -46,9 +98,13 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--ff-border);
+  background: var(--scrollbar-thumb);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #444;
+  background: var(--scrollbar-thumb-hover);
 }
+
+/* Date inputs: adapt color-scheme per theme */
+:root input[type="date"] { color-scheme: light; }
+:root.dark input[type="date"] { color-scheme: dark; }

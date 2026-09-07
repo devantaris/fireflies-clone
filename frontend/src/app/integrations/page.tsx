@@ -95,17 +95,17 @@ export default function IntegrationsPage() {
   });
 
   return (
-    <div className="min-h-full flex flex-col bg-[#0e0e0e]">
+    <div className="min-h-full flex flex-col bg-[var(--bg)]">
       {/* Tabs header */}
-      <div className="border-b border-[#1e1e1e] px-6 flex items-center gap-1">
+      <div className="border-b border-[var(--border)] px-6 flex items-center gap-1">
         {(["discover", "connected"] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={`px-4 py-3 text-sm font-medium border-b-2 -mb-px transition-colors ${
               activeTab === tab
-                ? "border-[#6c47ff] text-[#f0f0f0]"
-                : "border-transparent text-[#555] hover:text-[#aaa]"
+                ? "border-[#6c47ff] text-[var(--text-1)]"
+                : "border-transparent text-[var(--text-3)] hover:text-[var(--text-2)]"
             }`}
           >
             {tab === "discover" ? "Discover" : "Connected"}
@@ -116,13 +116,13 @@ export default function IntegrationsPage() {
       {activeTab === "connected" ? (
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <div className="w-14 h-14 rounded-2xl bg-[#141414] border border-[#1e1e1e] flex items-center justify-center mb-4 mx-auto">
-              <Puzzle size={24} className="text-[#333]" />
+            <div className="w-14 h-14 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] flex items-center justify-center mb-4 mx-auto">
+              <Puzzle size={24} className="text-[var(--text-4)]" />
             </div>
-            <h3 className="text-base font-medium text-[#e0e0e0] mb-1">
+            <h3 className="text-base font-medium text-[var(--text-1)] mb-1">
               No integrations connected
             </h3>
-            <p className="text-sm text-[#555]">
+            <p className="text-sm text-[var(--text-3)]">
               Connect apps to automatically sync your meeting data.
             </p>
           </div>
@@ -131,10 +131,10 @@ export default function IntegrationsPage() {
         <div className="flex-1 overflow-y-auto">
           {/* Featured banner */}
           {showHero && (
-            <div className="relative mx-6 mt-6 rounded-2xl overflow-hidden bg-gradient-to-r from-[#1a103a] to-[#1a2a4a] border border-[#2e2e2e] p-8 mb-6">
+            <div className="relative mx-6 mt-6 rounded-2xl overflow-hidden bg-gradient-to-r from-[#1a103a] to-[#1a2a4a] border border-[var(--border-strong)] p-8 mb-6">
               <button
                 onClick={() => setShowHero(false)}
-                className="absolute top-3 right-3 text-[#555] hover:text-[#888]"
+                className="absolute top-3 right-3 text-[var(--text-3)] hover:text-[var(--text-2)]"
               >
                 <X size={14} />
               </button>
@@ -151,7 +151,7 @@ export default function IntegrationsPage() {
                       NEW
                     </span>
                   </div>
-                  <p className="text-xs text-[#888]">Featured integration</p>
+                  <p className="text-xs text-[var(--text-2)]">Featured integration</p>
                 </div>
               </div>
               <p className="text-sm text-[#b8a8e8] mb-4 max-w-sm">
@@ -172,20 +172,20 @@ export default function IntegrationsPage() {
                 onClick={() => setActiveCategory(cat)}
                 className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
                   activeCategory === cat
-                    ? "border-[#6c47ff] bg-[#6c47ff]/15 text-[#9b7cff]"
-                    : "border-[#1e1e1e] bg-[#141414] text-[#666] hover:border-[#333] hover:text-[#aaa]"
+                    ? "border-[#6c47ff] bg-[#6c47ff]/15 text-[var(--accent-text)]"
+                    : "border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-3)] hover:border-[var(--border-strong)] hover:text-[var(--text-2)]"
                 }`}
               >
                 {cat}
               </button>
             ))}
-            <div className="ml-auto flex items-center gap-2 bg-[#141414] border border-[#1e1e1e] rounded-lg px-3 py-1.5">
-              <Search size={12} className="text-[#444]" />
+            <div className="ml-auto flex items-center gap-2 bg-[var(--bg-card)] border border-[var(--border)] rounded-lg px-3 py-1.5">
+              <Search size={12} className="text-[var(--text-4)]" />
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search"
-                className="bg-transparent text-xs text-[#e0e0e0] placeholder:text-[#444] outline-none w-28"
+                className="bg-transparent text-xs text-[var(--text-1)] placeholder:text-[var(--text-4)] outline-none w-28"
               />
             </div>
           </div>
@@ -195,7 +195,7 @@ export default function IntegrationsPage() {
             {filtered.map((integration) => (
               <div
                 key={integration.name}
-                className="bg-[#141414] border border-[#1e1e1e] rounded-xl p-5 hover:border-[#2e2e2e] transition-colors"
+                className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-5 hover:border-[var(--border-strong)] transition-colors"
               >
                 <div className="flex items-center gap-3 mb-3">
                   <div
@@ -205,16 +205,16 @@ export default function IntegrationsPage() {
                     {integration.letter}
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-[#e0e0e0]">
+                    <p className="text-sm font-medium text-[var(--text-1)]">
                       {integration.name}
                     </p>
-                    <p className="text-[10px] text-[#444]">Fireflies</p>
+                    <p className="text-[10px] text-[var(--text-4)]">Fireflies</p>
                   </div>
                 </div>
-                <p className="text-xs text-[#555] mb-4 line-clamp-2">
+                <p className="text-xs text-[var(--text-3)] mb-4 line-clamp-2">
                   {integration.desc}
                 </p>
-                <button className="text-xs text-[#9b7cff] hover:text-[#7c5aff] font-medium transition-colors">
+                <button className="text-xs text-[var(--accent-text)] hover:text-[var(--accent-hover)] font-medium transition-colors">
                   + Connect
                 </button>
               </div>

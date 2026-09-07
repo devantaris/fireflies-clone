@@ -33,14 +33,14 @@ export function Modal({ open, onClose, title, children, width = "max-w-lg" }: Mo
       onClick={(e) => { if (e.target === overlayRef.current) onClose(); }}
     >
       <div
-        className={`w-full ${width} bg-[#1a1a1a] border border-[#2e2e2e] rounded-xl shadow-2xl flex flex-col max-h-[90vh]`}
+        className={`w-full ${width} bg-[var(--bg-elevated)] border border-[var(--border-strong)] rounded-xl shadow-2xl flex flex-col max-h-[90vh]`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#2e2e2e] shrink-0">
-          <h2 className="text-base font-semibold text-[#f0f0f0]">{title}</h2>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--border-strong)] shrink-0">
+          <h2 className="text-base font-semibold text-[var(--text-1)]">{title}</h2>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-[#8a8a8a] hover:text-[#f0f0f0] hover:bg-[#2e2e2e] transition-colors"
+            className="p-1 rounded-lg text-[var(--text-2)] hover:text-[var(--text-1)] hover:bg-[var(--border-strong)] transition-colors"
           >
             <X size={16} />
           </button>

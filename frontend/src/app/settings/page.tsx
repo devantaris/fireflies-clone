@@ -36,7 +36,7 @@ function Toggle({
     <button
       onClick={onChange}
       className={`relative w-10 h-5.5 rounded-full transition-colors shrink-0 ${
-        checked ? "bg-[#6c47ff]" : "bg-[#333]"
+        checked ? "bg-[#6c47ff]" : "bg-[var(--border-strong)]"
       }`}
       style={{ height: "22px" }}
     >
@@ -57,25 +57,25 @@ export default function SettingsPage() {
   const [autoDelete, setAutoDelete] = useState(false);
 
   return (
-    <div className="min-h-full flex bg-[#0e0e0e]">
+    <div className="min-h-full flex bg-[var(--bg)]">
       {/* Settings sidebar */}
-      <aside className="w-[220px] shrink-0 border-r border-[#1e1e1e] flex flex-col">
+      <aside className="w-[220px] shrink-0 border-r border-[var(--border)] flex flex-col">
         {/* User info */}
-        <div className="px-4 py-4 border-b border-[#1e1e1e]">
+        <div className="px-4 py-4 border-b border-[var(--border)]">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-9 h-9 rounded-full bg-[#6c47ff] flex items-center justify-center text-white text-sm font-bold shrink-0">
               D
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-medium text-[#f0f0f0] truncate">
+              <p className="text-xs font-medium text-[var(--text-1)] truncate">
                 user@company.com
               </p>
-              <p className="text-[10px] text-[#555]">Free Plan</p>
+              <p className="text-[10px] text-[var(--text-3)]">Free Plan</p>
             </div>
           </div>
 
           {/* Personal / Team toggle */}
-          <div className="flex rounded-lg bg-[#1a1a1a] border border-[#1e1e1e] p-0.5">
+          <div className="flex rounded-lg bg-[var(--bg-elevated)] border border-[var(--border)] p-0.5">
             {(["personal", "team"] as const).map((t) => (
               <button
                 key={t}
@@ -83,7 +83,7 @@ export default function SettingsPage() {
                 className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-colors capitalize ${
                   activeTab === t
                     ? "bg-[#6c47ff] text-white"
-                    : "text-[#555] hover:text-[#aaa]"
+                    : "text-[var(--text-3)] hover:text-[var(--text-2)]"
                 }`}
               >
                 {t}
@@ -100,8 +100,8 @@ export default function SettingsPage() {
               onClick={() => setActiveSection(id)}
               className={`w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors ${
                 activeSection === id
-                  ? "text-[#f0f0f0] bg-[#141414]"
-                  : "text-[#666] hover:text-[#aaa] hover:bg-[#141414]/50"
+                  ? "text-[var(--text-1)] bg-[var(--bg-card)]"
+                  : "text-[var(--text-3)] hover:text-[var(--text-2)] hover:bg-[var(--bg-card)]/50"
               }`}
             >
               <Icon size={15} />
@@ -111,12 +111,12 @@ export default function SettingsPage() {
         </nav>
 
         {/* Bottom links */}
-        <div className="border-t border-[#1e1e1e] py-2">
-          <button className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-[#555] hover:text-[#aaa]">
+        <div className="border-t border-[var(--border)] py-2">
+          <button className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--text-3)] hover:text-[var(--text-2)]">
             <User size={15} />
             Account
           </button>
-          <button className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-[#555] hover:text-[#aaa]">
+          <button className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--text-3)] hover:text-[var(--text-2)]">
             <Shield size={15} />
             Security overview
           </button>
@@ -127,19 +127,19 @@ export default function SettingsPage() {
       <div className="flex-1 overflow-y-auto">
         {activeSection === "recording" ? (
           <div className="max-w-2xl px-8 py-6">
-            <h2 className="text-lg font-semibold text-[#f0f0f0] mb-6">
+            <h2 className="text-lg font-semibold text-[var(--text-1)] mb-6">
               Recording
             </h2>
 
             {/* Auto-record */}
-            <div className="border border-[#1e1e1e] rounded-xl divide-y divide-[#1e1e1e] mb-8">
+            <div className="border border-[var(--border)] rounded-xl divide-y divide-[var(--border)] mb-8">
               <div className="flex items-start gap-4 p-4">
-                <div className="w-8 h-8 rounded-lg bg-[#1a1a1a] flex items-center justify-center shrink-0 mt-0.5">
+                <div className="w-8 h-8 rounded-lg bg-[var(--bg-elevated)] flex items-center justify-center shrink-0 mt-0.5">
                   <Video size={15} className="text-[#6c47ff]" />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
-                    <h3 className="text-sm font-medium text-[#e0e0e0]">
+                    <h3 className="text-sm font-medium text-[var(--text-1)]">
                       Auto-record meetings
                     </h3>
                     <Toggle
@@ -147,13 +147,13 @@ export default function SettingsPage() {
                       onChange={() => setAutoRecord(!autoRecord)}
                     />
                   </div>
-                  <p className="text-xs text-[#555]">
+                  <p className="text-xs text-[var(--text-3)]">
                     Fireflies notetaker will join and record your calendar
                     events.
                   </p>
                   {autoRecord && (
                     <div className="mt-3">
-                      <select className="w-full bg-[#1a1a1a] border border-[#2e2e2e] rounded-lg px-3 py-2 text-xs text-[#aaa] outline-none focus:border-[#6c47ff]/50">
+                      <select className="w-full bg-[var(--bg-elevated)] border border-[var(--border-strong)] rounded-lg px-3 py-2 text-xs text-[var(--text-2)] outline-none focus:border-[#6c47ff]/50">
                         <option>Record all calendar events with a meeting link</option>
                         <option>Record only events I organize</option>
                         <option>Record all events</option>
@@ -164,12 +164,12 @@ export default function SettingsPage() {
               </div>
 
               <div className="flex items-start gap-4 p-4">
-                <div className="w-8 h-8 rounded-lg bg-[#1a1a1a] flex items-center justify-center shrink-0 mt-0.5">
-                  <Video size={15} className="text-[#555]" />
+                <div className="w-8 h-8 rounded-lg bg-[var(--bg-elevated)] flex items-center justify-center shrink-0 mt-0.5">
+                  <Video size={15} className="text-[var(--text-3)]" />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
-                    <h3 className="text-sm font-medium text-[#e0e0e0]">
+                    <h3 className="text-sm font-medium text-[var(--text-1)]">
                       Capture meeting video
                     </h3>
                     <Toggle
@@ -177,24 +177,24 @@ export default function SettingsPage() {
                       onChange={() => setCaptureVideo(!captureVideo)}
                     />
                   </div>
-                  <p className="text-xs text-[#555]">
+                  <p className="text-xs text-[var(--text-3)]">
                     Capture your meeting screen and shared content as video.
                   </p>
                 </div>
               </div>
 
               <div className="flex items-start gap-4 p-4">
-                <div className="w-8 h-8 rounded-lg bg-[#1a1a1a] flex items-center justify-center shrink-0 mt-0.5">
-                  <span className="text-[#555] text-xs font-bold">T</span>
+                <div className="w-8 h-8 rounded-lg bg-[var(--bg-elevated)] flex items-center justify-center shrink-0 mt-0.5">
+                  <span className="text-[var(--text-3)] text-xs font-bold">T</span>
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-sm font-medium text-[#e0e0e0] mb-1">
+                  <h3 className="text-sm font-medium text-[var(--text-1)] mb-1">
                     Meeting language
                   </h3>
-                  <p className="text-xs text-[#555] mb-3">
+                  <p className="text-xs text-[var(--text-3)] mb-3">
                     For transcripts and summaries.
                   </p>
-                  <select className="w-full bg-[#1a1a1a] border border-[#2e2e2e] rounded-lg px-3 py-2 text-xs text-[#aaa] outline-none focus:border-[#6c47ff]/50">
+                  <select className="w-full bg-[var(--bg-elevated)] border border-[var(--border-strong)] rounded-lg px-3 py-2 text-xs text-[var(--text-2)] outline-none focus:border-[#6c47ff]/50">
                     <option>English (Global)</option>
                     <option>English (US)</option>
                     <option>Spanish</option>
@@ -205,17 +205,17 @@ export default function SettingsPage() {
               </div>
             </div>
 
-            <h2 className="text-lg font-semibold text-[#f0f0f0] mb-4">
+            <h2 className="text-lg font-semibold text-[var(--text-1)] mb-4">
               Privacy &amp; Access
             </h2>
-            <div className="border border-[#1e1e1e] rounded-xl divide-y divide-[#1e1e1e]">
+            <div className="border border-[var(--border)] rounded-xl divide-y divide-[var(--border)]">
               <div className="flex items-start gap-4 p-4">
-                <div className="w-8 h-8 rounded-lg bg-[#1a1a1a] flex items-center justify-center shrink-0 mt-0.5">
-                  <Shield size={15} className="text-[#555]" />
+                <div className="w-8 h-8 rounded-lg bg-[var(--bg-elevated)] flex items-center justify-center shrink-0 mt-0.5">
+                  <Shield size={15} className="text-[var(--text-3)]" />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
-                    <h3 className="text-sm font-medium text-[#e0e0e0]">
+                    <h3 className="text-sm font-medium text-[var(--text-1)]">
                       Auto-delete meetings
                     </h3>
                     <Toggle
@@ -223,7 +223,7 @@ export default function SettingsPage() {
                       onChange={() => setAutoDelete(!autoDelete)}
                     />
                   </div>
-                  <p className="text-xs text-[#555]">
+                  <p className="text-xs text-[var(--text-3)]">
                     Automatically delete meetings after a set retention period.
                   </p>
                 </div>
@@ -240,13 +240,13 @@ export default function SettingsPage() {
                 const Icon = sec?.icon;
                 return (
                   <>
-                    <div className="w-14 h-14 rounded-2xl bg-[#141414] border border-[#1e1e1e] flex items-center justify-center mb-4 mx-auto">
-                      {Icon && <Icon size={24} className="text-[#333]" />}
+                    <div className="w-14 h-14 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] flex items-center justify-center mb-4 mx-auto">
+                      {Icon && <Icon size={24} className="text-[var(--text-4)]" />}
                     </div>
-                    <h3 className="text-base font-medium text-[#e0e0e0] mb-1">
+                    <h3 className="text-base font-medium text-[var(--text-1)] mb-1">
                       {sec?.label}
                     </h3>
-                    <p className="text-sm text-[#555]">
+                    <p className="text-sm text-[var(--text-3)]">
                       Settings coming soon.
                     </p>
                   </>
