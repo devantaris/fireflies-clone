@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { getMeetings } from "@/lib/api";
 import type { MeetingListItem } from "@/lib/types";
-import { BarChart2, Video, Clock, Users, TrendingUp } from "lucide-react";
+import { Video, Clock, Users, TrendingUp, Star } from "lucide-react";
 
 function StatCard({
   label,
@@ -48,42 +48,23 @@ export default function AnalyticsPage() {
   const totalMins = meetings.reduce((s, m) => s + m.duration, 0);
   const totalHours = (totalMins / 60).toFixed(1);
   const avgDuration =
-    meetings.length > 0
-      ? Math.round(totalMins / meetings.length)
-      : 0;
-  const totalParticipants = meetings.reduce(
-    (s, m) => s + m.participant_count,
-    0
-  );
-  const withTranscript = meetings.filter(
-    (m) => m.transcript_line_count > 0
-  ).length;
-
+    meetings.length > 0 ? Math.round(totalMins / meetings.length) : 0;
+  const totalParticipants = meetings.reduce((s, m) => s + m.participant_count, 0);
+  const withTranscript = meetings.filter((m) => m.transcript_line_count > 0).length;
   const thisMonth = meetings.filter((m) => {
     const d = new Date(m.date);
     const now = new Date();
-    return (
-      d.getMonth() === now.getMonth() &&
-      d.getFullYear() === now.getFullYear()
-    );
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
   }).length;
 
   return (
-    <div className="min-h-full flex flex-col bg-[var(--bg)]">
-      {/* Header */}
-      <div className="border-b border-[var(--border)] px-6 py-4 flex items-center gap-3">
-        <BarChart2 size={18} className="text-[var(--accent-text)]" />
-        <h1 className="text-xl font-semibold text-[var(--text-1)]">Analytics</h1>
-      </div>
-
-      <div className="px-6 py-6 max-w-5xl">
+    <div className="relative min-h-full flex flex-col bg-[var(--bg)]">
+      {/* Analytics content — shown blurred behind paywall */}
+      <div className="blur-sm pointer-events-none select-none px-6 py-6 max-w-5xl">
         {loading ? (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[1, 2, 3, 4].map((i) => (
-              <div
-                key={i}
-                className="h-28 rounded-xl bg-[var(--bg-card)] animate-pulse"
-              />
+              <div key={i} className="h-28 rounded-xl bg-[var(--bg-card)] animate-pulse" />
             ))}
           </div>
         ) : (
@@ -127,64 +108,54 @@ export default function AnalyticsPage() {
               />
             </div>
 
-            {/* Recent activity */}
             <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-5">
               <h2 className="text-sm font-semibold text-[var(--text-1)] mb-4">
                 Meetings by Month
               </h2>
-              {meetings.length === 0 ? (
-                <p className="text-sm text-[var(--text-3)] py-8 text-center">
-                  No data yet — record your first meeting to see analytics.
-                </p>
-              ) : (
-                <div className="space-y-3">
-                  {Object.entries(
-                    meetings.reduce<Record<string, number>>((acc, m) => {
-                      const key = new Date(m.date).toLocaleDateString("en-US", {
-                        month: "short",
-                        year: "numeric",
-                      });
-                      acc[key] = (acc[key] || 0) + 1;
-                      return acc;
-                    }, {})
-                  )
-                    .slice(0, 6)
-                    .map(([month, count]) => {
-                      const max = Math.max(
-                        ...Object.values(
-                          meetings.reduce<Record<string, number>>((a, m) => {
-                            const k = new Date(m.date).toLocaleDateString(
-                              "en-US",
-                              { month: "short", year: "numeric" }
-                            );
-                            a[k] = (a[k] || 0) + 1;
-                            return a;
-                          }, {})
-                        )
-                      );
-                      const pct = Math.round((count / max) * 100);
-                      return (
-                        <div key={month} className="flex items-center gap-3">
-                          <span className="text-xs text-[var(--text-3)] w-20 shrink-0">
-                            {month}
-                          </span>
-                          <div className="flex-1 h-2 rounded-full bg-[var(--border)]">
-                            <div
-                              className="h-2 rounded-full bg-[#6c47ff]"
-                              style={{ width: `${pct}%` }}
-                            />
-                          </div>
-                          <span className="text-xs text-[var(--text-3)] w-6 text-right">
-                            {count}
-                          </span>
-                        </div>
-                      );
-                    })}
-                </div>
-              )}
+              <div className="space-y-3">
+                {["Jan 2026", "Feb 2026", "Mar 2026", "Apr 2026"].map((month, i) => {
+                  const pcts = [80, 55, 100, 40];
+                  return (
+                    <div key={month} className="flex items-center gap-3">
+                      <span className="text-xs text-[var(--text-3)] w-20 shrink-0">{month}</span>
+                      <div className="flex-1 h-2 rounded-full bg-[var(--border)]">
+                        <div className="h-2 rounded-full bg-[#6c47ff]" style={{ width: `${pcts[i]}%` }} />
+                      </div>
+                      <span className="text-xs text-[var(--text-3)] w-6 text-right">{i + 3}</span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </>
         )}
+      </div>
+
+      {/* Upgrade paywall overlay */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl p-8 max-w-sm w-full mx-6 text-center shadow-xl">
+          {/* Star icon */}
+          <div className="w-14 h-14 rounded-full bg-[#f59e0b] flex items-center justify-center mx-auto mb-5">
+            <Star size={26} className="text-white fill-white" />
+          </div>
+
+          <h2 className="text-lg font-bold text-[var(--text-1)] mb-2">
+            Upgrade your account to view analytics
+          </h2>
+          <p className="text-sm text-[var(--text-3)] mb-7 leading-relaxed">
+            You are on the free plan. To view your analytics please upgrade to
+            business plan
+          </p>
+
+          <div className="flex items-center gap-3 justify-center">
+            <button className="px-5 py-2.5 rounded-lg border border-[#10b981] text-[#10b981] text-sm font-medium hover:bg-[#10b981]/10 transition-colors">
+              Request free trial
+            </button>
+            <button className="px-5 py-2.5 rounded-lg bg-[#6c47ff] hover:bg-[#7c5aff] text-white text-sm font-medium transition-colors">
+              Upgrade account
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
