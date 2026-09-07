@@ -11,9 +11,12 @@ import {
   Edit2,
   RefreshCw,
   Tag,
+  Sparkles,
+  X,
+  Send,
 } from "lucide-react";
 import toast from "react-hot-toast";
-import type { Summary, ActionItem, Chapter, KeyTopic } from "@/lib/types";
+import type { Summary, ActionItem, Chapter, KeyTopic, TranscriptLine } from "@/lib/types";
 import { formatTimestamp } from "@/lib/utils";
 import {
   generateSummary,
@@ -21,9 +24,100 @@ import {
   updateActionItem,
   deleteActionItem,
 } from "@/lib/api";
+import { TranscriptPanel } from "@/components/detail/TranscriptPanel";
 
 // ── Tab types ─────────────────────────────────────────────────────────────────
-type Tab = "summary" | "action_items";
+type RightTab = "askfred" | "transcript";
+
+// ── AskFred Panel ─────────────────────────────────────────────────────────────
+
+const SUGGESTION_CHIPS = [
+  "Identify the key decisions made.",
+  "Were any challenges or issues raised?",
+  "Outline the next steps and deadlines.",
+];
+
+function AskFredPanel() {
+  const [input, setInput] = useState("");
+  const [showSlackBanner, setShowSlackBanner] = useState(true);
+
+  return (
+    <div className="flex flex-col h-full">
+      {/* Connect banner */}
+      {showSlackBanner && (
+        <div className="shrink-0 mx-3 mt-3 flex items-center gap-3 px-3 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg-card)]">
+          <div className="flex items-center gap-1.5">
+            <div className="w-5 h-5 rounded bg-[#e01e5a]/15 flex items-center justify-center">
+              <span className="text-[#e01e5a] text-[10px] font-bold">S</span>
+            </div>
+            <div className="w-5 h-5 rounded bg-[#ea4335]/15 flex items-center justify-center">
+              <span className="text-[#ea4335] text-[10px] font-bold">G</span>
+            </div>
+          </div>
+          <p className="text-xs text-[var(--text-2)] flex-1 min-w-0">
+            <span className="font-medium">Connect Slack and Gmail</span>
+            {" — "}get answers with full context.
+          </p>
+          <div className="flex items-center gap-2 shrink-0">
+            <button className="text-xs text-[var(--accent-text)] font-medium hover:underline">Connect</button>
+            <button onClick={() => setShowSlackBanner(false)} className="text-[var(--text-4)] hover:text-[var(--text-2)]">
+              <X size={12} />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Greeting + suggestions */}
+      <div className="flex-1 overflow-y-auto px-4 py-5 flex flex-col items-center justify-center gap-4">
+        <div className="text-center mb-2">
+          <div className="mb-3">
+            <Sparkles size={24} className="text-[#6c47ff] mx-auto" />
+          </div>
+          <h3 className="text-base font-semibold text-[var(--text-1)]">Hi Devansh!</h3>
+          <p className="text-sm text-[var(--text-2)] mt-0.5">Ask anything about this meeting</p>
+        </div>
+
+        {/* Suggestion chips */}
+        <div className="w-full space-y-2">
+          {SUGGESTION_CHIPS.map((chip) => (
+            <button
+              key={chip}
+              onClick={() => setInput(chip)}
+              className="w-full text-left px-4 py-3 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-sm text-[var(--text-2)] hover:border-[var(--border-strong)] hover:text-[var(--text-1)] transition-colors"
+            >
+              {chip}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Input area */}
+      <div className="shrink-0 p-3 border-t border-[var(--border)]">
+        <div className="flex items-end gap-2 border border-[var(--border-strong)] rounded-xl px-3 py-2 focus-within:border-[#6c47ff]/50 transition-colors bg-[var(--bg-card)]">
+          <textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Ask anything. Type / to run AI Skills"
+            className="flex-1 bg-transparent text-sm text-[var(--text-1)] placeholder:text-[var(--text-4)] resize-none outline-none min-h-[20px] max-h-[120px]"
+            rows={1}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                setInput("");
+              }
+            }}
+          />
+          <button
+            className="shrink-0 w-7 h-7 rounded-lg bg-[#6c47ff] hover:bg-[#5535ee] flex items-center justify-center text-white transition-colors"
+            onClick={() => setInput("")}
+          >
+            <Send size={12} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // ── Overview section ──────────────────────────────────────────────────────────
 function OverviewSection({
@@ -62,7 +156,7 @@ function OverviewSection({
         <button
           onClick={handleRegenerate}
           disabled={regenerating}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs bg-[#6c47ff] text-white hover:bg-[#7c5aff] transition-colors disabled:opacity-50"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs bg-[#6c47ff] text-white hover:bg-[#5535ee] transition-colors disabled:opacity-50"
         >
           <RefreshCw size={12} className={regenerating ? "animate-spin" : ""} />
           {regenerating ? "Generating…" : "Generate Summary"}
@@ -82,7 +176,6 @@ function OverviewSection({
 
   return (
     <div className="p-4 space-y-5">
-      {/* Regenerate button */}
       <div className="flex justify-end">
         <button
           onClick={handleRegenerate}
@@ -94,22 +187,16 @@ function OverviewSection({
         </button>
       </div>
 
-      {/* Overview */}
       {summary.overview && (
         <div>
-          <h3 className="text-[11px] font-semibold uppercase tracking-widest text-[var(--text-3)] mb-2">
-            Overview
-          </h3>
-          <p className="text-sm text-[#b0b0b0] leading-relaxed">{summary.overview}</p>
+          <h3 className="text-[11px] font-semibold uppercase tracking-widest text-[var(--text-3)] mb-2">Overview</h3>
+          <p className="text-sm text-[var(--text-2)] leading-relaxed">{summary.overview}</p>
         </div>
       )}
 
-      {/* Key Topics */}
       {keyTopics.length > 0 && (
         <div>
-          <h3 className="text-[11px] font-semibold uppercase tracking-widest text-[var(--text-3)] mb-2">
-            Key Topics
-          </h3>
+          <h3 className="text-[11px] font-semibold uppercase tracking-widest text-[var(--text-3)] mb-2">Key Topics</h3>
           <div className="flex flex-wrap gap-1.5">
             {keyTopics.map((topic, i) => (
               <div
@@ -125,12 +212,9 @@ function OverviewSection({
         </div>
       )}
 
-      {/* Chapters */}
       {chapters.length > 0 && (
         <div>
-          <h3 className="text-[11px] font-semibold uppercase tracking-widest text-[var(--text-3)] mb-2">
-            Outline
-          </h3>
+          <h3 className="text-[11px] font-semibold uppercase tracking-widest text-[var(--text-3)] mb-2">Outline</h3>
           <div className="space-y-1">
             {chapters.map((ch, i) => (
               <button
@@ -141,7 +225,7 @@ function OverviewSection({
                 <span className="text-[11px] tabular-nums text-[#6c47ff] font-medium shrink-0">
                   {formatTimestamp(ch.start_time)}
                 </span>
-                <span className="text-sm text-[#a0a0a0] group-hover:text-[var(--text-1)] transition-colors">
+                <span className="text-sm text-[var(--text-3)] group-hover:text-[var(--text-1)] transition-colors">
                   {ch.title}
                 </span>
               </button>
@@ -233,13 +317,10 @@ function ActionItemsSection({ items, onToggle, onAdd, onEdit, onDelete }: Action
 
   return (
     <div className="p-4 space-y-4">
-      {/* Progress bar */}
       {items.length > 0 && (
         <div>
           <div className="flex justify-between text-[11px] text-[var(--text-3)] mb-1.5">
-            <span>
-              {done}/{items.length} completed
-            </span>
+            <span>{done}/{items.length} completed</span>
             <span>{Math.round((done / items.length) * 100)}%</span>
           </div>
           <div className="h-1.5 bg-[var(--border)] rounded-full">
@@ -251,7 +332,6 @@ function ActionItemsSection({ items, onToggle, onAdd, onEdit, onDelete }: Action
         </div>
       )}
 
-      {/* Empty state */}
       {items.length === 0 && !adding && (
         <div className="flex flex-col items-center justify-center py-8 text-center">
           <div className="w-10 h-10 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-strong)] flex items-center justify-center mb-3">
@@ -261,16 +341,14 @@ function ActionItemsSection({ items, onToggle, onAdd, onEdit, onDelete }: Action
         </div>
       )}
 
-      {/* Items list */}
       <div className="space-y-1">
         {items.map((item) =>
           editingId === item.id ? (
-            /* Edit form */
             <div key={item.id} className="bg-[var(--bg-elevated)] rounded-lg p-3 space-y-2">
               <textarea
                 value={editText}
                 onChange={(e) => setEditText(e.target.value)}
-                className="w-full bg-[var(--bg-sub)] border border-[var(--border-strong)] rounded-lg px-3 py-2 text-xs text-[var(--text-1)] resize-none focus:outline-none focus:border-[#6c47ff] transition-colors"
+                className="w-full bg-[var(--bg)] border border-[var(--border-strong)] rounded-lg px-3 py-2 text-xs text-[var(--text-1)] resize-none focus:outline-none focus:border-[#6c47ff] transition-colors"
                 rows={2}
                 autoFocus
               />
@@ -279,79 +357,51 @@ function ActionItemsSection({ items, onToggle, onAdd, onEdit, onDelete }: Action
                 value={editAssignee}
                 onChange={(e) => setEditAssignee(e.target.value)}
                 placeholder="Assignee (optional)"
-                className="w-full bg-[var(--bg-sub)] border border-[var(--border-strong)] rounded-lg px-3 py-1.5 text-xs text-[var(--text-1)] placeholder-[var(--text-4)] focus:outline-none focus:border-[#6c47ff] transition-colors"
+                className="w-full bg-[var(--bg)] border border-[var(--border-strong)] rounded-lg px-3 py-1.5 text-xs text-[var(--text-1)] placeholder-[var(--text-4)] focus:outline-none focus:border-[#6c47ff] transition-colors"
               />
               <input
                 type="date"
                 value={editDueDate}
                 onChange={(e) => setEditDueDate(e.target.value)}
-                className="w-full bg-[var(--bg-sub)] border border-[var(--border-strong)] rounded-lg px-3 py-1.5 text-xs text-[var(--text-1)] focus:outline-none focus:border-[#6c47ff] transition-colors"
+                className="w-full bg-[var(--bg)] border border-[var(--border-strong)] rounded-lg px-3 py-1.5 text-xs text-[var(--text-1)] focus:outline-none focus:border-[#6c47ff] transition-colors"
               />
               <div className="flex justify-end gap-2">
-                <button
-                  onClick={cancelEdit}
-                  className="px-2.5 py-1 rounded text-xs text-[var(--text-3)] hover:text-[var(--text-2)] transition-colors"
-                >
-                  Cancel
-                </button>
+                <button onClick={cancelEdit} className="px-2.5 py-1 rounded text-xs text-[var(--text-3)] hover:text-[var(--text-2)]">Cancel</button>
                 <button
                   onClick={() => handleSaveEdit(item.id)}
                   disabled={savingId === item.id || !editText.trim()}
-                  className="px-2.5 py-1 rounded-lg text-xs bg-[#6c47ff] text-white hover:bg-[#7c5aff] transition-colors disabled:opacity-50"
+                  className="px-2.5 py-1 rounded-lg text-xs bg-[#6c47ff] text-white hover:bg-[#5535ee] transition-colors disabled:opacity-50"
                 >
                   {savingId === item.id ? "Saving…" : "Save"}
                 </button>
               </div>
             </div>
           ) : (
-            /* Display row */
-            <div
-              key={item.id}
-              className="group flex items-start gap-2.5 px-2 py-2 rounded-lg hover:bg-[var(--bg-elevated)] transition-colors"
-            >
+            <div key={item.id} className="group flex items-start gap-2.5 px-2 py-2 rounded-lg hover:bg-[var(--bg-elevated)] transition-colors">
               <button
                 onClick={() => handleToggle(item)}
                 disabled={savingId === item.id}
                 className="mt-0.5 shrink-0 text-[var(--text-4)] hover:text-[#6c47ff] transition-colors disabled:opacity-50"
               >
-                {item.completed ? (
-                  <CheckCircle2 size={16} className="text-[#22c55e]" />
-                ) : (
-                  <Circle size={16} />
-                )}
+                {item.completed ? <CheckCircle2 size={16} className="text-[#22c55e]" /> : <Circle size={16} />}
               </button>
-
               <div className="flex-1 min-w-0">
-                <p
-                  className={`text-sm leading-snug ${
-                    item.completed ? "line-through text-[var(--text-3)]" : "text-[var(--text-2)]"
-                  }`}
-                >
+                <p className={`text-sm leading-snug ${item.completed ? "line-through text-[var(--text-3)]" : "text-[var(--text-2)]"}`}>
                   {item.text}
                 </p>
                 <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                  {item.assignee && (
-                    <p className="text-[11px] text-[var(--text-3)]">→ {item.assignee}</p>
-                  )}
-                  {item.due_date && (
-                    <p className="text-[11px] text-[var(--text-4)]">due {item.due_date}</p>
-                  )}
+                  {item.assignee && <p className="text-[11px] text-[var(--text-3)]">→ {item.assignee}</p>}
+                  {item.due_date && <p className="text-[11px] text-[var(--text-4)]">due {item.due_date}</p>}
                 </div>
               </div>
-
               <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-                <button
-                  onClick={() => startEdit(item)}
-                  className="p-1 rounded text-[var(--text-3)] hover:text-[var(--text-2)] hover:bg-[var(--border)] transition-colors"
-                  title="Edit"
-                >
+                <button onClick={() => startEdit(item)} className="p-1 rounded text-[var(--text-3)] hover:text-[var(--text-2)] hover:bg-[var(--border)] transition-colors">
                   <Edit2 size={12} />
                 </button>
                 <button
                   onClick={() => handleDelete(item.id)}
                   disabled={savingId === item.id}
                   className="p-1 rounded text-[var(--text-3)] hover:text-red-400 hover:bg-[var(--border)] transition-colors disabled:opacity-50"
-                  title="Delete"
                 >
                   <Trash2 size={12} />
                 </button>
@@ -361,14 +411,13 @@ function ActionItemsSection({ items, onToggle, onAdd, onEdit, onDelete }: Action
         )}
       </div>
 
-      {/* Add form / Add button */}
       {adding ? (
         <div className="bg-[var(--bg-elevated)] rounded-lg p-3 space-y-2">
           <textarea
             value={newText}
             onChange={(e) => setNewText(e.target.value)}
             placeholder="Action item text…"
-            className="w-full bg-[var(--bg-sub)] border border-[var(--border-strong)] rounded-lg px-3 py-2 text-xs text-[var(--text-1)] placeholder-[var(--text-4)] resize-none focus:outline-none focus:border-[#6c47ff] transition-colors"
+            className="w-full bg-[var(--bg)] border border-[var(--border-strong)] rounded-lg px-3 py-2 text-xs text-[var(--text-1)] placeholder-[var(--text-4)] resize-none focus:outline-none focus:border-[#6c47ff] transition-colors"
             rows={2}
             autoFocus
           />
@@ -377,30 +426,20 @@ function ActionItemsSection({ items, onToggle, onAdd, onEdit, onDelete }: Action
             value={newAssignee}
             onChange={(e) => setNewAssignee(e.target.value)}
             placeholder="Assignee (optional)"
-            className="w-full bg-[var(--bg-sub)] border border-[var(--border-strong)] rounded-lg px-3 py-1.5 text-xs text-[var(--text-1)] placeholder-[var(--text-4)] focus:outline-none focus:border-[#6c47ff] transition-colors"
+            className="w-full bg-[var(--bg)] border border-[var(--border-strong)] rounded-lg px-3 py-1.5 text-xs text-[var(--text-1)] placeholder-[var(--text-4)] focus:outline-none focus:border-[#6c47ff] transition-colors"
           />
           <input
             type="date"
             value={newDueDate}
             onChange={(e) => setNewDueDate(e.target.value)}
-            className="w-full bg-[var(--bg-sub)] border border-[var(--border-strong)] rounded-lg px-3 py-1.5 text-xs text-[var(--text-1)] focus:outline-none focus:border-[#6c47ff] transition-colors"
+            className="w-full bg-[var(--bg)] border border-[var(--border-strong)] rounded-lg px-3 py-1.5 text-xs text-[var(--text-1)] focus:outline-none focus:border-[#6c47ff] transition-colors"
           />
           <div className="flex justify-end gap-2">
-            <button
-              onClick={() => {
-                setAdding(false);
-                setNewText("");
-                setNewAssignee("");
-                setNewDueDate("");
-              }}
-              className="px-2.5 py-1 rounded text-xs text-[var(--text-3)] hover:text-[var(--text-2)] transition-colors"
-            >
-              Cancel
-            </button>
+            <button onClick={() => { setAdding(false); setNewText(""); setNewAssignee(""); setNewDueDate(""); }} className="px-2.5 py-1 rounded text-xs text-[var(--text-3)] hover:text-[var(--text-2)]">Cancel</button>
             <button
               onClick={handleAdd}
               disabled={savingId === "new" || !newText.trim()}
-              className="px-2.5 py-1 rounded-lg text-xs bg-[#6c47ff] text-white hover:bg-[#7c5aff] transition-colors disabled:opacity-50"
+              className="px-2.5 py-1 rounded-lg text-xs bg-[#6c47ff] text-white hover:bg-[#5535ee] transition-colors disabled:opacity-50"
             >
               {savingId === "new" ? "Adding…" : "Add"}
             </button>
@@ -426,10 +465,21 @@ interface Props {
   actionItems: ActionItem[];
   meetingId: number;
   onChapterSeek: (t: number) => void;
+  transcriptLines: TranscriptLine[];
+  currentTime: number;
+  onSeek: (t: number) => void;
 }
 
-export function RightPanel({ summary: initialSummary, actionItems: initialItems, meetingId, onChapterSeek }: Props) {
-  const [activeTab, setActiveTab] = useState<Tab>("summary");
+export function RightPanel({
+  summary: initialSummary,
+  actionItems: initialItems,
+  meetingId,
+  onChapterSeek,
+  transcriptLines,
+  currentTime,
+  onSeek,
+}: Props) {
+  const [rightTab, setRightTab] = useState<RightTab>("askfred");
   const [summary, setSummary] = useState<Summary | null>(initialSummary);
   const [items, setItems] = useState<ActionItem[]>(initialItems);
 
@@ -483,58 +533,41 @@ export function RightPanel({ summary: initialSummary, actionItems: initialItems,
     }
   }
 
-  const TABS: { id: Tab; label: string; count?: number }[] = [
-    { id: "summary", label: "Summary" },
-    { id: "action_items", label: "Action Items", count: items.length },
-  ];
-
   return (
-    <div className="flex flex-col h-full">
-      {/* Tabs */}
-      <div className="shrink-0 flex border-b border-[var(--border)] px-4">
-        {TABS.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-1.5 px-1 py-3 mr-4 text-sm border-b-2 transition-colors ${
-              activeTab === tab.id
-                ? "border-[#6c47ff] text-[var(--text-1)] font-medium"
-                : "border-transparent text-[var(--text-3)] hover:text-[var(--text-2)]"
-            }`}
-          >
-            {tab.label}
-            {tab.count !== undefined && tab.count > 0 && (
-              <span
-                className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-                  activeTab === tab.id
-                    ? "bg-[#6c47ff]/20 text-[var(--accent-text)]"
-                    : "bg-[var(--border)] text-[var(--text-3)]"
-                }`}
-              >
-                {tab.count}
-              </span>
-            )}
-          </button>
-        ))}
+    <div className="flex flex-col h-full overflow-hidden">
+      {/* AskFred | Transcript tab switcher */}
+      <div className="shrink-0 flex items-center border-b border-[var(--border)] px-4">
+        <button
+          onClick={() => setRightTab("askfred")}
+          className={`flex items-center gap-1.5 px-1 py-3 mr-4 text-sm border-b-2 transition-colors ${
+            rightTab === "askfred"
+              ? "border-[#6c47ff] text-[var(--text-1)] font-medium"
+              : "border-transparent text-[var(--text-3)] hover:text-[var(--text-2)]"
+          }`}
+        >
+          <Sparkles size={13} className={rightTab === "askfred" ? "text-[#6c47ff]" : ""} />
+          AskFred
+        </button>
+        <button
+          onClick={() => setRightTab("transcript")}
+          className={`flex items-center gap-1.5 px-1 py-3 text-sm border-b-2 transition-colors ${
+            rightTab === "transcript"
+              ? "border-[#6c47ff] text-[var(--text-1)] font-medium"
+              : "border-transparent text-[var(--text-3)] hover:text-[var(--text-2)]"
+          }`}
+        >
+          Transcript
+        </button>
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto">
-        {activeTab === "summary" && (
-          <OverviewSection
-            summary={summary}
-            meetingId={meetingId}
-            onSummaryUpdate={setSummary}
-            onChapterSeek={onChapterSeek}
-          />
-        )}
-        {activeTab === "action_items" && (
-          <ActionItemsSection
-            items={items}
-            onToggle={handleToggle}
-            onAdd={handleAdd}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
+      <div className="flex-1 overflow-hidden flex flex-col">
+        {rightTab === "askfred" && <AskFredPanel />}
+        {rightTab === "transcript" && (
+          <TranscriptPanel
+            lines={transcriptLines}
+            currentTime={currentTime}
+            onSeek={onSeek}
           />
         )}
       </div>
