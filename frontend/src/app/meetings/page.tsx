@@ -1,8 +1,8 @@
 "use client";
 
-import { Suspense, useEffect, useState, useCallback } from "react";
+import { Suspense, useEffect, useState, useCallback, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Plus, Mic2, RefreshCw } from "lucide-react";
+import { Plus, Mic2, RefreshCw, AlertTriangle } from "lucide-react";
 import toast from "react-hot-toast";
 import { getMeetings, deleteMeeting } from "@/lib/api";
 import type { MeetingListItem, MeetingDetail, MeetingFilters } from "@/lib/types";
@@ -60,9 +60,7 @@ function EmptyState({ filtered, onNew }: { filtered: boolean; onNew: () => void 
         </>
       ) : (
         <>
-          <h3 className="text-base font-medium text-[#f0f0f0] mb-1">
-            No meetings yet
-          </h3>
+          <h3 className="text-base font-medium text-[#f0f0f0] mb-1">No meetings yet</h3>
           <p className="text-sm text-[#666] mb-5 max-w-xs">
             Create your first meeting to get started.
           </p>
@@ -79,13 +77,40 @@ function EmptyState({ filtered, onNew }: { filtered: boolean; onNew: () => void 
   );
 }
 
+function FetchErrorState({ onRetry }: { onRetry: () => void }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-24 text-center">
+      <div className="w-16 h-16 rounded-2xl bg-[#1a1a1a] border border-[#2e2e2e] flex items-center justify-center mb-4">
+        <AlertTriangle size={28} className="text-[#ef4444]" />
+      </div>
+      <h3 className="text-base font-medium text-[#f0f0f0] mb-1">
+        Failed to load meetings
+      </h3>
+      <p className="text-sm text-[#666] mb-5 max-w-xs">
+        Check your connection and try again.
+      </p>
+      <button
+        onClick={onRetry}
+        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#1e1e1e] hover:bg-[#2a2a2a] text-sm text-[#c0c0c0] transition-colors border border-[#2e2e2e]"
+      >
+        <RefreshCw size={14} />
+        Retry
+      </button>
+    </div>
+  );
+}
+
 // Inner component — safe to use useSearchParams inside Suspense
 function MeetingsList() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
+  const focusParam = searchParams.get("focus");
+
   const [meetings, setMeetings] = useState<MeetingListItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
   const [filters, setFilters] = useState<MeetingFilters>({
     ...DEFAULT_FILTERS,
     search: searchParams.get("search") ?? "",
@@ -94,8 +119,17 @@ function MeetingsList() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [deleting, setDeleting] = useState(false);
 
+  // Auto-focus search when ?focus=search is in the URL
+  useEffect(() => {
+    if (focusParam === "search") {
+      const t = setTimeout(() => searchInputRef.current?.focus(), 150);
+      return () => clearTimeout(t);
+    }
+  }, [focusParam]);
+
   const fetchMeetings = useCallback(async (f: MeetingFilters) => {
     setLoading(true);
+    setFetchError(false);
     try {
       const data = await getMeetings({
         search: f.search || undefined,
@@ -106,6 +140,7 @@ function MeetingsList() {
       });
       setMeetings(data);
     } catch {
+      setFetchError(true);
       toast.error("Failed to load meetings");
     } finally {
       setLoading(false);
@@ -149,7 +184,7 @@ function MeetingsList() {
         <div className="flex items-center justify-between gap-4 mb-4">
           <div>
             <h1 className="text-xl font-semibold text-[#f0f0f0]">Meetings</h1>
-            {!loading && (
+            {!loading && !fetchError && (
               <p className="text-xs text-[#666] mt-0.5">
                 {meetings.length} meeting{meetings.length !== 1 ? "s" : ""}
                 {hasActiveFilters ? " (filtered)" : ""}
@@ -170,7 +205,8 @@ function MeetingsList() {
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#6c47ff] hover:bg-[#7c5aff] text-white text-sm font-medium transition-colors"
             >
               <Plus size={15} />
-              New Meeting
+              <span className="hidden sm:inline">New Meeting</span>
+              <span className="sm:hidden">New</span>
             </button>
           </div>
         </div>
@@ -179,6 +215,7 @@ function MeetingsList() {
           filters={filters}
           onChange={updateFilters}
           onClear={() => setFilters(DEFAULT_FILTERS)}
+          searchInputRef={searchInputRef}
         />
       </div>
 
@@ -186,6 +223,8 @@ function MeetingsList() {
       <div className="flex-1 px-6 py-6">
         {loading ? (
           <MeetingsSkeleton />
+        ) : fetchError ? (
+          <FetchErrorState onRetry={() => fetchMeetings(filters)} />
         ) : meetings.length === 0 ? (
           <EmptyState
             filtered={!!hasActiveFilters}

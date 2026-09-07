@@ -7,12 +7,13 @@ interface Props {
   filters: MeetingFilters;
   onChange: (f: Partial<MeetingFilters>) => void;
   onClear: () => void;
+  searchInputRef?: React.RefObject<HTMLInputElement | null>;
 }
 
 const INPUT_CLS =
   "bg-[#141414] border border-[#2a2a2a] rounded-lg text-sm text-[#e0e0e0] placeholder-[#444] focus:outline-none focus:border-[#6c47ff] transition-colors";
 
-export function MeetingFiltersBar({ filters, onChange, onClear }: Props) {
+export function MeetingFiltersBar({ filters, onChange, onClear, searchInputRef }: Props) {
   const hasActiveFilters =
     filters.search || filters.date_from || filters.date_to || filters.participant;
 
@@ -25,6 +26,7 @@ export function MeetingFiltersBar({ filters, onChange, onClear }: Props) {
           className="absolute left-3 top-1/2 -translate-y-1/2 text-[#444] pointer-events-none"
         />
         <input
+          ref={searchInputRef}
           type="text"
           value={filters.search}
           onChange={(e) => onChange({ search: e.target.value })}

@@ -10,13 +10,13 @@ import {
   Flame,
 } from "lucide-react";
 
+interface Props {
+  onNavClick?: () => void;
+}
+
 const NAV_ITEMS = [
   { label: "Meetings", href: "/meetings", icon: BookOpen },
   { label: "Search", href: "/meetings?focus=search", icon: Search },
-];
-
-const AVATAR_COLORS = [
-  "#6c47ff", "#0891b2", "#059669", "#d97706",
 ];
 
 function UserAvatar() {
@@ -38,7 +38,7 @@ function UserAvatar() {
   );
 }
 
-export function Sidebar() {
+export function Sidebar({ onNavClick }: Props) {
   const pathname = usePathname();
 
   return (
@@ -60,6 +60,7 @@ export function Sidebar() {
       <div className="px-3 mb-3">
         <Link
           href="/meetings/new"
+          onClick={onNavClick}
           className="flex items-center justify-center gap-2 w-full py-2 rounded-lg bg-[#6c47ff] hover:bg-[#7c5aff] text-white text-sm font-medium transition-colors"
         >
           <Mic2 size={14} />
@@ -79,6 +80,7 @@ export function Sidebar() {
             <Link
               key={href}
               href={href}
+              onClick={onNavClick}
               className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
                 isActive
                   ? "bg-[#6c47ff]/15 text-[#9b7cff] font-medium"
@@ -99,6 +101,7 @@ export function Sidebar() {
 
         <Link
           href="/settings"
+          onClick={onNavClick}
           className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
             pathname === "/settings"
               ? "bg-[#6c47ff]/15 text-[#9b7cff] font-medium"
@@ -110,7 +113,6 @@ export function Sidebar() {
         </Link>
       </nav>
 
-      {/* User */}
       <UserAvatar />
     </aside>
   );

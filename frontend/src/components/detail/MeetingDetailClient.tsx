@@ -67,6 +67,7 @@ export function MeetingDetailClient({ meetingId }: Props) {
   const [meeting, setMeeting] = useState<MeetingDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [mobilePanel, setMobilePanel] = useState<"transcript" | "summary">("transcript");
 
   useEffect(() => {
     getMeeting(meetingId)
@@ -173,10 +174,31 @@ export function MeetingDetailClient({ meetingId }: Props) {
         </div>
       </header>
 
+      {/* Mobile panel tabs — hidden on lg+ */}
+      <div className="flex lg:hidden shrink-0 border-b border-[#1e1e1e]">
+        {(["transcript", "summary"] as const).map((panel) => (
+          <button
+            key={panel}
+            onClick={() => setMobilePanel(panel)}
+            className={`flex-1 py-2.5 text-xs font-medium transition-colors border-b-2 -mb-px ${
+              mobilePanel === panel
+                ? "text-[#f0f0f0] border-[#6c47ff]"
+                : "text-[#555] border-transparent hover:text-[#aaa]"
+            }`}
+          >
+            {panel === "transcript" ? "Transcript" : "Summary & Actions"}
+          </button>
+        ))}
+      </div>
+
       {/* ── Body — two-panel split ───────────────────────────────────────────── */}
       <div className="flex-1 flex overflow-hidden">
         {/* Left: player + transcript */}
-        <div className="flex-1 flex flex-col overflow-hidden min-w-0 border-r border-[#1e1e1e]">
+        <div
+          className={`flex flex-col overflow-hidden min-w-0 border-r border-[#1e1e1e] ${
+            mobilePanel === "transcript" ? "flex-1" : "hidden lg:flex lg:flex-1"
+          }`}
+        >
           <div className="shrink-0 p-4 border-b border-[#1e1e1e]">
             <MediaPlayer player={player} hasDuration={duration > 0} />
           </div>
@@ -189,7 +211,11 @@ export function MeetingDetailClient({ meetingId }: Props) {
         </div>
 
         {/* Right: summary + action items */}
-        <div className="w-[340px] shrink-0 flex flex-col overflow-hidden">
+        <div
+          className={`flex flex-col overflow-hidden ${
+            mobilePanel === "summary" ? "flex-1" : "hidden lg:flex lg:w-[340px] lg:shrink-0"
+          }`}
+        >
           <RightPanel
             summary={meeting.summary}
             actionItems={meeting.action_items}
