@@ -14,7 +14,7 @@ import {
   Calendar,
   ChevronDown,
 } from "lucide-react";
-import { CURRENT_USER } from "@/lib/currentUser";
+import { useUser } from "@/lib/currentUser";
 
 const SUGGESTIONS = [
   { icon: Check, text: "List my action items & todos for this week" },
@@ -25,6 +25,7 @@ const SUGGESTIONS = [
 ];
 
 export default function AskFredPage() {
+  const user = useUser();
   const [input, setInput] = useState("");
 
   return (
@@ -56,7 +57,7 @@ export default function AskFredPage() {
       {/* Main content */}
       <div className="flex-1 min-w-0 overflow-y-auto flex flex-col items-center justify-center px-8 py-8">
         <h1 className="text-xl font-semibold text-[var(--text-1)] mb-6 text-center">
-          Hi {CURRENT_USER.firstName}, how can I help today?
+          Hi {user.firstName}, how can I help today?
         </h1>
 
         {/* Large input box */}

@@ -25,7 +25,7 @@ import {
   deleteActionItem,
 } from "@/lib/api";
 import { TranscriptPanel } from "@/components/detail/TranscriptPanel";
-import { CURRENT_USER } from "@/lib/currentUser";
+import { useUser } from "@/lib/currentUser";
 
 // ── Tab types ─────────────────────────────────────────────────────────────────
 type RightTab = "askfred" | "overview" | "actions" | "transcript";
@@ -39,6 +39,7 @@ const SUGGESTION_CHIPS = [
 ];
 
 function AskFredPanel() {
+  const user = useUser();
   const [input, setInput] = useState("");
   const [showSlackBanner, setShowSlackBanner] = useState(true);
 
@@ -74,7 +75,7 @@ function AskFredPanel() {
           <div className="mb-3">
             <Sparkles size={24} className="text-[#6c47ff] mx-auto" />
           </div>
-          <h3 className="text-base font-semibold text-[var(--text-1)]">Hi {CURRENT_USER.firstName}!</h3>
+          <h3 className="text-base font-semibold text-[var(--text-1)]">Hi {user.firstName}!</h3>
           <p className="text-sm text-[var(--text-2)] mt-0.5">Ask anything about this meeting</p>
         </div>
 

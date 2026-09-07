@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Plus, MessageSquare, X, Check, ChevronDown, User } from "lucide-react";
 import { getMeetings } from "@/lib/api";
 import type { MeetingListItem } from "@/lib/types";
-import { CURRENT_USER } from "@/lib/currentUser";
+import { useUser } from "@/lib/currentUser";
 
 type TaskStatus = "open" | "done";
 
@@ -20,7 +20,6 @@ interface Task {
 }
 
 const AVATAR_COLORS: Record<string, string> = {
-  [CURRENT_USER.firstName]: "#f59e0b",
   Janice: "#6c47ff",
   Keith: "#10b981",
   Ayush: "#0ea5e9",
@@ -28,18 +27,20 @@ const AVATAR_COLORS: Record<string, string> = {
 };
 
 function avatarColor(name: string) {
-  return AVATAR_COLORS[name] ?? "#9999b0";
+  return AVATAR_COLORS[name] ?? "#f59e0b";
 }
 
-const SEED_TASKS: Task[] = [
-  { id: "1", title: "Ensure Accessibility and Inclusivity Compliance", assignee: "Janice", assigneeInitial: "J", assigneeColor: "#6c47ff", dueDate: "2026-09-15", meetingTitle: "Product Sync", status: "open" },
-  { id: "2", title: "Check with PMs about pipeline options for HubSpot", assignee: "Keith", assigneeInitial: "K", assigneeColor: "#10b981", dueDate: "2026-09-12", meetingTitle: "Product Sync", status: "open" },
-  { id: "3", title: "Share documents around data processing agreement", assignee: "Keith", assigneeInitial: "K", assigneeColor: "#10b981", dueDate: "2026-09-10", meetingTitle: "Product Sync", status: "done" },
-  { id: "4", title: "Schedule follow-up call with the design team", assignee: CURRENT_USER.firstName, assigneeInitial: CURRENT_USER.initials, assigneeColor: "#f59e0b", dueDate: "2026-09-20", meetingTitle: "Design Review", status: "open" },
-  { id: "5", title: "Review Q3 roadmap and update priority list", assignee: CURRENT_USER.firstName, assigneeInitial: CURRENT_USER.initials, assigneeColor: "#f59e0b", dueDate: "2026-09-14", meetingTitle: "Quarterly Planning", status: "open" },
-  { id: "6", title: "Send onboarding materials to new team members", assignee: CURRENT_USER.firstName, assigneeInitial: CURRENT_USER.initials, assigneeColor: "#f59e0b", dueDate: "2026-09-08", meetingTitle: "Team Standup", status: "done" },
-  { id: "7", title: "Prepare demo environment for client presentation", assignee: "Ayush", assigneeInitial: "A", assigneeColor: "#0ea5e9", dueDate: "2026-09-18", meetingTitle: "Sales Strategy Call", status: "open" },
-];
+function buildSeedTasks(userName: string, userInitials: string): Task[] {
+  return [
+    { id: "1", title: "Ensure Accessibility and Inclusivity Compliance", assignee: "Janice", assigneeInitial: "J", assigneeColor: "#6c47ff", dueDate: "2026-09-15", meetingTitle: "Product Sync", status: "open" },
+    { id: "2", title: "Check with PMs about pipeline options for HubSpot", assignee: "Keith", assigneeInitial: "K", assigneeColor: "#10b981", dueDate: "2026-09-12", meetingTitle: "Product Sync", status: "open" },
+    { id: "3", title: "Share documents around data processing agreement", assignee: "Keith", assigneeInitial: "K", assigneeColor: "#10b981", dueDate: "2026-09-10", meetingTitle: "Product Sync", status: "done" },
+    { id: "4", title: "Schedule follow-up call with the design team", assignee: userName, assigneeInitial: userInitials, assigneeColor: "#f59e0b", dueDate: "2026-09-20", meetingTitle: "Design Review", status: "open" },
+    { id: "5", title: "Review Q3 roadmap and update priority list", assignee: userName, assigneeInitial: userInitials, assigneeColor: "#f59e0b", dueDate: "2026-09-14", meetingTitle: "Quarterly Planning", status: "open" },
+    { id: "6", title: "Send onboarding materials to new team members", assignee: userName, assigneeInitial: userInitials, assigneeColor: "#f59e0b", dueDate: "2026-09-08", meetingTitle: "Team Standup", status: "done" },
+    { id: "7", title: "Prepare demo environment for client presentation", assignee: "Ayush", assigneeInitial: "A", assigneeColor: "#0ea5e9", dueDate: "2026-09-18", meetingTitle: "Sales Strategy Call", status: "open" },
+  ];
+}
 
 function formatDue(dateStr: string) {
   if (!dateStr) return "";
@@ -48,9 +49,9 @@ function formatDue(dateStr: string) {
 }
 
 // ── Create Task Modal ─────────────────────────────────────────────────────────
-function CreateTaskModal({ onClose, onSave, meetings }: { onClose: () => void; onSave: (t: Task) => void; meetings: MeetingListItem[] }) {
+function CreateTaskModal({ onClose, onSave, meetings, userName }: { onClose: () => void; onSave: (t: Task) => void; meetings: MeetingListItem[]; userName: string }) {
   const [title, setTitle] = useState("");
-  const [assignee, setAssignee] = useState<string>(CURRENT_USER.firstName);
+  const [assignee, setAssignee] = useState<string>(userName);
   const [dueDate, setDueDate] = useState("");
   const [meetingTitle, setMeetingTitle] = useState("");
   const [status, setStatus] = useState<TaskStatus>("open");
@@ -87,7 +88,7 @@ function CreateTaskModal({ onClose, onSave, meetings }: { onClose: () => void; o
             <label className="text-xs font-medium text-[var(--text-2)] mb-1.5 block">Assignee</label>
             <div className="relative">
               <select value={assignee} onChange={(e) => setAssignee(e.target.value)} className="w-full bg-[var(--bg-sub)] border border-[var(--border-strong)] rounded-lg pl-3 pr-8 py-2.5 text-sm text-[var(--text-2)] outline-none focus:border-[#6c47ff]/60 transition-colors appearance-none">
-                {[CURRENT_USER.firstName, "Janice", "Keith", "Ayush", "Sarah"].map((n) => <option key={n}>{n}</option>)}
+                {[userName, "Janice", "Keith", "Ayush", "Sarah"].map((n) => <option key={n}>{n}</option>)}
               </select>
               <User size={13} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-4)] pointer-events-none" />
             </div>
@@ -156,8 +157,9 @@ function TaskRow({ task, onToggle }: { task: Task; onToggle: () => void }) {
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 export default function TasksPage() {
+  const user = useUser();
   const [activeTab, setActiveTab] = useState<"my" | "all">("my");
-  const [tasks, setTasks] = useState<Task[]>(SEED_TASKS);
+  const [tasks, setTasks] = useState<Task[]>(() => buildSeedTasks(user.firstName, user.initials));
   const [showModal, setShowModal] = useState(false);
   const [meetings, setMeetings] = useState<MeetingListItem[]>([]);
 
@@ -173,7 +175,7 @@ export default function TasksPage() {
     setTasks((prev) => [task, ...prev]);
   }
 
-  const filtered = activeTab === "my" ? tasks.filter((t) => t.assignee === CURRENT_USER.firstName) : tasks;
+  const filtered = activeTab === "my" ? tasks.filter((t) => t.assignee === user.firstName) : tasks;
 
   // Group by meeting title
   const groups = new Map<string, Task[]>();
@@ -256,7 +258,7 @@ export default function TasksPage() {
         )}
       </div>
 
-      {showModal && <CreateTaskModal onClose={() => setShowModal(false)} onSave={addTask} meetings={meetings} />}
+      {showModal && <CreateTaskModal onClose={() => setShowModal(false)} onSave={addTask} meetings={meetings} userName={user.firstName} />}
     </div>
   );
 }

@@ -29,7 +29,7 @@ import {
   getInitials,
   getAvatarColor,
 } from "@/lib/utils";
-import { CURRENT_USER } from "@/lib/currentUser";
+import { useUser } from "@/lib/currentUser";
 
 interface Props {
   meetingId: number;
@@ -314,6 +314,7 @@ function CenterPanel({
   meetingId: number;
   duration: number;
 }) {
+  const user = useUser();
   const [activeTab, setActiveTab] = useState<"notes" | "aiskills">("notes");
 
   return (
@@ -355,12 +356,12 @@ function CenterPanel({
           <div className="flex items-center gap-1.5">
             <div
               className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white shrink-0"
-              style={{ background: getAvatarColor(CURRENT_USER.name) }}
+              style={{ background: getAvatarColor(user.name) }}
             >
-              {getInitials(CURRENT_USER.name)}
+              {getInitials(user.name)}
             </div>
             <span className="text-[var(--accent-text)] text-xs font-medium hover:underline cursor-pointer">
-              {CURRENT_USER.name}
+              {user.name}
             </span>
           </div>
           <span className="text-[var(--text-4)]">·</span>

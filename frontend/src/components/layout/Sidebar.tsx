@@ -18,10 +18,11 @@ import {
   Users,
   Zap,
   TrendingUp,
+  LogOut,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ThemeToggle } from "./ThemeToggle";
-import { CURRENT_USER } from "@/lib/currentUser";
+import { useUser, clearName } from "@/lib/currentUser";
 
 interface Props {
   onNavClick?: () => void;
@@ -65,7 +66,10 @@ function NavLink({
 
 export function Sidebar({ onNavClick }: Props) {
   const pathname = usePathname();
+  const user = useUser();
   const [showInviteCard, setShowInviteCard] = useState(true);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
 
   function isActive(href: string) {
     if (href === "/home") return pathname === "/home";
@@ -76,17 +80,48 @@ export function Sidebar({ onNavClick }: Props) {
   return (
     <aside className="w-[220px] shrink-0 flex flex-col h-full bg-[var(--bg-sub)] border-r border-[var(--border)]">
       {/* User identity at top */}
-      <div className="px-3 pt-4 pb-3 border-b border-[var(--border)]">
-        <button className="flex items-center gap-2.5 w-full px-2 py-1.5 rounded-lg hover:bg-[var(--bg-hover)] transition-colors">
+      <div className="px-3 pt-4 pb-3 border-b border-[var(--border)] relative" ref={profileRef}>
+        <button
+          onClick={() => setProfileOpen((v) => !v)}
+          className="flex items-center gap-2.5 w-full px-2 py-1.5 rounded-lg hover:bg-[var(--bg-hover)] transition-colors"
+        >
           <div
             className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
-            style={{ background: CURRENT_USER.color }}
+            style={{ background: user.color }}
           >
-            {CURRENT_USER.initials}
+            {user.initials}
           </div>
-          <span className="text-sm font-medium text-[var(--text-1)] truncate flex-1 text-left">{CURRENT_USER.firstName}</span>
-          <ChevronDown size={13} className="text-[var(--text-3)] shrink-0" />
+          <span className="text-sm font-medium text-[var(--text-1)] truncate flex-1 text-left">{user.firstName}</span>
+          <ChevronDown size={13} className={`text-[var(--text-3)] shrink-0 transition-transform ${profileOpen ? "rotate-180" : ""}`} />
         </button>
+
+        {profileOpen && (
+          <>
+            <div className="fixed inset-0 z-40" onClick={() => setProfileOpen(false)} />
+            <div className="absolute left-3 right-3 top-full mt-1 z-50 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] shadow-lg overflow-hidden">
+              <div className="px-4 py-3 border-b border-[var(--border)]">
+                <p className="text-sm font-medium text-[var(--text-1)]">{user.name}</p>
+                <p className="text-xs text-[var(--text-3)] mt-0.5">Free Plan</p>
+              </div>
+              <div className="py-1">
+                <button
+                  onClick={() => { setProfileOpen(false); onNavClick?.(); window.location.href = "/settings"; }}
+                  className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-[var(--text-2)] hover:bg-[var(--bg-hover)] transition-colors text-left"
+                >
+                  <Settings size={14} />
+                  Settings
+                </button>
+                <button
+                  onClick={() => { clearName(); window.location.reload(); }}
+                  className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-[var(--text-2)] hover:bg-[var(--bg-hover)] transition-colors text-left"
+                >
+                  <LogOut size={14} />
+                  Switch User
+                </button>
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Main nav */}

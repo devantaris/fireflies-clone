@@ -4,6 +4,7 @@ import "./globals.css";
 import { Providers } from "@/components/layout/Providers";
 import { LayoutShell } from "@/components/layout/LayoutShell";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
+import { UserProvider } from "@/components/layout/UserProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,9 +37,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="h-screen flex flex-col overflow-hidden" style={{ backgroundColor: "var(--bg)", color: "var(--text-1)" }}>
         <ThemeProvider>
-          <Providers>
-            <LayoutShell>{children}</LayoutShell>
-          </Providers>
+          <UserProvider>
+            <Providers>
+              <LayoutShell>{children}</LayoutShell>
+            </Providers>
+          </UserProvider>
         </ThemeProvider>
       </body>
     </html>

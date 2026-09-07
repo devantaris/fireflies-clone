@@ -17,7 +17,7 @@ import {
   Minimize2,
   Check,
 } from "lucide-react";
-import { CURRENT_USER } from "@/lib/currentUser";
+import { useUser } from "@/lib/currentUser";
 
 function getGreeting() {
   const h = new Date().getHours();
@@ -37,6 +37,7 @@ function formatMeetingDate(dateStr: string) {
 
 // ── Right AskFred panel ───────────────────────────────────────────────────────
 function AskFredPanel() {
+  const user = useUser();
   const [input, setInput] = useState("");
   const suggestions = [
     "What's my day looking like?",
@@ -72,7 +73,7 @@ function AskFredPanel() {
             <path d="M7 24 L8 28 L12 29 L8 30 L7 34 L6 30 L2 29 L6 28 Z" fill="#6c47ff" />
           </svg>
         </div>
-        <h3 className="text-base font-bold text-[var(--text-1)] mb-0.5">Hi {CURRENT_USER.firstName}!</h3>
+        <h3 className="text-base font-bold text-[var(--text-1)] mb-0.5">Hi {user.firstName}!</h3>
         <p className="text-sm text-[var(--text-2)] mb-6 text-center">Get ready for your meeting</p>
         <div className="w-full space-y-1">
           {suggestions.map((s) => (
@@ -125,6 +126,7 @@ function AskFredPanel() {
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 export function HomeClient() {
+  const user = useUser();
   const [meetings, setMeetings] = useState<MeetingListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"recent" | "upcoming" | "ai-feed">("recent");
@@ -143,7 +145,7 @@ export function HomeClient() {
         <div className="px-6 pt-5 pb-6 bg-[linear-gradient(90deg,#d5fcff_0.92%,#e9ffe2_45.92%,#f7e6ff_100%)] dark:bg-[linear-gradient(90deg,#0e4f5e_0.92%,#14512f_45.92%,#3d2170_100%)]">
           <div className="flex items-start justify-between mb-4">
             <h1 className="text-2xl font-bold text-[#1a1040] dark:text-white">
-              {getGreeting()}, {CURRENT_USER.firstName} 🌙
+              {getGreeting()}, {user.firstName} 🌙
             </h1>
             <button className="flex items-center gap-1.5 text-sm text-[#6b5a8a] dark:text-white/60 hover:text-[#1a1040] dark:hover:text-white transition-colors mt-1">
               <MessageSquare size={13} />
@@ -167,15 +169,15 @@ export function HomeClient() {
 
           <div className="grid grid-cols-3 gap-3">
             {[
-              { emoji: "📡", title: "Daily Brief", sub: "No brief yet" },
-              { emoji: "📅", title: "Meeting Prep", sub: "No upcoming meetings" },
-              { emoji: "✅", title: "Tasks", sub: "Last 7 Days" },
-            ].map(({ emoji, title, sub }) => (
-              <div key={title} className="bg-white/60 dark:bg-white/10 rounded-xl p-3.5 backdrop-blur-sm">
+              { emoji: "📡", title: "Daily Brief", sub: "No brief yet", href: "/meetings" },
+              { emoji: "📅", title: "Meeting Prep", sub: "No upcoming meetings", href: "/meetings/new" },
+              { emoji: "✅", title: "Tasks", sub: "Last 7 Days", href: "/tasks" },
+            ].map(({ emoji, title, sub, href }) => (
+              <Link key={title} href={href} className="bg-white/60 dark:bg-white/10 rounded-xl p-3.5 backdrop-blur-sm hover:bg-white/80 dark:hover:bg-white/15 transition-colors cursor-pointer">
                 <div className="text-xl mb-2">{emoji}</div>
                 <p className="text-sm font-semibold text-[#1a1040] dark:text-white">{title}</p>
                 <p className="text-xs text-[#6b5a8a] dark:text-white/60 mt-0.5">{sub}</p>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

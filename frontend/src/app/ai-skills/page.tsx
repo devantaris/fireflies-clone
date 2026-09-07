@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Sparkles, Plus, Search, X, MessageSquare, Check } from "lucide-react";
 import toast from "react-hot-toast";
-import { CURRENT_USER } from "@/lib/currentUser";
+import { useUser } from "@/lib/currentUser";
 
 const SKILLS = {
   Recommended: [
@@ -38,6 +38,7 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: () => void 
 }
 
 export default function AISkillsPage() {
+  const user = useUser();
   const [activeTab, setActiveTab] = useState<"discover" | "active" | "feed">("discover");
   const [selectedSkill, setSelectedSkill] = useState(SKILLS.Recommended[0].name);
   const [showBanner, setShowBanner] = useState(true);
@@ -104,11 +105,35 @@ export default function AISkillsPage() {
         </button>
       </div>
 
-      {activeTab !== "discover" ? (
+      {activeTab === "feed" ? (
         <div className="flex-1 flex items-center justify-center">
-          <p className="text-sm text-[var(--text-3)]">
-            {activeTab === "active" ? "Your active skills will appear here." : "Skill outputs and AI feed will appear here."}
-          </p>
+          <p className="text-sm text-[var(--text-3)]">Skill outputs and AI feed will appear here.</p>
+        </div>
+      ) : activeTab === "active" ? (
+        <div className="flex-1 overflow-y-auto p-6">
+          {activeCount === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16">
+              <Sparkles size={28} className="text-[var(--text-4)] mb-3" />
+              <p className="text-sm text-[var(--text-3)] mb-2">No active skills yet</p>
+              <button onClick={() => setActiveTab("discover")} className="text-xs text-[#6c47ff] hover:underline">Browse skills to enable</button>
+            </div>
+          ) : (
+            <div className="max-w-2xl space-y-3">
+              <p className="text-xs text-[var(--text-3)] mb-2">{activeCount} skill{activeCount !== 1 ? "s" : ""} enabled</p>
+              {allSkills.filter((s) => s.enabled).map((skill) => (
+                <div key={skill.name} className="flex items-center gap-3 p-3 rounded-xl border border-[var(--border)] bg-[var(--bg-card)]">
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${skill.color}25` }}>
+                    <Sparkles size={14} style={{ color: skill.color }} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-[var(--text-1)]">{skill.name}</p>
+                    <p className="text-xs text-[var(--text-3)]">Enabled · {skill.uses} uses</p>
+                  </div>
+                  <Toggle checked={true} onChange={() => toggleSkill(skill.name)} />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       ) : (
         <div className="flex-1 flex min-h-0">
@@ -187,9 +212,9 @@ export default function AISkillsPage() {
                     <>
                       <div className="flex items-center gap-1.5 mb-4">
                         <div className="w-5 h-5 rounded-full bg-[#8b5cf6] flex items-center justify-center shrink-0">
-                          <span className="text-white text-[9px] font-bold">{CURRENT_USER.initials}</span>
+                          <span className="text-white text-[9px] font-bold">{user.initials}</span>
                         </div>
-                        <span className="text-xs text-[var(--text-2)]">{CURRENT_USER.name}</span>
+                        <span className="text-xs text-[var(--text-2)]">{user.name}</span>
                         <span className="text-[var(--text-4)] mx-1">·</span>
                         <span className="text-xs text-[var(--text-4)]">↑ {selected.uses}</span>
                       </div>
