@@ -1,8 +1,11 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Search, Bell, Video, ChevronDown, X } from "lucide-react";
+import { Search, Bell, Video, ChevronDown, X, Clock, Loader2 } from "lucide-react";
+import { getMeetings } from "@/lib/api";
+import type { MeetingListItem } from "@/lib/types";
+import { formatDuration } from "@/lib/utils";
 
 const PAGE_TITLES: Array<[string, string]> = [
   ["/home", "Home"],
@@ -119,6 +122,158 @@ function AddToLiveMeetingModal({ onClose }: { onClose: () => void }) {
   );
 }
 
+// ── Global Search Modal ───────────────────────────────────────────────────────
+
+function GlobalSearchModal({ onClose }: { onClose: () => void }) {
+  const router = useRouter();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<MeetingListItem[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [searched, setSearched] = useState(false);
+  const [selected, setSelected] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  // Auto-focus input
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
+  // Debounced search
+  const doSearch = useCallback((q: string) => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    if (!q.trim()) {
+      setResults([]);
+      setSearched(false);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    timerRef.current = setTimeout(async () => {
+      try {
+        const data = await getMeetings({ search: q.trim(), sort: "date_desc" });
+        setResults(data);
+      } catch {
+        setResults([]);
+      } finally {
+        setLoading(false);
+        setSearched(true);
+      }
+    }, 300);
+  }, []);
+
+  useEffect(() => {
+    doSearch(query);
+    setSelected(0);
+  }, [query, doSearch]);
+
+  function navigate(id: number) {
+    onClose();
+    router.push(`/meetings/${id}`);
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setSelected((s) => Math.min(s + 1, results.length - 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelected((s) => Math.max(s - 1, 0));
+    } else if (e.key === "Enter" && results[selected]) {
+      navigate(results[selected].id);
+    } else if (e.key === "Escape") {
+      onClose();
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh]">
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" onClick={onClose} />
+      <div className="relative bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden">
+        {/* Search input */}
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-[var(--border)]">
+          <Search size={16} className="text-[var(--text-4)] shrink-0" />
+          <input
+            ref={inputRef}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Search across all meetings..."
+            className="flex-1 bg-transparent text-sm text-[var(--text-1)] placeholder:text-[var(--text-4)] outline-none"
+          />
+          {loading && <Loader2 size={14} className="text-[var(--text-4)] animate-spin shrink-0" />}
+          <kbd className="text-[10px] text-[var(--text-4)] bg-[var(--bg-elevated)] border border-[var(--border)] px-1.5 py-0.5 rounded font-mono shrink-0">
+            ESC
+          </kbd>
+        </div>
+
+        {/* Results */}
+        <div className="max-h-[50vh] overflow-y-auto">
+          {!query.trim() ? (
+            <div className="px-4 py-8 text-center text-sm text-[var(--text-4)]">
+              Type to search meetings by title or keyword
+            </div>
+          ) : loading ? (
+            <div className="px-4 py-6 space-y-2">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex items-center gap-3 px-3 py-2 rounded-lg">
+                  <div className="w-8 h-8 rounded-full bg-[var(--border)] animate-pulse shrink-0" />
+                  <div className="flex-1 space-y-1.5">
+                    <div className="h-3.5 bg-[var(--border)] rounded animate-pulse" style={{ width: `${50 + i * 15}%` }} />
+                    <div className="h-2.5 bg-[var(--bg-elevated)] rounded animate-pulse w-20" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : results.length === 0 && searched ? (
+            <div className="px-4 py-8 text-center">
+              <p className="text-sm text-[var(--text-3)]">No meetings found for &ldquo;{query}&rdquo;</p>
+              <button
+                onClick={() => { onClose(); router.push("/meetings/new"); }}
+                className="mt-3 text-xs text-[#6c47ff] hover:underline"
+              >
+                Create a new meeting
+              </button>
+            </div>
+          ) : (
+            <div className="py-1">
+              {results.map((m, i) => (
+                <button
+                  key={m.id}
+                  onClick={() => navigate(m.id)}
+                  onMouseEnter={() => setSelected(i)}
+                  className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${
+                    selected === i ? "bg-[var(--bg-hover)]" : ""
+                  }`}
+                >
+                  <div className="w-8 h-8 rounded-full bg-[#6c47ff]/15 flex items-center justify-center shrink-0 text-sm font-semibold text-[#6c47ff]">
+                    {m.title[0]?.toUpperCase() ?? "M"}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-[var(--text-1)] truncate">{m.title}</p>
+                    <div className="flex items-center gap-2 text-xs text-[var(--text-3)]">
+                      <span>{new Date(m.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
+                      <span>·</span>
+                      <span>{formatDuration(m.duration)}</span>
+                      {m.participant_count > 0 && (
+                        <>
+                          <span>·</span>
+                          <span>{m.participant_count} participant{m.participant_count !== 1 ? "s" : ""}</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  <Clock size={12} className="text-[var(--text-4)] shrink-0" />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── TopBar ────────────────────────────────────────────────────────────────────
 
 export function TopBar() {
@@ -126,7 +281,20 @@ export function TopBar() {
   const router = useRouter();
   const [captureOpen, setCaptureOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Ctrl+K global keyboard shortcut
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   // Don't render on meeting detail pages — they have their own header
   if (isMeetingDetailRoute(pathname)) return null;
@@ -151,7 +319,7 @@ export function TopBar() {
         {/* Global search */}
         <div className="flex-1 flex items-center gap-2 max-w-md">
           <button
-            onClick={() => router.push("/meetings?focus=search")}
+            onClick={() => setSearchOpen(true)}
             className="flex-1 flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-sub)] hover:border-[var(--border-strong)] cursor-text transition-colors text-left"
           >
             <Search size={13} className="text-[var(--text-4)] shrink-0" />
@@ -253,6 +421,7 @@ export function TopBar() {
       </header>
 
       {modalOpen && <AddToLiveMeetingModal onClose={() => setModalOpen(false)} />}
+      {searchOpen && <GlobalSearchModal onClose={() => setSearchOpen(false)} />}
     </>
   );
 }

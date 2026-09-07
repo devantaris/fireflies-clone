@@ -140,17 +140,12 @@ export function HomeClient() {
       {/* ── Main scrollable content ── */}
       <div className="flex-1 min-w-0 overflow-y-auto">
         {/* Gradient hero */}
-        <div
-          style={{
-            background: "linear-gradient(135deg, #fde8d8 0%, #f5e6ff 40%, #dde9ff 100%)",
-          }}
-          className="px-6 pt-5 pb-6"
-        >
+        <div className="px-6 pt-5 pb-6 bg-[linear-gradient(90deg,#d5fcff_0.92%,#e9ffe2_45.92%,#f7e6ff_100%)] dark:bg-[linear-gradient(90deg,#0e4f5e_0.92%,#14512f_45.92%,#3d2170_100%)]">
           <div className="flex items-start justify-between mb-4">
-            <h1 className="text-2xl font-bold text-[#1a1040]">
+            <h1 className="text-2xl font-bold text-[#1a1040] dark:text-white">
               {getGreeting()}, {CURRENT_USER.firstName} 🌙
             </h1>
-            <button className="flex items-center gap-1.5 text-sm text-[#6b5a8a] hover:text-[#1a1040] transition-colors mt-1">
+            <button className="flex items-center gap-1.5 text-sm text-[#6b5a8a] dark:text-white/60 hover:text-[#1a1040] dark:hover:text-white transition-colors mt-1">
               <MessageSquare size={13} />
               Feedback
             </button>
@@ -158,13 +153,13 @@ export function HomeClient() {
 
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-1.5">
-              <span className="text-sm font-medium text-[#1a1040]">✦ Personal Assistant</span>
-              <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
-                <circle cx="7" cy="7" r="6.5" stroke="#6b5a8a" />
-                <text x="7" y="11" textAnchor="middle" fill="#6b5a8a" fontSize="8" fontFamily="sans-serif">i</text>
+              <span className="text-sm font-medium text-[#1a1040] dark:text-white">✦ Personal Assistant</span>
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" className="stroke-[#6b5a8a] dark:stroke-white/60">
+                <circle cx="7" cy="7" r="6.5" />
+                <text x="7" y="11" textAnchor="middle" className="fill-[#6b5a8a] dark:fill-white/60" fontSize="8" fontFamily="sans-serif">i</text>
               </svg>
             </div>
-            <button className="flex items-center gap-1 text-xs text-[#6b5a8a] hover:text-[#1a1040] transition-colors">
+            <button className="flex items-center gap-1 text-xs text-[#6b5a8a] dark:text-white/60 hover:text-[#1a1040] dark:hover:text-white transition-colors">
               <Settings size={12} />
               Manage
             </button>
@@ -176,10 +171,10 @@ export function HomeClient() {
               { emoji: "📅", title: "Meeting Prep", sub: "No upcoming meetings" },
               { emoji: "✅", title: "Tasks", sub: "Last 7 Days" },
             ].map(({ emoji, title, sub }) => (
-              <div key={title} className="bg-white/60 rounded-xl p-3.5 backdrop-blur-sm">
+              <div key={title} className="bg-white/60 dark:bg-white/10 rounded-xl p-3.5 backdrop-blur-sm">
                 <div className="text-xl mb-2">{emoji}</div>
-                <p className="text-sm font-semibold text-[#1a1040]">{title}</p>
-                <p className="text-xs text-[#6b5a8a] mt-0.5">{sub}</p>
+                <p className="text-sm font-semibold text-[#1a1040] dark:text-white">{title}</p>
+                <p className="text-xs text-[#6b5a8a] dark:text-white/60 mt-0.5">{sub}</p>
               </div>
             ))}
           </div>
