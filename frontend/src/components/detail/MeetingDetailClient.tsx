@@ -38,17 +38,84 @@ interface Props {
 function LoadingState() {
   return (
     <div className="h-full flex flex-col overflow-hidden">
-      <div className="shrink-0 border-b border-[var(--border)] px-6 py-4">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-[var(--border)] rounded-lg animate-pulse" />
-          <div className="space-y-2">
-            <div className="h-4 bg-[var(--border)] rounded w-48 animate-pulse" />
-            <div className="h-3 bg-[var(--bg-elevated)] rounded w-32 animate-pulse" />
+      {/* Header skeleton */}
+      <div className="shrink-0 border-b border-[var(--border)] px-5 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="h-4 w-24 bg-[var(--border)] rounded animate-pulse" />
+          <span className="text-[var(--text-4)]">/</span>
+          <div className="h-4 w-40 bg-[var(--border)] rounded animate-pulse" />
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="flex -space-x-1.5">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="w-7 h-7 rounded-full bg-[var(--border)] ring-2 ring-[var(--bg)] animate-pulse" />
+            ))}
           </div>
+          <div className="w-14 h-7 rounded-lg bg-[var(--border)] animate-pulse" />
         </div>
       </div>
-      <div className="flex-1 flex items-center justify-center">
-        <Loader2 size={22} className="text-[var(--border-strong)] animate-spin" />
+
+      {/* 3-column body skeleton */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Left column */}
+        <div className="hidden lg:flex flex-col w-[280px] shrink-0 border-r border-[var(--border)]">
+          <div className="flex-1 p-4 space-y-4">
+            <div className="h-4 w-28 bg-[var(--border)] rounded animate-pulse" />
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-[var(--border)] animate-pulse shrink-0" />
+                <div className="flex-1 space-y-1.5">
+                  <div className="h-3 bg-[var(--border)] rounded w-20 animate-pulse" />
+                  <div className="h-2 bg-[var(--bg-elevated)] rounded w-16 animate-pulse" />
+                </div>
+              </div>
+            ))}
+            <div className="h-4 w-24 bg-[var(--border)] rounded animate-pulse mt-4" />
+            {[1, 2].map((i) => (
+              <div key={i} className="h-3 bg-[var(--bg-elevated)] rounded animate-pulse" style={{ width: `${60 + i * 15}%` }} />
+            ))}
+          </div>
+          <div className="shrink-0 p-3 border-t border-[var(--border)]">
+            <div className="h-20 rounded-lg bg-[var(--bg-elevated)] animate-pulse" />
+          </div>
+        </div>
+
+        {/* Center column */}
+        <div className="flex-1 flex flex-col overflow-hidden border-r border-[var(--border)]">
+          <div className="p-5 space-y-4">
+            <div className="h-5 w-48 bg-[var(--border)] rounded animate-pulse" />
+            <div className="flex gap-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-3 w-16 bg-[var(--bg-elevated)] rounded animate-pulse" />
+              ))}
+            </div>
+            <div className="space-y-2 mt-4">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="h-3 bg-[var(--bg-elevated)] rounded animate-pulse" style={{ width: `${90 - i * 10}%` }} />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Right column */}
+        <div className="hidden lg:flex flex-col lg:w-[380px] lg:shrink-0">
+          <div className="flex border-b border-[var(--border)] px-3 py-2 gap-2">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="h-7 flex-1 bg-[var(--bg-elevated)] rounded-lg animate-pulse" />
+            ))}
+          </div>
+          <div className="p-4 space-y-3">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="flex gap-3">
+                <div className="w-7 h-7 rounded-full bg-[var(--border)] animate-pulse shrink-0" />
+                <div className="flex-1 space-y-1.5">
+                  <div className="h-3 bg-[var(--border)] rounded animate-pulse" style={{ width: `${50 + (i * 7) % 30}%` }} />
+                  <div className="h-2 bg-[var(--bg-elevated)] rounded w-full animate-pulse" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

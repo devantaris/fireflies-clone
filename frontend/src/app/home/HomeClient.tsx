@@ -221,9 +221,16 @@ export function HomeClient() {
           ) : activeTab === "ai-feed" ? (
             <div className="py-8 text-center text-[var(--text-3)] text-sm">AI insights will appear here</div>
           ) : loading ? (
-            <div className="space-y-2">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-12 rounded-lg bg-[var(--bg-card)] animate-pulse" />
+            <div className="space-y-1">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="flex items-center gap-3 px-3 py-2.5 rounded-lg">
+                  <div className="w-8 h-8 rounded-full bg-[var(--border)] animate-pulse shrink-0" />
+                  <div className="flex-1 space-y-1.5">
+                    <div className="h-3.5 bg-[var(--border)] rounded animate-pulse" style={{ width: `${55 + i * 10}%` }} />
+                    <div className="h-2.5 bg-[var(--bg-elevated)] rounded animate-pulse w-24" />
+                  </div>
+                  <div className="h-3 w-12 bg-[var(--bg-elevated)] rounded animate-pulse shrink-0" />
+                </div>
               ))}
             </div>
           ) : meetings.length === 0 ? (
