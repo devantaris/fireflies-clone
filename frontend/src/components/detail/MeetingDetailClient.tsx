@@ -178,6 +178,7 @@ export function MeetingDetailClient({ meetingId }: Props) {
           <RightPanel
             summary={meeting.summary}
             actionItems={meeting.action_items}
+            meetingId={meetingId}
             onChapterSeek={player.seek}
           />
         </div>
