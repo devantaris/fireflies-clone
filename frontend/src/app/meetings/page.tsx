@@ -108,6 +108,7 @@ function MeetingsList() {
   const searchInputRef = useRef<HTMLInputElement | null>(null);
   const focusParam = searchParams.get("focus");
 
+  const [ownerTab, setOwnerTab] = useState<"hosted" | "shared">("hosted");
   const [meetings, setMeetings] = useState<MeetingListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
@@ -177,6 +178,12 @@ function MeetingsList() {
   const hasActiveFilters =
     filters.search || filters.date_from || filters.date_to || filters.participant;
 
+  // Client-side tab filter (hosted = odd IDs simulating "mine", shared = even IDs)
+  const tabFilteredMeetings = meetings.filter((m) =>
+    ownerTab === "hosted" ? m.id % 2 !== 0 : m.id % 2 === 0
+  );
+  const displayMeetings = tabFilteredMeetings;
+
   return (
     <div className="min-h-full flex flex-col">
       {/* Top header */}
@@ -186,13 +193,28 @@ function MeetingsList() {
             <h1 className="text-xl font-semibold text-[var(--text-1)]">Meetings</h1>
             {!loading && !fetchError && (
               <p className="text-xs text-[var(--text-3)] mt-0.5">
-                {meetings.length} meeting{meetings.length !== 1 ? "s" : ""}
+                {displayMeetings.length} meeting{displayMeetings.length !== 1 ? "s" : ""}
                 {hasActiveFilters ? " (filtered)" : ""}
               </p>
             )}
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Hosted by me / Shared with me tabs */}
+            <div className="hidden sm:flex items-center rounded-lg border border-[var(--border)] bg-[var(--bg-card)] p-0.5 text-xs font-medium">
+              <button
+                onClick={() => setOwnerTab("hosted")}
+                className={`px-3 py-1 rounded-md transition-colors ${ownerTab === "hosted" ? "bg-[#6c47ff] text-white" : "text-[var(--text-3)] hover:text-[var(--text-2)]"}`}
+              >
+                Hosted by me
+              </button>
+              <button
+                onClick={() => setOwnerTab("shared")}
+                className={`px-3 py-1 rounded-md transition-colors ${ownerTab === "shared" ? "bg-[#6c47ff] text-white" : "text-[var(--text-3)] hover:text-[var(--text-2)]"}`}
+              >
+                Shared with me
+              </button>
+            </div>
             <button
               onClick={() => fetchMeetings(filters)}
               className="p-2 rounded-lg text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[var(--bg-hover)] transition-colors"
@@ -225,14 +247,14 @@ function MeetingsList() {
           <MeetingsSkeleton />
         ) : fetchError ? (
           <FetchErrorState onRetry={() => fetchMeetings(filters)} />
-        ) : meetings.length === 0 ? (
+        ) : displayMeetings.length === 0 ? (
           <EmptyState
-            filtered={!!hasActiveFilters}
+            filtered={!!hasActiveFilters || ownerTab === "shared"}
             onNew={() => setCreateOpen(true)}
           />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {meetings.map((m) => (
+            {displayMeetings.map((m) => (
               <MeetingCard
                 key={m.id}
                 meeting={m}

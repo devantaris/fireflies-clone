@@ -97,14 +97,7 @@ export function Sidebar({ onNavClick }: Props) {
         <NavLink href="/ai-skills" label="AI Skills" icon={Sparkles} isActive={isActive("/ai-skills")} onNavClick={onNavClick} />
         <NavLink href="/analytics" label="Analytics" icon={BarChart2} isActive={isActive("/analytics")} onNavClick={onNavClick} />
 
-        {/* Voice Agents */}
-        <Link
-          href="#"
-          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-[var(--text-2)] hover:text-[var(--text-1)] hover:bg-[var(--bg-hover)] transition-colors"
-        >
-          <Mic size={16} />
-          <span className="flex-1">Voice Agents</span>
-        </Link>
+        <NavLink href="/voice-agents" label="Voice Agents" icon={Mic} isActive={isActive("/voice-agents")} onNavClick={onNavClick} />
 
         {/* Upgrade with badge */}
         <Link

@@ -174,8 +174,15 @@ export default function AISkillsPage() {
                     <span className="text-xs text-[var(--text-4)]">↑ {selected.uses}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button className="px-4 py-1.5 rounded-lg bg-[#6c47ff] hover:bg-[#5535ee] text-white text-xs font-medium transition-colors">
-                      Enable
+                    <button
+                      onClick={() => toggleSkill(selected.name)}
+                      className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                        selected.enabled
+                          ? "border border-[var(--border-strong)] text-[var(--text-2)] hover:text-[var(--text-1)] bg-transparent"
+                          : "bg-[#6c47ff] hover:bg-[#5535ee] text-white"
+                      }`}
+                    >
+                      {selected.enabled ? "Disable" : "Enable"}
                     </button>
                     <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[var(--border-strong)] text-xs text-[var(--text-2)] hover:text-[var(--text-1)] transition-colors">
                       <Sparkles size={11} />

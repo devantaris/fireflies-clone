@@ -29,6 +29,22 @@ export default function IntegrationsPage() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [search, setSearch] = useState("");
   const [showHero, setShowHero] = useState(true);
+  const [connectedSet, setConnectedSet] = useState<Set<string>>(new Set());
+  const [flashName, setFlashName] = useState<string | null>(null);
+
+  function handleConnect(name: string) {
+    setConnectedSet((prev) => {
+      const next = new Set(prev);
+      if (next.has(name)) {
+        next.delete(name);
+      } else {
+        next.add(name);
+      }
+      return next;
+    });
+    setFlashName(name);
+    setTimeout(() => setFlashName(null), 2000);
+  }
 
   const filtered = INTEGRATIONS.filter((i) => {
     const matchesSearch = !search || i.name.toLowerCase().includes(search.toLowerCase());
@@ -38,6 +54,18 @@ export default function IntegrationsPage() {
 
   return (
     <div className="min-h-full flex flex-col bg-[var(--bg)]">
+      {/* Toast notification */}
+      {flashName && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--bg-card)] border border-[var(--border)] shadow-lg text-sm text-[var(--text-1)]">
+          <span className="text-[#22c55e]">✓</span>
+          <span>
+            {connectedSet.has(flashName)
+              ? `${flashName} connected`
+              : `${flashName} disconnected`}
+          </span>
+        </div>
+      )}
+
       {/* Tabs header */}
       <div className="border-b border-[var(--border)] px-6 flex items-center gap-1">
         {(["discover", "connected"] as const).map((tab) => (
@@ -178,8 +206,15 @@ export default function IntegrationsPage() {
                   </div>
                 </div>
                 <p className="text-xs text-[var(--text-3)] mb-4 line-clamp-2">{integration.desc}</p>
-                <button className="text-xs text-[var(--accent-text)] hover:text-[var(--accent-hover)] font-medium transition-colors">
-                  + Connect
+                <button
+                  onClick={() => handleConnect(integration.name)}
+                  className={`text-xs font-medium transition-colors ${
+                    connectedSet.has(integration.name)
+                      ? "text-[#22c55e] hover:text-[#16a34a]"
+                      : "text-[var(--accent-text)] hover:text-[var(--accent-hover)]"
+                  }`}
+                >
+                  {connectedSet.has(integration.name) ? "✓ Connected" : "+ Connect"}
                 </button>
               </div>
             ))}

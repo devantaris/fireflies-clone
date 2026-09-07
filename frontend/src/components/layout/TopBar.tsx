@@ -12,6 +12,7 @@ const PAGE_TITLES: Array<[string, string]> = [
   ["/tasks", "Tasks"],
   ["/ai-skills", "AI Skills"],
   ["/analytics", "Analytics"],
+  ["/voice-agents", "Voice Agents"],
   ["/integrations", "Integrations"],
   ["/settings", "Settings"],
 ];

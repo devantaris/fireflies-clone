@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { Menu, Flame } from "lucide-react";
 import { Sidebar } from "./Sidebar";
 import { AnnouncementBanner } from "./AnnouncementBanner";
@@ -11,7 +12,11 @@ interface Props {
 }
 
 export function LayoutShell({ children }: Props) {
+  const pathname = usePathname();
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  // Landing page — render without sidebar/topbar
+  if (pathname === "/") return <>{children}</>;
 
   function closeDrawer() {
     setDrawerOpen(false);
