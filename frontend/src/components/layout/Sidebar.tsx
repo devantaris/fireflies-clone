@@ -4,19 +4,32 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Mic2,
-  Search,
   Settings,
-  BookOpen,
   Flame,
+  Home,
+  Bot,
+  Video,
+  ListTodo,
+  Sparkles,
+  BarChart2,
+  Puzzle,
 } from "lucide-react";
 
 interface Props {
   onNavClick?: () => void;
 }
 
-const NAV_ITEMS = [
-  { label: "Meetings", href: "/meetings", icon: BookOpen },
-  { label: "Search", href: "/meetings?focus=search", icon: Search },
+const PRIMARY_NAV = [
+  { label: "Home", href: "/home", icon: Home },
+  { label: "AskFred", href: "/askfred", icon: Bot },
+];
+
+const PRODUCT_NAV = [
+  { label: "Meetings", href: "/meetings", icon: Video },
+  { label: "Tasks", href: "/tasks", icon: ListTodo },
+  { label: "AI Skills", href: "/ai-skills", icon: Sparkles },
+  { label: "Analytics", href: "/analytics", icon: BarChart2 },
+  { label: "Integrations", href: "/integrations", icon: Puzzle },
 ];
 
 function UserAvatar() {
@@ -27,7 +40,7 @@ function UserAvatar() {
           className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
           style={{ background: "#6c47ff" }}
         >
-          U
+          D
         </div>
         <div className="min-w-0">
           <p className="text-sm font-medium text-[#f0f0f0] truncate">My Workspace</p>
@@ -38,8 +51,43 @@ function UserAvatar() {
   );
 }
 
+function NavLink({
+  href,
+  label,
+  icon: Icon,
+  isActive,
+  onNavClick,
+}: {
+  href: string;
+  label: string;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+  isActive: boolean;
+  onNavClick?: () => void;
+}) {
+  return (
+    <Link
+      href={href}
+      onClick={onNavClick}
+      className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+        isActive
+          ? "bg-[#6c47ff]/15 text-[#9b7cff] font-medium"
+          : "text-[#8a8a8a] hover:text-[#f0f0f0] hover:bg-[#1e1e1e]"
+      }`}
+    >
+      <Icon size={16} />
+      {label}
+    </Link>
+  );
+}
+
 export function Sidebar({ onNavClick }: Props) {
   const pathname = usePathname();
+
+  function isActive(href: string) {
+    if (href === "/home") return pathname === "/home";
+    if (href === "/meetings") return pathname.startsWith("/meetings");
+    return pathname === href || pathname.startsWith(href + "/");
+  }
 
   return (
     <aside className="w-[220px] shrink-0 flex flex-col h-full bg-[#111111] border-r border-[#1e1e1e]">
@@ -68,50 +116,47 @@ export function Sidebar({ onNavClick }: Props) {
         </Link>
       </div>
 
-      {/* Nav */}
-      <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto">
-        {NAV_ITEMS.map(({ label, href, icon: Icon }) => {
-          const base = href.split("?")[0];
-          const isActive =
-            pathname === base ||
-            (base === "/meetings" && pathname.startsWith("/meetings"));
-
-          return (
-            <Link
+      {/* Primary nav */}
+      <nav className="flex-1 px-3 overflow-y-auto">
+        <div className="space-y-0.5">
+          {PRIMARY_NAV.map(({ label, href, icon }) => (
+            <NavLink
               key={href}
               href={href}
-              onClick={onNavClick}
-              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
-                isActive
-                  ? "bg-[#6c47ff]/15 text-[#9b7cff] font-medium"
-                  : "text-[#8a8a8a] hover:text-[#f0f0f0] hover:bg-[#1e1e1e]"
-              }`}
-            >
-              <Icon size={16} />
-              {label}
-            </Link>
-          );
-        })}
-
-        <div className="pt-4 pb-1">
-          <p className="px-3 text-[10px] font-semibold uppercase tracking-widest text-[#444]">
-            Workspace
-          </p>
+              label={label}
+              icon={icon}
+              isActive={isActive(href)}
+              onNavClick={onNavClick}
+            />
+          ))}
         </div>
 
-        <Link
-          href="/settings"
-          onClick={onNavClick}
-          className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
-            pathname === "/settings"
-              ? "bg-[#6c47ff]/15 text-[#9b7cff] font-medium"
-              : "text-[#8a8a8a] hover:text-[#f0f0f0] hover:bg-[#1e1e1e]"
-          }`}
-        >
-          <Settings size={16} />
-          Settings
-        </Link>
+        <div className="my-3 border-t border-[#1e1e1e]" />
+
+        <div className="space-y-0.5">
+          {PRODUCT_NAV.map(({ label, href, icon }) => (
+            <NavLink
+              key={href}
+              href={href}
+              label={label}
+              icon={icon}
+              isActive={isActive(href)}
+              onNavClick={onNavClick}
+            />
+          ))}
+        </div>
       </nav>
+
+      {/* Settings at bottom */}
+      <div className="px-3 pb-1">
+        <NavLink
+          href="/settings"
+          label="Settings"
+          icon={Settings}
+          isActive={pathname === "/settings"}
+          onNavClick={onNavClick}
+        />
+      </div>
 
       <UserAvatar />
     </aside>
