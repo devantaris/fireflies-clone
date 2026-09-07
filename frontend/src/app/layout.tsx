@@ -34,7 +34,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className="h-full flex" style={{ backgroundColor: "var(--bg)", color: "var(--text-1)" }}>
+      <body className="h-screen flex flex-col overflow-hidden" style={{ backgroundColor: "var(--bg)", color: "var(--text-1)" }}>
         <ThemeProvider>
           <Providers>
             <LayoutShell>{children}</LayoutShell>

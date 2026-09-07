@@ -6,12 +6,16 @@ import { getMeetings } from "@/lib/api";
 import type { MeetingListItem } from "@/lib/types";
 import {
   Video,
-  Clock,
   ChevronRight,
   Plus,
   Upload,
   Mic2,
   Calendar,
+  Settings,
+  Play,
+  Monitor,
+  Smartphone,
+  Clock,
 } from "lucide-react";
 
 function formatDate(dateStr: string) {
@@ -35,7 +39,7 @@ function formatDuration(mins: number) {
 export function HomeClient() {
   const [meetings, setMeetings] = useState<MeetingListItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"recent" | "upcoming">("recent");
+  const [activeTab, setActiveTab] = useState<"recent" | "upcoming" | "ai-feed">("recent");
 
   useEffect(() => {
     getMeetings({ sort: "date_desc" })
@@ -43,105 +47,49 @@ export function HomeClient() {
       .finally(() => setLoading(false));
   }, []);
 
-  const totalHours =
-    Math.round((meetings.reduce((s, m) => s + m.duration, 0) / 60) * 10) / 10;
   const recentMeetings = meetings.slice(0, 5);
 
   return (
     <div className="min-h-full bg-[var(--bg)]">
-      {/* Hero banner */}
+      {/* Welcome card — light gradient matching reference */}
       <div
-        className="relative overflow-hidden px-8 pt-10 pb-8"
+        className="mx-6 mt-6 mb-6 rounded-2xl overflow-hidden relative"
         style={{
           background:
-            "linear-gradient(135deg, #1a103a 0%, #2d1b69 45%, #1a2a4a 100%)",
+            "linear-gradient(135deg, #fde8d8 0%, #f3e8ff 40%, #dde9ff 100%)",
+          minHeight: 160,
         }}
       >
-        <div className="max-w-lg">
-          <p className="text-xs font-semibold uppercase tracking-widest text-[#9b7cff] mb-2">
-            Welcome back
-          </p>
-          <h1 className="text-2xl font-bold text-white mb-2">
-            Welcome Aboard, Devansh!
-          </h1>
-          <p className="text-sm text-[#b8a8e8]">
-            Fireflies is ready to automate your meetings and streamline your
-            workflows.
-          </p>
-        </div>
-
-        {/* Decorative card */}
-        <div className="absolute right-8 top-1/2 -translate-y-1/2 hidden lg:flex">
-          <div className="w-[160px] h-[100px] rounded-xl bg-[#12082c] border border-[#6c47ff]/30 flex items-center justify-center shadow-2xl">
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-10 h-10 rounded-full bg-[#6c47ff] flex items-center justify-center">
-                <Video size={18} className="text-white" />
+        <div className="px-8 py-7 flex items-center gap-6">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl font-bold text-[#1a1040] mb-2">
+              Welcome Aboard, Devansh!
+            </h1>
+            <p className="text-sm text-[#5a4a7a]">
+              Fireflies is now ready to automate your meetings and streamline
+              your workflows.
+            </p>
+          </div>
+          {/* Video thumbnail */}
+          <div className="hidden lg:flex shrink-0">
+            <div className="w-[170px] h-[108px] rounded-xl bg-[#12082c] border border-[#6c47ff]/30 flex flex-col items-center justify-center gap-2 shadow-lg overflow-hidden relative">
+              <div className="absolute top-2 left-3 flex items-center gap-1.5">
+                <div className="w-3 h-3 rounded-sm bg-[#6c47ff]" />
+                <span className="text-[9px] text-white/70 font-medium">
+                  Fireflies | Product Demo
+                </span>
               </div>
-              <span className="text-[10px] text-[#7c5aff] font-medium">
-                Product Demo
-              </span>
+              <div className="w-10 h-10 rounded-full bg-[#6c47ff] flex items-center justify-center">
+                <Play size={16} className="text-white ml-0.5" fill="white" />
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="px-8 py-6 max-w-5xl">
-        {/* Stat cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
-          <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-7 h-7 rounded-md bg-[#6c47ff]/15 flex items-center justify-center">
-                <Video size={14} className="text-[var(--accent-text)]" />
-              </div>
-              <span className="text-xs text-[var(--text-3)] font-medium">
-                Total Meetings
-              </span>
-            </div>
-            <p className="text-2xl font-bold text-[var(--text-1)]">
-              {loading ? "–" : meetings.length}
-            </p>
-          </div>
-
-          <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-7 h-7 rounded-md bg-[#0ea5e9]/10 flex items-center justify-center">
-                <Clock size={14} className="text-[#0ea5e9]" />
-              </div>
-              <span className="text-xs text-[var(--text-3)] font-medium">
-                Hours Recorded
-              </span>
-            </div>
-            <p className="text-2xl font-bold text-[var(--text-1)]">
-              {loading ? "–" : totalHours}
-            </p>
-          </div>
-
-          <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4 col-span-2 sm:col-span-1">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-7 h-7 rounded-md bg-[#10b981]/10 flex items-center justify-center">
-                <Calendar size={14} className="text-[#10b981]" />
-              </div>
-              <span className="text-xs text-[var(--text-3)] font-medium">
-                Meetings This Month
-              </span>
-            </div>
-            <p className="text-2xl font-bold text-[var(--text-1)]">
-              {loading
-                ? "–"
-                : meetings.filter((m) => {
-                    const d = new Date(m.date);
-                    const now = new Date();
-                    return (
-                      d.getMonth() === now.getMonth() &&
-                      d.getFullYear() === now.getFullYear()
-                    );
-                  }).length}
-            </p>
-          </div>
-        </div>
-
+      <div className="px-6 max-w-5xl">
         {/* Quick Start */}
-        <div className="mb-8">
+        <div className="mb-7">
           <h2 className="text-sm font-semibold text-[var(--text-1)] mb-0.5">
             Quick Start
           </h2>
@@ -156,21 +104,21 @@ export function HomeClient() {
                 icon: Calendar,
                 href: "/meetings/new",
                 color: "#f472b6",
-                bg: "#f472b620",
+                bg: "#fdf2f8",
               },
               {
                 label: "Upload File",
                 icon: Upload,
                 href: "/meetings/new",
                 color: "#34d399",
-                bg: "#34d39920",
+                bg: "#f0fdf4",
               },
               {
                 label: "Capture Meeting",
                 icon: Mic2,
                 href: "/meetings/new",
                 color: "#a78bfa",
-                bg: "#a78bfa20",
+                bg: "#faf5ff",
               },
             ].map(({ label, icon: Icon, href, color, bg }) => (
               <Link
@@ -198,26 +146,40 @@ export function HomeClient() {
           </div>
         </div>
 
-        {/* Recent / Upcoming tabs */}
-        <div>
-          <div className="flex items-center gap-1 mb-4 border-b border-[var(--border)]">
-            {(["recent", "upcoming"] as const).map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-4 pb-2.5 text-sm font-medium border-b-2 -mb-px transition-colors ${
-                  activeTab === tab
-                    ? "border-[#6c47ff] text-[var(--text-1)]"
-                    : "border-transparent text-[var(--text-3)] hover:text-[var(--text-2)]"
-                }`}
-              >
-                {tab === "recent" ? "Recent" : "Upcoming"}
-              </button>
-            ))}
+        {/* Recent / Upcoming / AI Feed tabs */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-1">
+            <div className="flex items-center gap-1 border-b border-[var(--border)] flex-1">
+              {(
+                [
+                  { id: "recent", label: "Recent" },
+                  { id: "upcoming", label: "Upcoming" },
+                  { id: "ai-feed", label: "AI Feed" },
+                ] as const
+              ).map(({ id, label }) => (
+                <button
+                  key={id}
+                  onClick={() => setActiveTab(id)}
+                  className={`px-4 pb-2.5 text-sm font-medium border-b-2 -mb-px transition-colors ${
+                    activeTab === id
+                      ? "border-[#6c47ff] text-[var(--text-1)]"
+                      : "border-transparent text-[var(--text-3)] hover:text-[var(--text-2)]"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <Link
+              href="/settings"
+              className="pb-2.5 text-[var(--text-3)] hover:text-[var(--text-2)] transition-colors"
+            >
+              <Settings size={15} />
+            </Link>
           </div>
 
           {loading ? (
-            <div className="space-y-2">
+            <div className="space-y-2 mt-3">
               {[1, 2, 3].map((i) => (
                 <div
                   key={i}
@@ -229,34 +191,42 @@ export function HomeClient() {
             <div className="py-12 text-center text-[var(--text-3)] text-sm">
               No upcoming meetings
             </div>
+          ) : activeTab === "ai-feed" ? (
+            <div className="py-12 text-center text-[var(--text-3)] text-sm">
+              AI-generated insights from your meetings will appear here.
+            </div>
           ) : recentMeetings.length === 0 ? (
             <div className="py-12 text-center">
               <p className="text-[var(--text-3)] text-sm mb-4">No meetings yet</p>
               <Link
                 href="/meetings/new"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#6c47ff] hover:bg-[#7c5aff] text-white text-sm font-medium transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#6c47ff] hover:bg-[#5535ee] text-white text-sm font-medium transition-colors"
               >
                 <Plus size={14} />
                 New Meeting
               </Link>
             </div>
           ) : (
-            <div className="space-y-1">
+            <div className="space-y-1 mt-2">
               {recentMeetings.map((m) => (
                 <Link
                   key={m.id}
                   href={`/meetings/${m.id}`}
                   className="flex items-center gap-4 px-3 py-3 rounded-lg hover:bg-[var(--bg-card)] transition-colors group"
                 >
+                  {/* Fireflies-style meeting logo placeholder */}
                   <div className="w-9 h-9 rounded-lg bg-[#6c47ff]/10 flex items-center justify-center shrink-0">
                     <Video size={16} className="text-[var(--accent-text)]" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-[var(--text-1)] truncate transition-colors">
+                    <p className="text-sm font-medium text-[var(--text-1)] truncate">
                       {m.title}
                     </p>
-                    <p className="text-xs text-[var(--text-3)] mt-0.5">
-                      {formatDate(m.date)} &middot; {formatDuration(m.duration)}
+                    <p className="text-xs text-[var(--text-3)] mt-0.5 flex items-center gap-1">
+                      <Clock size={11} />
+                      {formatDate(m.date)}
+                      <span className="text-[var(--text-4)]">·</span>
+                      {formatDuration(m.duration)}
                     </p>
                   </div>
                   <ChevronRight
@@ -278,6 +248,41 @@ export function HomeClient() {
               )}
             </div>
           )}
+        </div>
+
+        {/* Try More section */}
+        <div className="mb-8">
+          <h2 className="text-sm font-semibold text-[var(--text-1)] mb-4">
+            Try More
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] hover:border-[var(--border-strong)] transition-colors cursor-pointer">
+              <div className="w-10 h-10 rounded-xl bg-[var(--bg-elevated)] flex items-center justify-center shrink-0">
+                <Monitor size={18} className="text-[var(--text-3)]" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-[var(--text-1)]">
+                  Download Desktop App
+                </p>
+                <p className="text-xs text-[var(--text-3)] mt-0.5">
+                  Bot-less recording with the desktop app
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] hover:border-[var(--border-strong)] transition-colors cursor-pointer">
+              <div className="w-10 h-10 rounded-xl bg-[var(--bg-elevated)] flex items-center justify-center shrink-0">
+                <Smartphone size={18} className="text-[var(--text-3)]" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-[var(--text-1)]">
+                  Get Mobile App
+                </p>
+                <p className="text-xs text-[var(--text-3)] mt-0.5">
+                  Record in-person meetings on mobile
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
