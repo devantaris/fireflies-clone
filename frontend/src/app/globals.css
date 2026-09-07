@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+:root {
+  /* Fireflies dark palette */
+  --ff-bg: #0f0f0f;
+  --ff-surface: #1a1a1a;
+  --ff-surface-2: #242424;
+  --ff-border: #2e2e2e;
+  --ff-text: #f0f0f0;
+  --ff-text-muted: #8a8a8a;
+  --ff-purple: #6c47ff;
+  --ff-purple-light: #8b6bff;
+  --ff-purple-dim: rgba(108, 71, 255, 0.15);
+  --ff-green: #22c55e;
+  --ff-red: #ef4444;
+
+  --background: var(--ff-bg);
+  --foreground: var(--ff-text);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  background-color: var(--ff-bg);
+  color: var(--ff-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--ff-border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}

@@ -1,0 +1,8 @@
+export default function SettingsPage() {
+  return (
+    <div className="p-8">
+      <h1 className="text-2xl font-bold text-white">Settings</h1>
+      <p className="text-[#8a8a8a] mt-2">Settings placeholder.</p>
+    </div>
+  );
+}
