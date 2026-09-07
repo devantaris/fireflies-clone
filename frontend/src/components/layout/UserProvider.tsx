@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { UserContext, buildProfile, getSavedName, saveName } from "@/lib/currentUser";
 import type { UserProfile } from "@/lib/currentUser";
 
@@ -28,7 +29,7 @@ function WelcomeScreen({ onSubmit }: { onSubmit: (name: string) => void }) {
         </div>
 
         <h1 className="text-xl font-semibold text-[var(--text-1)] mb-2">Welcome to Fireflies</h1>
-        <p className="text-sm text-[var(--text-3)] mb-8">Enter your name to get started</p>
+        <p className="text-sm text-[var(--text-3)] mb-8">What should we call you?</p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
@@ -41,9 +42,9 @@ function WelcomeScreen({ onSubmit }: { onSubmit: (name: string) => void }) {
           <button
             type="submit"
             disabled={!name.trim()}
-            className="w-full py-3 rounded-xl bg-[#6c47ff] hover:bg-[#5535ee] disabled:bg-[var(--border-strong)] disabled:text-[var(--text-4)] text-white text-sm font-medium transition-colors disabled:cursor-not-allowed"
+            className="w-full py-3 rounded-xl bg-[#6c47ff] hover:bg-[#5535ee] disabled:bg-[var(--border-strong)] disabled:text-[var(--text-4)] text-white text-sm font-semibold shadow-sm hover:shadow-md transition-all active:scale-[0.99] disabled:cursor-not-allowed"
           >
-            Get Started
+            Get Started →
           </button>
         </form>
 
@@ -54,6 +55,7 @@ function WelcomeScreen({ onSubmit }: { onSubmit: (name: string) => void }) {
 }
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [showWelcome, setShowWelcome] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -63,10 +65,16 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     if (saved) {
       setUser(buildProfile(saved));
     } else {
-      setShowWelcome(true);
+      // Only intercept with welcome screen inside the app, not on the landing page
+      if (pathname !== "/") {
+        setShowWelcome(true);
+      } else {
+        // On landing page just use a guest profile — the welcome triggers on /home
+        setUser(buildProfile("Guest"));
+      }
     }
     setMounted(true);
-  }, []);
+  }, [pathname]);
 
   function handleNameSubmit(name: string) {
     saveName(name);

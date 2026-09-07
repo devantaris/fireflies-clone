@@ -53,7 +53,15 @@
       "Bash(curl -s http://localhost:3000)",
       "Bash(python3:*)",
       "Bash(sort -k2)",
-      "Bash(find /c/Users/Devansh/Desktop/Projects/fireflies-clone/frontend/public/assets/images /c/Users/Devansh/Desktop/Projects/fireflies-clone/frontend/public/assets/logos /c/Users/Devansh/Desktop/Projects/fireflies-clone/frontend/public/assets/badges -maxdepth 1 -type f -size 0 -exec ls -la '{}' ';')"
+      "Bash(find /c/Users/Devansh/Desktop/Projects/fireflies-clone/frontend/public/assets/images /c/Users/Devansh/Desktop/Projects/fireflies-clone/frontend/public/assets/logos /c/Users/Devansh/Desktop/Projects/fireflies-clone/frontend/public/assets/badges -maxdepth 1 -type f -size 0 -exec ls -la '{}' ';')",
+      "Bash(curl -sI \"https://fireflies-clone-tz2k.vercel.app\")",
+      "Bash(curl -sI \"https://github.com/devantaris/fireflies-clone\")",
+      "Bash(curl -s \"https://fireflies-clone-api-mm2v.onrender.com/api/health\")",
+      "Bash(curl -s \"https://fireflies-clone-api-mm2v.onrender.com/health\")",
+      "Bash(curl -s \"https://fireflies-clone-api-mm2v.onrender.com/\")",
+      "Bash(curl -s \"https://fireflies-clone-tz2k.vercel.app/home\")",
+      "Bash(curl -s \"https://fireflies-clone-tz2k.vercel.app/meetings\")",
+      "Bash(git push:*)"
     ]
   }
 }

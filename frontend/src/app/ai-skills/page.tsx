@@ -24,14 +24,22 @@ const TOP_PICKS = ["Daily Standups", "Board Summaries", "Todos", "Decision Maker
 function Toggle({ checked, onChange }: { checked: boolean; onChange: () => void }) {
   return (
     <button
-      onClick={(e) => { e.stopPropagation(); onChange(); }}
-      className="relative shrink-0 rounded-full transition-colors"
-      style={{ width: 36, height: 20, background: checked ? "#6c47ff" : "var(--border-strong)" }}
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      onClick={(e) => {
+        e.stopPropagation();
+        onChange();
+      }}
+      className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full p-0.5 transition-colors duration-200 ease-in-out focus:outline-none ${
+        checked ? "bg-[#6c47ff]" : "bg-[var(--border-strong)]"
+      }`}
       aria-label={checked ? "Disable" : "Enable"}
     >
       <span
-        className="absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform"
-        style={{ transform: checked ? "translateX(18px)" : "translateX(2px)" }}
+        className={`pointer-events-none block h-4 w-4 rounded-full bg-white shadow-sm ring-0 transition-transform duration-200 ease-in-out ${
+          checked ? "translate-x-4" : "translate-x-0"
+        }`}
       />
     </button>
   );
@@ -156,10 +164,13 @@ export default function AISkillsPage() {
                     {section}
                   </p>
                   {sectionSkills.map((skill) => (
-                    <button
+                    <div
                       key={skill.name}
+                      role="button"
+                      tabIndex={0}
                       onClick={() => setSelectedSkill(skill.name)}
-                      className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors border-l-2 ${
+                      onKeyDown={(e) => e.key === "Enter" && setSelectedSkill(skill.name)}
+                      className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors border-l-2 cursor-pointer ${
                         selectedSkill === skill.name
                           ? "bg-[#6c47ff]/[0.08] border-[#6c47ff]"
                           : "border-transparent hover:bg-[var(--bg-card)]"
@@ -176,7 +187,7 @@ export default function AISkillsPage() {
                       </span>
                       <span className="text-[10px] text-[var(--text-4)] mr-2">↑ {skill.uses}</span>
                       <Toggle checked={skill.enabled} onChange={() => toggleSkill(skill.name)} />
-                    </button>
+                    </div>
                   ))}
                 </div>
               ))}

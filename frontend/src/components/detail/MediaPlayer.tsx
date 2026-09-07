@@ -117,13 +117,16 @@ export function MediaPlayer({ player, hasDuration }: Props) {
       </div>
 
       {/* Controls row */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between pt-0.5">
+        {/* Spacer for symmetry with speed button */}
+        <div className="w-10" />
+
         {/* Transport */}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
           <button
             onClick={skipBackward}
             disabled={!hasDuration}
-            className="p-2 rounded-lg text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[var(--border)] transition-colors disabled:opacity-30"
+            className="p-1.5 rounded-lg text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[var(--border)] transition-colors disabled:opacity-30"
             title="Back 10s"
           >
             <SkipBack size={16} />
@@ -132,7 +135,8 @@ export function MediaPlayer({ player, hasDuration }: Props) {
           <button
             onClick={togglePlay}
             disabled={!hasDuration}
-            className="w-10 h-10 rounded-full bg-[#6c47ff] hover:bg-[#7c5aff] flex items-center justify-center text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            className="w-10 h-10 rounded-full bg-[#6c47ff] hover:bg-[#5535ee] flex items-center justify-center text-white shadow-sm hover:shadow transition-all disabled:opacity-30 disabled:cursor-not-allowed active:scale-95"
+            title={isPlaying ? "Pause" : "Play"}
           >
             {isPlaying ? <Pause size={18} /> : <Play size={18} className="translate-x-0.5" />}
           </button>
@@ -140,29 +144,24 @@ export function MediaPlayer({ player, hasDuration }: Props) {
           <button
             onClick={skipForward}
             disabled={!hasDuration}
-            className="p-2 rounded-lg text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[var(--border)] transition-colors disabled:opacity-30"
+            className="p-1.5 rounded-lg text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[var(--border)] transition-colors disabled:opacity-30"
             title="Forward 10s"
           >
             <SkipForward size={16} />
           </button>
         </div>
 
-        {/* Speed selector */}
-        <div className="flex items-center gap-0.5">
-          {SPEEDS.map((s) => (
-            <button
-              key={s}
-              onClick={() => setSpeed(s)}
-              className={`px-2 py-1 rounded text-[11px] font-medium transition-colors ${
-                speed === s
-                  ? "bg-[#6c47ff]/20 text-[var(--accent-text)]"
-                  : "text-[var(--text-3)] hover:text-[var(--text-2)]"
-              }`}
-            >
-              {s}×
-            </button>
-          ))}
-        </div>
+        {/* Speed cycle pill */}
+        <button
+          onClick={() => {
+            const nextIdx = (SPEEDS.indexOf(speed) + 1) % SPEEDS.length;
+            setSpeed(SPEEDS[nextIdx]);
+          }}
+          className="w-10 py-1 rounded-md text-xs font-semibold bg-[var(--bg-sub)] hover:bg-[var(--border)] border border-[var(--border)] text-[var(--text-2)] hover:text-[var(--text-1)] transition-colors shadow-xs"
+          title={`Speed: ${speed}× (click to cycle)`}
+        >
+          {speed}×
+        </button>
       </div>
 
       {!hasDuration && (

@@ -19,11 +19,12 @@ import {
 } from "lucide-react";
 import { useUser } from "@/lib/currentUser";
 
-function getGreeting() {
+function getGreeting(): { text: string; emoji: string } {
   const h = new Date().getHours();
-  if (h < 12) return "Good Morning";
-  if (h < 17) return "Good Afternoon";
-  return "Good Evening";
+  if (h < 12) return { text: "Good Morning", emoji: "☀️" };
+  if (h < 17) return { text: "Good Afternoon", emoji: "🌤️" };
+  if (h < 21) return { text: "Good Evening", emoji: "🌆" };
+  return { text: "Good Night", emoji: "🌙" };
 }
 
 function formatMeetingDate(dateStr: string) {
@@ -141,44 +142,94 @@ export function HomeClient() {
     <div className="flex h-full overflow-hidden">
       {/* ── Main scrollable content ── */}
       <div className="flex-1 min-w-0 overflow-y-auto">
-        {/* Gradient hero */}
-        <div className="px-6 pt-5 pb-6 bg-[linear-gradient(90deg,#d5fcff_0.92%,#e9ffe2_45.92%,#f7e6ff_100%)] dark:bg-[linear-gradient(90deg,#0e4f5e_0.92%,#14512f_45.92%,#3d2170_100%)]">
-          <div className="flex items-start justify-between mb-4">
-            <h1 className="text-2xl font-bold text-[#1a1040] dark:text-white">
-              {getGreeting()}, {user.firstName} 🌙
-            </h1>
-            <button className="flex items-center gap-1.5 text-sm text-[#6b5a8a] dark:text-white/60 hover:text-[#1a1040] dark:hover:text-white transition-colors mt-1">
-              <MessageSquare size={13} />
-              Feedback
-            </button>
-          </div>
+        {/* ── Hero Banner Card ── */}
+        <div className="p-6 pb-2">
+          <div className="relative overflow-hidden rounded-2xl border border-[var(--border)] bg-gradient-to-br from-[#6c47ff]/[0.08] via-[#8b5cf6]/[0.04] to-transparent dark:from-[#6c47ff]/[0.14] dark:via-[#3b1d7a]/[0.08] dark:to-transparent p-6 shadow-sm">
+            {/* Ambient decorative glow */}
+            <div className="absolute -top-16 -right-16 w-64 h-64 bg-[#6c47ff]/10 dark:bg-[#6c47ff]/15 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-1.5">
-              <span className="text-sm font-medium text-[#1a1040] dark:text-white">✦ Personal Assistant</span>
-              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" className="stroke-[#6b5a8a] dark:stroke-white/60">
-                <circle cx="7" cy="7" r="6.5" />
-                <text x="7" y="11" textAnchor="middle" className="fill-[#6b5a8a] dark:fill-white/60" fontSize="8" fontFamily="sans-serif">i</text>
-              </svg>
+            {/* Top row: Greeting + Actions */}
+            <div className="relative flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-5">
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-1)]">
+                  {(() => {
+                    const g = getGreeting();
+                    return `${g.text}, ${user.firstName} ${g.emoji}`;
+                  })()}
+                </h1>
+                <div className="flex items-center gap-2 mt-2">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#6c47ff]/10 text-[#6c47ff] dark:bg-[#6c47ff]/25 dark:text-[#a78bfa] border border-[#6c47ff]/20">
+                    ✦ Personal Assistant
+                  </span>
+                  <span className="text-xs text-[var(--text-3)]">Your meeting intelligence hub</span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  className="flex items-center gap-1.5 text-xs font-medium text-[var(--text-2)] hover:text-[var(--text-1)] bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] border border-[var(--border)] px-3 py-1.5 rounded-lg transition-colors shadow-xs"
+                >
+                  <MessageSquare size={13} className="text-[#6c47ff]" />
+                  Feedback
+                </button>
+                <Link
+                  href="/settings"
+                  className="flex items-center gap-1.5 text-xs font-medium text-[var(--text-2)] hover:text-[var(--text-1)] bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] border border-[var(--border)] px-3 py-1.5 rounded-lg transition-colors shadow-xs"
+                >
+                  <Settings size={13} />
+                  Manage
+                </Link>
+              </div>
             </div>
-            <button className="flex items-center gap-1 text-xs text-[#6b5a8a] dark:text-white/60 hover:text-[#1a1040] dark:hover:text-white transition-colors">
-              <Settings size={12} />
-              Manage
-            </button>
-          </div>
 
-          <div className="grid grid-cols-3 gap-3">
-            {[
-              { emoji: "📡", title: "Daily Brief", sub: "No brief yet", href: "/meetings" },
-              { emoji: "📅", title: "Meeting Prep", sub: "No upcoming meetings", href: "/meetings/new" },
-              { emoji: "✅", title: "Tasks", sub: "Last 7 Days", href: "/tasks" },
-            ].map(({ emoji, title, sub, href }) => (
-              <Link key={title} href={href} className="bg-white/60 dark:bg-white/10 rounded-xl p-3.5 backdrop-blur-sm hover:bg-white/80 dark:hover:bg-white/15 transition-colors cursor-pointer">
-                <div className="text-xl mb-2">{emoji}</div>
-                <p className="text-sm font-semibold text-[#1a1040] dark:text-white">{title}</p>
-                <p className="text-xs text-[#6b5a8a] dark:text-white/60 mt-0.5">{sub}</p>
-              </Link>
-            ))}
+            {/* Quick Action Cards */}
+            <div className="relative grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {[
+                {
+                  icon: "📡",
+                  iconBg: "bg-[#6c47ff]/10 text-[#6c47ff] dark:bg-[#6c47ff]/20 dark:text-[#a78bfa]",
+                  title: "Daily Brief",
+                  sub: "No brief yet · catch up on today",
+                  href: "/meetings",
+                },
+                {
+                  icon: "📅",
+                  iconBg: "bg-[#0ea5e9]/10 text-[#0ea5e9] dark:bg-[#0ea5e9]/20 dark:text-[#38bdf8]",
+                  title: "Meeting Prep",
+                  sub: "No upcoming meetings scheduled",
+                  href: "/meetings/new",
+                },
+                {
+                  icon: "✅",
+                  iconBg: "bg-[#10b981]/10 text-[#10b981] dark:bg-[#10b981]/20 dark:text-[#34d399]",
+                  title: "Tasks & Action Items",
+                  sub: "Last 7 Days · view your todos",
+                  href: "/tasks",
+                },
+              ].map(({ icon, iconBg, title, sub, href }) => (
+                <Link
+                  key={title}
+                  href={href}
+                  className="group flex flex-col justify-between p-4 rounded-xl border border-[var(--border)] bg-[var(--bg-card)]/90 hover:bg-[var(--bg-card)] hover:border-[#6c47ff]/40 hover:shadow-md transition-all backdrop-blur-sm"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div className={`w-8 h-8 rounded-lg ${iconBg} flex items-center justify-center text-sm font-bold shadow-xs`}>
+                      {icon}
+                    </div>
+                    <span className="text-[var(--text-4)] group-hover:text-[#6c47ff] group-hover:translate-x-0.5 transition-all text-sm font-semibold">
+                      →
+                    </span>
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-[var(--text-1)] group-hover:text-[#6c47ff] transition-colors">
+                      {title}
+                    </p>
+                    <p className="text-xs text-[var(--text-3)] mt-0.5 truncate">{sub}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
 

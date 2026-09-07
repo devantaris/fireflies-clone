@@ -5,6 +5,7 @@ import {
   Video, Bell, Mail, Brain, Zap, BookOpen, Code2, Cookie,
   User, Shield, ChevronLeft, Gift, X, Crown,
 } from "lucide-react";
+import { useUser } from "@/lib/currentUser";
 
 const SETTINGS_SECTIONS = [
   { id: "recording", label: "Recording & Privacy", icon: Video },
@@ -20,25 +21,34 @@ const SETTINGS_SECTIONS = [
 function Toggle({ checked, onChange }: { checked: boolean; onChange: () => void }) {
   return (
     <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
       onClick={onChange}
-      className="relative shrink-0 rounded-full transition-colors"
-      style={{ width: 40, height: 22, background: checked ? "#6c47ff" : "var(--border-strong)" }}
+      className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full p-0.5 transition-colors duration-200 ease-in-out focus:outline-none ${
+        checked ? "bg-[#6c47ff]" : "bg-[var(--border-strong)]"
+      }`}
     >
       <span
-        className="absolute top-[3px] w-4 h-4 rounded-full bg-white shadow transition-transform"
-        style={{ transform: checked ? "translateX(20px)" : "translateX(3px)" }}
+        className={`pointer-events-none block h-4 w-4 rounded-full bg-white shadow-sm ring-0 transition-transform duration-200 ease-in-out ${
+          checked ? "translate-x-4" : "translate-x-0"
+        }`}
       />
     </button>
   );
 }
 
 export default function SettingsPage() {
+  const user = useUser();
   const [activeSection, setActiveSection] = useState("recording");
   const [activeTab, setActiveTab] = useState<"personal" | "team">("personal");
   const [autoRecord, setAutoRecord] = useState(true);
   const [captureVideo, setCaptureVideo] = useState(false);
   const [autoDelete, setAutoDelete] = useState(false);
   const [showEmailBanner, setShowEmailBanner] = useState(true);
+
+  // Derive a plausible email handle from the user's name
+  const emailDisplay = `${user.firstName.toLowerCase()}@fireflies.ai`;
 
   return (
     <div className="min-h-full flex bg-[var(--bg)]">
@@ -50,11 +60,14 @@ export default function SettingsPage() {
             <ChevronLeft size={14} />
           </button>
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-9 h-9 rounded-full bg-[#6c47ff] flex items-center justify-center text-white text-sm font-bold shrink-0">
-              D
+            <div
+              className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0"
+              style={{ background: user.color }}
+            >
+              {user.initials}
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-medium text-[var(--text-1)] truncate">itsdevanshkumar@g...</p>
+              <p className="text-xs font-medium text-[var(--text-1)] truncate">{emailDisplay}</p>
               <p className="text-[10px] text-[var(--text-3)]">Free Plan</p>
             </div>
           </div>
