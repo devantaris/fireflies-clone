@@ -15,8 +15,8 @@ export function LayoutShell({ children }: Props) {
   const pathname = usePathname();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  // Landing page — render without sidebar/topbar
-  if (pathname === "/") return <>{children}</>;
+  // Landing page — render without sidebar/topbar, but needs its own scroll container
+  if (pathname === "/") return <div className="flex-1 overflow-y-auto">{children}</div>;
 
   function closeDrawer() {
     setDrawerOpen(false);
