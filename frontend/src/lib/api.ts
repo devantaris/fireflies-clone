@@ -15,10 +15,12 @@ const api = axios.create({
 
 // ── Meetings ──────────────────────────────────────────────────────────────────
 
-export async function getMeetings(filters: Partial<MeetingFilters> = {}): Promise<MeetingListItem[]> {
-  const params = Object.fromEntries(
-    Object.entries(filters).filter(([_, v]) => v !== "" && v !== undefined && v !== null)
+export async function getMeetings(filters: Partial<MeetingFilters> & { hosted?: boolean } = {}): Promise<MeetingListItem[]> {
+  const { hosted, ...rest } = filters;
+  const params: Record<string, unknown> = Object.fromEntries(
+    Object.entries(rest).filter(([_, v]) => v !== "" && v !== undefined && v !== null)
   );
+  if (hosted !== undefined) params.hosted = hosted;
   const { data } = await api.get<MeetingListItem[]>("/meetings", { params });
   return data;
 }

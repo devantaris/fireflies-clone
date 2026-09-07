@@ -29,6 +29,7 @@ import {
   getInitials,
   getAvatarColor,
 } from "@/lib/utils";
+import { CURRENT_USER } from "@/lib/currentUser";
 
 interface Props {
   meetingId: number;
@@ -69,11 +70,6 @@ function ErrorState({ onBack }: { onBack: () => void }) {
 
 // ── Smart Search Left Panel ───────────────────────────────────────────────────
 
-const MOCK_SPEAKERS = [
-  { name: "Ayush Anand", initials: "A", color: "#10b981", wpm: 157, talktime: 92 },
-  { name: "Devansh Kumar", initials: "D", color: "#6c47ff", wpm: 214, talktime: 8 },
-];
-
 function CollapsibleSection({
   title,
   children,
@@ -110,7 +106,43 @@ function CollapsibleSection({
   );
 }
 
-function SmartSearchPanel({ onSeek }: { onSeek: (t: number) => void }) {
+function useSpeakerStats(transcriptLines: import("@/lib/types").TranscriptLine[]) {
+  return useMemo(() => {
+    if (!transcriptLines.length) return [];
+
+    // Aggregate talktime and word count per speaker
+    const stats: Record<string, { talktime: number; words: number }> = {};
+    for (const line of transcriptLines) {
+      const dur = Math.max(0, line.end_time - line.start_time);
+      const wc = line.text.trim().split(/\s+/).filter(Boolean).length;
+      if (!stats[line.speaker]) stats[line.speaker] = { talktime: 0, words: 0 };
+      stats[line.speaker].talktime += dur;
+      stats[line.speaker].words += wc;
+    }
+
+    const totalTime = Object.values(stats).reduce((s, v) => s + v.talktime, 0) || 1;
+
+    return Object.entries(stats)
+      .map(([name, { talktime, words }]) => ({
+        name,
+        color: getAvatarColor(name),
+        initials: getInitials(name),
+        wpm: talktime > 0 ? Math.round(words / (talktime / 60)) : 0,
+        talktime: Math.round((talktime / totalTime) * 100),
+      }))
+      .sort((a, b) => b.talktime - a.talktime);
+  }, [transcriptLines]);
+}
+
+function SmartSearchPanel({
+  onSeek,
+  transcriptLines,
+}: {
+  onSeek: (t: number) => void;
+  transcriptLines: import("@/lib/types").TranscriptLine[];
+}) {
+  const speakers = useSpeakerStats(transcriptLines);
+
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <div className="shrink-0 px-4 py-3 border-b border-[var(--border)]">
@@ -141,43 +173,49 @@ function SmartSearchPanel({ onSeek }: { onSeek: (t: number) => void }) {
         {/* Speaker Talktime */}
         <CollapsibleSection title="Speaker Talktime">
           <div className="px-4">
-            <div className="grid grid-cols-3 gap-1 mb-2 text-[10px] font-semibold uppercase tracking-wide text-[var(--text-4)]">
-              <span>Speakers</span>
-              <span className="text-center">WPM</span>
-              <span className="text-right">Talktime</span>
-            </div>
-            {MOCK_SPEAKERS.map((sp) => (
-              <div key={sp.name} className="grid grid-cols-3 gap-1 items-center py-1.5">
-                <div className="flex items-center gap-2 min-w-0">
-                  <div
-                    className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white shrink-0"
-                    style={{ background: sp.color }}
-                  >
-                    {sp.initials}
+            {speakers.length === 0 ? (
+              <p className="text-xs text-[var(--text-4)] py-2">No transcript data.</p>
+            ) : (
+              <>
+                <div className="grid grid-cols-3 gap-1 mb-2 text-[10px] font-semibold uppercase tracking-wide text-[var(--text-4)]">
+                  <span>Speakers</span>
+                  <span className="text-center">WPM</span>
+                  <span className="text-right">Talktime</span>
+                </div>
+                {speakers.map((sp) => (
+                  <div key={sp.name} className="grid grid-cols-3 gap-1 items-center py-1.5">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div
+                        className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white shrink-0"
+                        style={{ background: sp.color }}
+                      >
+                        {sp.initials}
+                      </div>
+                      <span className="text-xs text-[var(--text-2)] truncate">{sp.name.split(" ")[0]}</span>
+                    </div>
+                    <div className="flex items-center justify-center gap-1">
+                      <div className="w-1.5 h-1.5 rounded-full" style={{ background: sp.color }} />
+                      <span className="text-xs text-[var(--text-2)]">{sp.wpm}</span>
+                    </div>
+                    <div className="flex items-center justify-end gap-1.5">
+                      <div className="relative w-6 h-6 shrink-0">
+                        <svg viewBox="0 0 24 24" className="w-6 h-6 -rotate-90">
+                          <circle cx="12" cy="12" r="9" fill="none" stroke="var(--border)" strokeWidth="2.5" />
+                          <circle
+                            cx="12" cy="12" r="9"
+                            fill="none"
+                            stroke={sp.color}
+                            strokeWidth="2.5"
+                            strokeDasharray={`${2 * Math.PI * 9 * sp.talktime / 100} ${2 * Math.PI * 9}`}
+                          />
+                        </svg>
+                      </div>
+                      <span className="text-xs text-[var(--text-2)]">{sp.talktime}%</span>
+                    </div>
                   </div>
-                  <span className="text-xs text-[var(--text-2)] truncate">{sp.name.split(" ")[0]}</span>
-                </div>
-                <div className="flex items-center justify-center gap-1">
-                  <div className="w-1.5 h-1.5 rounded-full" style={{ background: sp.color }} />
-                  <span className="text-xs text-[var(--text-2)]">{sp.wpm}</span>
-                </div>
-                <div className="flex items-center justify-end gap-1.5">
-                  <div className="relative w-6 h-6 shrink-0">
-                    <svg viewBox="0 0 24 24" className="w-6 h-6 -rotate-90">
-                      <circle cx="12" cy="12" r="9" fill="none" stroke="var(--border)" strokeWidth="2.5" />
-                      <circle
-                        cx="12" cy="12" r="9"
-                        fill="none"
-                        stroke={sp.color}
-                        strokeWidth="2.5"
-                        strokeDasharray={`${2 * Math.PI * 9 * sp.talktime / 100} ${2 * Math.PI * 9}`}
-                      />
-                    </svg>
-                  </div>
-                  <span className="text-xs text-[var(--text-2)]">{sp.talktime}%</span>
-                </div>
-              </div>
-            ))}
+                ))}
+              </>
+            )}
           </div>
         </CollapsibleSection>
 
@@ -250,12 +288,12 @@ function CenterPanel({
           <div className="flex items-center gap-1.5">
             <div
               className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white shrink-0"
-              style={{ background: getAvatarColor("Devansh Kumar") }}
+              style={{ background: getAvatarColor(CURRENT_USER.name) }}
             >
-              {getInitials("Devansh Kumar")}
+              {getInitials(CURRENT_USER.name)}
             </div>
             <span className="text-[var(--accent-text)] text-xs font-medium hover:underline cursor-pointer">
-              Devansh Kumar
+              {CURRENT_USER.name}
             </span>
           </div>
           <span className="text-[var(--text-4)]">·</span>
@@ -426,7 +464,7 @@ export function MeetingDetailClient({ meetingId }: Props) {
         {/* LEFT: Smart Search + Media Player */}
         <div className="hidden lg:flex flex-col w-[280px] shrink-0 border-r border-[var(--border)] overflow-hidden">
           <div className="flex-1 overflow-hidden">
-            <SmartSearchPanel onSeek={player.seek} />
+            <SmartSearchPanel onSeek={player.seek} transcriptLines={meeting.transcript_lines} />
           </div>
           {/* Media player pinned at bottom of left col */}
           <div className="shrink-0 p-3 border-t border-[var(--border)] bg-[var(--bg)]">

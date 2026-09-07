@@ -17,6 +17,7 @@ import {
   Minimize2,
   Check,
 } from "lucide-react";
+import { CURRENT_USER } from "@/lib/currentUser";
 
 function getGreeting() {
   const h = new Date().getHours();
@@ -71,7 +72,7 @@ function AskFredPanel() {
             <path d="M7 24 L8 28 L12 29 L8 30 L7 34 L6 30 L2 29 L6 28 Z" fill="#6c47ff" />
           </svg>
         </div>
-        <h3 className="text-base font-bold text-[var(--text-1)] mb-0.5">Hi Devansh!</h3>
+        <h3 className="text-base font-bold text-[var(--text-1)] mb-0.5">Hi {CURRENT_USER.firstName}!</h3>
         <p className="text-sm text-[var(--text-2)] mb-6 text-center">Get ready for your meeting</p>
         <div className="w-full space-y-1">
           {suggestions.map((s) => (
@@ -147,7 +148,7 @@ export function HomeClient() {
         >
           <div className="flex items-start justify-between mb-4">
             <h1 className="text-2xl font-bold text-[#1a1040]">
-              {getGreeting()}, Devansh 🌙
+              {getGreeting()}, {CURRENT_USER.firstName} 🌙
             </h1>
             <button className="flex items-center gap-1.5 text-sm text-[#6b5a8a] hover:text-[#1a1040] transition-colors mt-1">
               <MessageSquare size={13} />

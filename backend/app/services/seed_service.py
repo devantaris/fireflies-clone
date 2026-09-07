@@ -12,6 +12,7 @@ from app.services.ai_service import generate_summary
 SEED_MEETINGS = [
     {
         "title": "Q4 Product Roadmap Planning",
+        "is_hosted": True,
         "days_ago": 2,
         "duration": 3240,  # 54 min
         "participants": [
@@ -55,6 +56,7 @@ SEED_MEETINGS = [
     },
     {
         "title": "Weekly Engineering Standup",
+        "is_hosted": True,
         "days_ago": 5,
         "duration": 1800,  # 30 min
         "participants": [
@@ -96,6 +98,7 @@ SEED_MEETINGS = [
     },
     {
         "title": "Customer Feedback Review — October",
+        "is_hosted": False,  # shared with me
         "days_ago": 10,
         "duration": 2700,  # 45 min
         "participants": [
@@ -136,6 +139,49 @@ SEED_MEETINGS = [
             {"text": "Add Slack integration to discovery backlog", "assignee": "Emma Torres"},
         ],
     },
+    {
+        "title": "Design System Sync — Component Library Review",
+        "is_hosted": False,  # shared with me
+        "days_ago": 15,
+        "duration": 2400,  # 40 min
+        "participants": [
+            {"name": "Lena Fischer", "email": "lena@company.com"},
+            {"name": "Omar Hassan", "email": "omar@company.com"},
+            {"name": "Yuki Tanaka", "email": "yuki@company.com"},
+        ],
+        "transcript": [
+            ("Lena Fischer", "Thanks for joining everyone. Today we're reviewing the component library and deciding what to standardize before the design system v2 launch.", 0, 8),
+            ("Omar Hassan", "I've prepared a list of the thirty-two components that currently have inconsistent implementations across the three product areas.", 9, 17),
+            ("Yuki Tanaka", "Thirty-two is a lot. Can we prioritize the ones that appear in the critical user paths?", 18, 24),
+            ("Lena Fischer", "Absolutely. The critical path components are buttons, form fields, modals, and navigation. Everything else can wait for a follow-up sprint.", 25, 34),
+            ("Omar Hassan", "For buttons, we have at least four different implementations. I recommend we standardize on the token-based system from the marketing site.", 35, 43),
+            ("Yuki Tanaka", "Agreed. That system already covers the primary, secondary, and destructive variants. We just need to add ghost and link button types.", 44, 52),
+            ("Lena Fischer", "Good call. Omar, can you document the button spec by end of next week?", 53, 58),
+            ("Omar Hassan", "Yes, I'll have the Figma component and written spec ready by Friday.", 59, 64),
+            ("Yuki Tanaka", "For form fields, the main issue is inconsistent error states and placeholder styling. I have a proposal ready to share.", 65, 73),
+            ("Lena Fischer", "Let's review it now. Share your screen, Yuki.", 74, 78),
+            ("Yuki Tanaka", "Sure. As you can see, I've unified the border treatment and added a floating label option that the product team requested.", 79, 87),
+            ("Omar Hassan", "The floating label looks great. Will it work with our existing React form library?", 88, 94),
+            ("Yuki Tanaka", "I tested it — yes, it integrates cleanly with react-hook-form. No breaking changes.", 95, 101),
+            ("Lena Fischer", "Excellent. Let's approve that proposal. Yuki, can you open a PR by Wednesday?", 102, 108),
+            ("Yuki Tanaka", "I'll have it up by Tuesday so there's time for review.", 109, 113),
+            ("Omar Hassan", "The modal component is tricky because we have both a slide-over and a centered dialog pattern. Do we keep both?", 114, 122),
+            ("Lena Fischer", "Yes, keep both but standardize the close behavior and focus trap. They should be interchangeable in terms of API.", 123, 131),
+            ("Omar Hassan", "Makes sense. I'll refactor both to share the same base hook.", 132, 137),
+            ("Yuki Tanaka", "For navigation, the sidebar is already consistent. The only issue is the mobile breakpoint handling.", 138, 145),
+            ("Lena Fischer", "Right. Let's move the breakpoint logic into a shared hook so both the sidebar and top nav use the same responsive behavior.", 146, 154),
+            ("Omar Hassan", "Good plan. Should we set a target date for the full v2 launch?", 155, 161),
+            ("Lena Fischer", "Six weeks from today feels achievable. That gives us three weeks for component work and three weeks for migration.", 162, 169),
+            ("Yuki Tanaka", "Agreed. I'll update the project timeline doc.", 170, 174),
+        ],
+        "action_items": [
+            {"text": "Document button spec with Figma component and written guidelines", "assignee": "Omar Hassan"},
+            {"text": "Open PR for unified form field component with floating label", "assignee": "Yuki Tanaka"},
+            {"text": "Refactor modal and slide-over to share base hook", "assignee": "Omar Hassan"},
+            {"text": "Move sidebar/top-nav breakpoint logic into shared hook", "assignee": "Lena Fischer"},
+            {"text": "Update project timeline doc for design system v2 launch", "assignee": "Yuki Tanaka"},
+        ],
+    },
 ]
 
 
@@ -157,6 +203,7 @@ def seed_database(db: Session) -> int:
             title=data["title"],
             date=meeting_date,
             duration=data["duration"],
+            is_hosted=data.get("is_hosted", True),
             created_at=meeting_date,
             updated_at=meeting_date,
         )

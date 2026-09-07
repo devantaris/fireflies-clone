@@ -39,6 +39,7 @@ export interface MeetingListItem {
   title: string;
   date: string;
   duration: number;
+  is_hosted: boolean;
   participant_count: number;
   participants: Participant[];
   transcript_line_count: number;

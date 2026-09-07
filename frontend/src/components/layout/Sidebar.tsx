@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { ThemeToggle } from "./ThemeToggle";
+import { CURRENT_USER } from "@/lib/currentUser";
 
 interface Props {
   onNavClick?: () => void;
@@ -79,11 +80,11 @@ export function Sidebar({ onNavClick }: Props) {
         <button className="flex items-center gap-2.5 w-full px-2 py-1.5 rounded-lg hover:bg-[var(--bg-hover)] transition-colors">
           <div
             className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
-            style={{ background: "#6c47ff" }}
+            style={{ background: CURRENT_USER.color }}
           >
-            D
+            {CURRENT_USER.initials}
           </div>
-          <span className="text-sm font-medium text-[var(--text-1)] truncate flex-1 text-left">Devansh</span>
+          <span className="text-sm font-medium text-[var(--text-1)] truncate flex-1 text-left">{CURRENT_USER.firstName}</span>
           <ChevronDown size={13} className="text-[var(--text-3)] shrink-0" />
         </button>
       </div>

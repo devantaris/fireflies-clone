@@ -128,7 +128,7 @@ function MeetingsList() {
     }
   }, [focusParam]);
 
-  const fetchMeetings = useCallback(async (f: MeetingFilters) => {
+  const fetchMeetings = useCallback(async (f: MeetingFilters, tab: "hosted" | "shared") => {
     setLoading(true);
     setFetchError(false);
     try {
@@ -138,6 +138,7 @@ function MeetingsList() {
         date_to: f.date_to || undefined,
         participant: f.participant || undefined,
         sort: f.sort,
+        hosted: tab === "hosted",
       });
       setMeetings(data);
     } catch {
@@ -149,8 +150,8 @@ function MeetingsList() {
   }, []);
 
   useEffect(() => {
-    fetchMeetings(filters);
-  }, [filters, fetchMeetings]);
+    fetchMeetings(filters, ownerTab);
+  }, [filters, ownerTab, fetchMeetings]);
 
   function updateFilters(partial: Partial<MeetingFilters>) {
     setFilters((f) => ({ ...f, ...partial }));
@@ -178,11 +179,7 @@ function MeetingsList() {
   const hasActiveFilters =
     filters.search || filters.date_from || filters.date_to || filters.participant;
 
-  // Client-side tab filter (hosted = odd IDs simulating "mine", shared = even IDs)
-  const tabFilteredMeetings = meetings.filter((m) =>
-    ownerTab === "hosted" ? m.id % 2 !== 0 : m.id % 2 === 0
-  );
-  const displayMeetings = tabFilteredMeetings;
+  const displayMeetings = meetings;
 
   return (
     <div className="min-h-full flex flex-col">
@@ -216,7 +213,7 @@ function MeetingsList() {
               </button>
             </div>
             <button
-              onClick={() => fetchMeetings(filters)}
+              onClick={() => fetchMeetings(filters, ownerTab)}
               className="p-2 rounded-lg text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[var(--bg-hover)] transition-colors"
               title="Refresh"
             >
@@ -246,7 +243,7 @@ function MeetingsList() {
         {loading ? (
           <MeetingsSkeleton />
         ) : fetchError ? (
-          <FetchErrorState onRetry={() => fetchMeetings(filters)} />
+          <FetchErrorState onRetry={() => fetchMeetings(filters, ownerTab)} />
         ) : displayMeetings.length === 0 ? (
           <EmptyState
             filtered={!!hasActiveFilters || ownerTab === "shared"}

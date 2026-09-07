@@ -78,6 +78,7 @@ class MeetingCreate(BaseModel):
     title: str
     date: datetime
     duration: int = 0
+    is_hosted: bool = True
     participants: list[ParticipantCreate] = []
     transcript_lines: list[TranscriptLineCreate] = []
 
@@ -92,6 +93,7 @@ class MeetingListItem(BaseModel):
     title: str
     date: datetime
     duration: int
+    is_hosted: bool
     participant_count: int
     participants: list[ParticipantOut]
     transcript_line_count: int

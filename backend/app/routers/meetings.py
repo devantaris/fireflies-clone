@@ -20,6 +20,7 @@ def list_meetings(
     date_to: Optional[str] = Query(None),
     participant: Optional[str] = Query(None),
     sort: str = Query("date_desc"),
+    hosted: Optional[bool] = Query(None),
     db: Session = Depends(get_db),
 ):
     q = db.query(Meeting)
@@ -32,6 +33,8 @@ def list_meetings(
         q = q.filter(Meeting.date <= datetime.fromisoformat(date_to))
     if participant:
         q = q.join(Participant).filter(Participant.name.ilike(f"%{participant}%"))
+    if hosted is not None:
+        q = q.filter(Meeting.is_hosted == hosted)
 
     if sort == "date_asc":
         q = q.order_by(Meeting.date.asc())
@@ -46,6 +49,7 @@ def list_meetings(
             title=m.title,
             date=m.date,
             duration=m.duration,
+            is_hosted=m.is_hosted,
             participant_count=len(m.participants),
             participants=[ParticipantOut.model_validate(p) for p in m.participants],
             transcript_line_count=len(m.transcript_lines),
@@ -60,6 +64,7 @@ def create_meeting(payload: MeetingCreate, db: Session = Depends(get_db)):
         title=payload.title,
         date=payload.date,
         duration=payload.duration,
+        is_hosted=payload.is_hosted,
     )
     db.add(meeting)
     db.flush()

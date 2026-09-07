@@ -11,6 +11,7 @@ class Meeting(Base):
     title = Column(String(255), nullable=False)
     date = Column(DateTime, nullable=False)
     duration = Column(Integer, nullable=False, default=0)  # seconds
+    is_hosted = Column(Boolean, nullable=False, default=True)  # True = hosted by current user
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 

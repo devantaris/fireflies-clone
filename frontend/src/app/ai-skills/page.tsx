@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Sparkles, Plus, Search, X, MessageSquare, Check } from "lucide-react";
 import toast from "react-hot-toast";
+import { CURRENT_USER } from "@/lib/currentUser";
 
 const SKILLS = {
   Recommended: [
@@ -186,9 +187,9 @@ export default function AISkillsPage() {
                     <>
                       <div className="flex items-center gap-1.5 mb-4">
                         <div className="w-5 h-5 rounded-full bg-[#8b5cf6] flex items-center justify-center shrink-0">
-                          <span className="text-white text-[9px] font-bold">D</span>
+                          <span className="text-white text-[9px] font-bold">{CURRENT_USER.initials}</span>
                         </div>
-                        <span className="text-xs text-[var(--text-2)]">Devansh Kumar</span>
+                        <span className="text-xs text-[var(--text-2)]">{CURRENT_USER.name}</span>
                         <span className="text-[var(--text-4)] mx-1">·</span>
                         <span className="text-xs text-[var(--text-4)]">↑ {selected.uses}</span>
                       </div>

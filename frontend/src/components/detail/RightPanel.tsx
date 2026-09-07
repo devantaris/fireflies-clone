@@ -25,9 +25,10 @@ import {
   deleteActionItem,
 } from "@/lib/api";
 import { TranscriptPanel } from "@/components/detail/TranscriptPanel";
+import { CURRENT_USER } from "@/lib/currentUser";
 
 // ── Tab types ─────────────────────────────────────────────────────────────────
-type RightTab = "askfred" | "transcript";
+type RightTab = "askfred" | "overview" | "actions" | "transcript";
 
 // ── AskFred Panel ─────────────────────────────────────────────────────────────
 
@@ -73,7 +74,7 @@ function AskFredPanel() {
           <div className="mb-3">
             <Sparkles size={24} className="text-[#6c47ff] mx-auto" />
           </div>
-          <h3 className="text-base font-semibold text-[var(--text-1)]">Hi Devansh!</h3>
+          <h3 className="text-base font-semibold text-[var(--text-1)]">Hi {CURRENT_USER.firstName}!</h3>
           <p className="text-sm text-[var(--text-2)] mt-0.5">Ask anything about this meeting</p>
         </div>
 
@@ -535,34 +536,60 @@ export function RightPanel({
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      {/* AskFred | Transcript tab switcher */}
-      <div className="shrink-0 flex items-center border-b border-[var(--border)] px-4">
-        <button
-          onClick={() => setRightTab("askfred")}
-          className={`flex items-center gap-1.5 px-1 py-3 mr-4 text-sm border-b-2 transition-colors ${
-            rightTab === "askfred"
-              ? "border-[#6c47ff] text-[var(--text-1)] font-medium"
-              : "border-transparent text-[var(--text-3)] hover:text-[var(--text-2)]"
-          }`}
-        >
-          <Sparkles size={13} className={rightTab === "askfred" ? "text-[#6c47ff]" : ""} />
-          AskFred
-        </button>
-        <button
-          onClick={() => setRightTab("transcript")}
-          className={`flex items-center gap-1.5 px-1 py-3 text-sm border-b-2 transition-colors ${
-            rightTab === "transcript"
-              ? "border-[#6c47ff] text-[var(--text-1)] font-medium"
-              : "border-transparent text-[var(--text-3)] hover:text-[var(--text-2)]"
-          }`}
-        >
-          Transcript
-        </button>
+      {/* Tab bar — AskFred | Overview | Actions | Transcript */}
+      <div className="shrink-0 flex items-center border-b border-[var(--border)] px-2 overflow-x-auto">
+        {(
+          [
+            { id: "askfred", label: "AskFred", icon: <Sparkles size={12} /> },
+            { id: "overview", label: "Overview", icon: <FileText size={12} /> },
+            { id: "actions",  label: "Actions",  icon: <ListTodo size={12} /> },
+            { id: "transcript", label: "Transcript", icon: null },
+          ] as const
+        ).map(({ id, label, icon }) => (
+          <button
+            key={id}
+            onClick={() => setRightTab(id)}
+            className={`flex items-center gap-1.5 px-2 py-3 mr-1 text-sm border-b-2 transition-colors whitespace-nowrap shrink-0 ${
+              rightTab === id
+                ? "border-[#6c47ff] text-[var(--text-1)] font-medium"
+                : "border-transparent text-[var(--text-3)] hover:text-[var(--text-2)]"
+            }`}
+          >
+            {icon && <span className={rightTab === id ? "text-[#6c47ff]" : ""}>{icon}</span>}
+            {label}
+            {id === "actions" && items.length > 0 && (
+              <span className="ml-1 text-[10px] bg-[#6c47ff]/15 text-[var(--accent-text)] px-1.5 py-0.5 rounded-full font-semibold">
+                {items.length}
+              </span>
+            )}
+          </button>
+        ))}
       </div>
 
       {/* Content */}
       <div className="flex-1 overflow-hidden flex flex-col">
         {rightTab === "askfred" && <AskFredPanel />}
+        {rightTab === "overview" && (
+          <div className="flex-1 overflow-y-auto">
+            <OverviewSection
+              summary={summary}
+              meetingId={meetingId}
+              onSummaryUpdate={setSummary}
+              onChapterSeek={onChapterSeek}
+            />
+          </div>
+        )}
+        {rightTab === "actions" && (
+          <div className="flex-1 overflow-y-auto">
+            <ActionItemsSection
+              items={items}
+              onToggle={handleToggle}
+              onAdd={handleAdd}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          </div>
+        )}
         {rightTab === "transcript" && (
           <TranscriptPanel
             lines={transcriptLines}
