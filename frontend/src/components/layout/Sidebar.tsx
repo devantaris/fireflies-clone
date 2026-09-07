@@ -101,7 +101,7 @@ export function Sidebar({ onNavClick }: Props) {
 
         {/* Upgrade with badge */}
         <Link
-          href="#"
+          href="/upgrade"
           className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-[var(--text-2)] hover:text-[var(--text-1)] hover:bg-[var(--bg-hover)] transition-colors"
         >
           <TrendingUp size={16} />

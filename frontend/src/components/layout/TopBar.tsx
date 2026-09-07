@@ -15,6 +15,7 @@ const PAGE_TITLES: Array<[string, string]> = [
   ["/voice-agents", "Voice Agents"],
   ["/integrations", "Integrations"],
   ["/settings", "Settings"],
+  ["/upgrade", "Plan"],
 ];
 
 function getPageTitle(pathname: string): string {

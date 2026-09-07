@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Sparkles, Plus, Search, X, MessageSquare } from "lucide-react";
+import { Sparkles, Plus, Search, X, MessageSquare, Check } from "lucide-react";
+import toast from "react-hot-toast";
 
 const SKILLS = {
   Recommended: [
@@ -17,12 +18,15 @@ const SKILLS = {
   ],
 };
 
+const TOP_PICKS = ["Daily Standups", "Board Summaries", "Todos", "Decision Maker"];
+
 function Toggle({ checked, onChange }: { checked: boolean; onChange: () => void }) {
   return (
     <button
       onClick={(e) => { e.stopPropagation(); onChange(); }}
       className="relative shrink-0 rounded-full transition-colors"
       style={{ width: 36, height: 20, background: checked ? "#6c47ff" : "var(--border-strong)" }}
+      aria-label={checked ? "Disable" : "Enable"}
     >
       <span
         className="absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform"
@@ -40,12 +44,19 @@ export default function AISkillsPage() {
 
   const allSkills = [...skills.Recommended, ...skills.Popular];
   const selected = allSkills.find((s) => s.name === selectedSkill);
+  const activeCount = allSkills.filter((s) => s.enabled).length;
 
   function toggleSkill(name: string) {
+    const skill = allSkills.find((s) => s.name === name);
+    const willEnable = skill ? !skill.enabled : false;
     setSkills((prev) => ({
       Recommended: prev.Recommended.map((s) => s.name === name ? { ...s, enabled: !s.enabled } : s),
       Popular: prev.Popular.map((s) => s.name === name ? { ...s, enabled: !s.enabled } : s),
     }));
+    toast.success(`${name} skill is now ${willEnable ? "enabled" : "disabled"}.`, {
+      duration: 2500,
+      style: { borderRadius: "8px", fontSize: "13px" },
+    });
   }
 
   return (
@@ -70,7 +81,7 @@ export default function AISkillsPage() {
         <div className="flex items-center gap-1">
           {[
             { id: "discover", label: "Discover" },
-            { id: "active", label: "Active Skills (1)" },
+            { id: "active", label: `Active Skills (${activeCount})` },
             { id: "feed", label: "Feed" },
           ].map(({ id, label }) => (
             <button
@@ -164,34 +175,55 @@ export default function AISkillsPage() {
                     </button>
                   </div>
                   <h3 className="text-base font-semibold text-[var(--text-1)] mb-1">{selected.name}</h3>
-                  <p className="text-xs text-[var(--text-3)] mb-4">Extract key ideas from audio content.</p>
-                  <div className="flex items-center gap-1.5 mb-5">
-                    <div className="w-4 h-4 rounded bg-[#6c47ff] flex items-center justify-center">
-                      <Sparkles size={9} className="text-white" />
-                    </div>
-                    <span className="text-xs text-[var(--text-3)]">Fireflies</span>
-                    <span className="text-[var(--text-4)] mx-1">·</span>
-                    <span className="text-xs text-[var(--text-4)]">↑ {selected.uses}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => toggleSkill(selected.name)}
-                      className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                        selected.enabled
-                          ? "border border-[var(--border-strong)] text-[var(--text-2)] hover:text-[var(--text-1)] bg-transparent"
-                          : "bg-[#6c47ff] hover:bg-[#5535ee] text-white"
-                      }`}
-                    >
-                      {selected.enabled ? "Disable" : "Enable"}
-                    </button>
-                    <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[var(--border-strong)] text-xs text-[var(--text-2)] hover:text-[var(--text-1)] transition-colors">
-                      <Sparkles size={11} />
-                      Try Skill
-                    </button>
-                    <button className="ml-auto text-xs text-[var(--text-3)] hover:text-[var(--text-2)] transition-colors">
-                      Edit
-                    </button>
-                  </div>
+                  <p className="text-xs text-[var(--text-3)] mb-4">
+                    {selected.name === "Goal Progress"
+                      ? "Track progress towards goals discussed in meetings."
+                      : "Extract key ideas from audio content."}
+                  </p>
+
+                  {selected.enabled ? (
+                    /* Enabled state: show owner + Edit only */
+                    <>
+                      <div className="flex items-center gap-1.5 mb-4">
+                        <div className="w-5 h-5 rounded-full bg-[#8b5cf6] flex items-center justify-center shrink-0">
+                          <span className="text-white text-[9px] font-bold">D</span>
+                        </div>
+                        <span className="text-xs text-[var(--text-2)]">Devansh Kumar</span>
+                        <span className="text-[var(--text-4)] mx-1">·</span>
+                        <span className="text-xs text-[var(--text-4)]">↑ {selected.uses}</span>
+                      </div>
+                      <button className="text-xs text-[var(--text-2)] hover:text-[var(--text-1)] transition-colors font-medium border border-[var(--border)] rounded-lg px-3 py-1.5">
+                        Edit
+                      </button>
+                    </>
+                  ) : (
+                    /* Disabled state: show Enable + Try Skill + Edit */
+                    <>
+                      <div className="flex items-center gap-1.5 mb-5">
+                        <div className="w-4 h-4 rounded bg-[#6c47ff] flex items-center justify-center">
+                          <Sparkles size={9} className="text-white" />
+                        </div>
+                        <span className="text-xs text-[var(--text-3)]">Fireflies</span>
+                        <span className="text-[var(--text-4)] mx-1">·</span>
+                        <span className="text-xs text-[var(--text-4)]">↑ {selected.uses}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => toggleSkill(selected.name)}
+                          className="px-4 py-1.5 rounded-lg bg-[#6c47ff] hover:bg-[#5535ee] text-white text-xs font-medium transition-colors"
+                        >
+                          Enable
+                        </button>
+                        <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[var(--border-strong)] text-xs text-[var(--text-2)] hover:text-[var(--text-1)] transition-colors">
+                          <Sparkles size={11} />
+                          Try Skill
+                        </button>
+                        <button className="ml-auto text-xs text-[var(--text-3)] hover:text-[var(--text-2)] transition-colors">
+                          Edit
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 {/* Share Feedback */}
@@ -200,19 +232,46 @@ export default function AISkillsPage() {
                   Share Feedback
                 </button>
 
-                {/* Slack upsell */}
-                <div className="flex items-center gap-3 p-4 rounded-xl border border-[var(--border)] bg-[var(--bg-card)]">
-                  <div className="w-7 h-7 rounded-lg bg-[#e01e5a]/15 flex items-center justify-center shrink-0">
-                    <span className="text-[#e01e5a] text-xs font-bold">S</span>
-                  </div>
-                  <p className="text-xs text-[var(--text-2)] flex-1 min-w-0">
-                    <span className="font-medium">Get insights on Slack</span>
-                    {" — "}Receive skills output to your Slack channel.
-                  </p>
-                  <button className="text-xs text-[var(--accent-text)] hover:text-[var(--accent-hover)] font-medium shrink-0 transition-colors">
-                    Connect →
-                  </button>
-                </div>
+                {!selected.enabled && (
+                  <>
+                    {/* Other Top Picks */}
+                    <div className="mb-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[#f59e0b] text-sm">✦</span>
+                          <span className="text-sm font-medium text-[var(--text-1)]">Other Top Picks For You</span>
+                        </div>
+                        <button className="text-xs text-[#22c55e] flex items-center gap-1 font-medium hover:opacity-80 transition-opacity">
+                          <Check size={11} /> Enable All
+                        </button>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {TOP_PICKS.map((name) => (
+                          <button
+                            key={name}
+                            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] text-xs text-[var(--text-2)] hover:border-[#6c47ff]/40 hover:text-[var(--text-1)] transition-colors"
+                          >
+                            <span className="text-[#f59e0b] text-xs">✦</span> {name}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Slack upsell */}
+                    <div className="flex items-center gap-3 p-4 rounded-xl border border-[var(--border)] bg-[var(--bg-card)]">
+                      <div className="w-7 h-7 rounded-lg bg-[#e01e5a]/15 flex items-center justify-center shrink-0">
+                        <span className="text-[#e01e5a] text-xs font-bold">S</span>
+                      </div>
+                      <p className="text-xs text-[var(--text-2)] flex-1 min-w-0">
+                        <span className="font-medium">Get insights on Slack</span>
+                        {" — "}Receive skills output to your Slack channel.
+                      </p>
+                      <button className="text-xs text-[var(--accent-text)] hover:text-[var(--accent-hover)] font-medium shrink-0 transition-colors">
+                        Connect →
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           )}

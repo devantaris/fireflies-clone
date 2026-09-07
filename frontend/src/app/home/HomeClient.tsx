@@ -5,37 +5,124 @@ import Link from "next/link";
 import { getMeetings } from "@/lib/api";
 import type { MeetingListItem } from "@/lib/types";
 import {
-  Video,
-  ChevronRight,
-  Plus,
-  Upload,
-  Mic2,
-  Calendar,
   Settings,
-  Play,
   Monitor,
   Smartphone,
-  Clock,
+  Send,
+  Mic,
+  Plus,
+  Layers,
+  MessageSquare,
+  MoreHorizontal,
+  Minimize2,
+  Check,
 } from "lucide-react";
 
-function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString("en-US", {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  });
+function getGreeting() {
+  const h = new Date().getHours();
+  if (h < 12) return "Good Morning";
+  if (h < 17) return "Good Afternoon";
+  return "Good Evening";
 }
 
-function formatDuration(mins: number) {
-  if (mins < 60) return `${mins}m`;
-  const h = Math.floor(mins / 60);
-  const m = mins % 60;
-  return m > 0 ? `${h}h ${m}m` : `${h}h`;
+function formatMeetingDate(dateStr: string) {
+  const d = new Date(dateStr);
+  return (
+    d.toLocaleDateString("en-US", { month: "short", day: "numeric" }) +
+    " · " +
+    d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })
+  );
 }
 
+// ── Right AskFred panel ───────────────────────────────────────────────────────
+function AskFredPanel() {
+  const [input, setInput] = useState("");
+  const suggestions = [
+    "What's my day looking like?",
+    "Pending tasks across all meetings",
+    "List out my action items from the past week",
+  ];
+
+  return (
+    <div className="w-[300px] shrink-0 border-l border-[var(--border)] flex flex-col bg-[var(--bg)] overflow-hidden">
+      {/* Header */}
+      <div className="flex items-center gap-2 px-4 py-3 border-b border-[var(--border)] shrink-0">
+        <div className="w-6 h-6 rounded-md bg-[#6c47ff]/15 flex items-center justify-center shrink-0">
+          <span className="text-[#6c47ff] text-[10px] font-bold">A</span>
+        </div>
+        <span className="text-sm font-medium text-[var(--text-1)] flex-1">AskFred</span>
+        <button className="text-[var(--text-4)] hover:text-[var(--text-2)] transition-colors">
+          <MoreHorizontal size={14} />
+        </button>
+        <button className="text-[var(--text-4)] hover:text-[var(--text-2)] transition-colors">
+          <Plus size={14} />
+        </button>
+        <button className="text-[var(--text-4)] hover:text-[var(--text-2)] transition-colors">
+          <Minimize2 size={14} />
+        </button>
+      </div>
+
+      {/* Body */}
+      <div className="flex-1 flex flex-col items-center justify-center px-5 pb-4 overflow-y-auto">
+        <div className="mb-3">
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+            <path d="M18 3 L20 16 L33 18 L20 20 L18 33 L16 20 L3 18 L16 16 Z" fill="#10b981" />
+            <path d="M29 6 L30 11 L35 12 L30 13 L29 18 L28 13 L23 12 L28 11 Z" fill="#f59e0b" />
+            <path d="M7 24 L8 28 L12 29 L8 30 L7 34 L6 30 L2 29 L6 28 Z" fill="#6c47ff" />
+          </svg>
+        </div>
+        <h3 className="text-base font-bold text-[var(--text-1)] mb-0.5">Hi Devansh!</h3>
+        <p className="text-sm text-[var(--text-2)] mb-6 text-center">Get ready for your meeting</p>
+        <div className="w-full space-y-1">
+          {suggestions.map((s) => (
+            <button
+              key={s}
+              onClick={() => setInput(s)}
+              className="w-full text-left text-sm text-[var(--text-2)] px-3 py-2.5 rounded-lg hover:bg-[var(--bg-card)] hover:text-[var(--text-1)] transition-colors"
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Bottom input */}
+      <div className="border-t border-[var(--border)] px-4 py-3 shrink-0">
+        <div className="flex items-center gap-2 bg-[var(--bg-sub)] border border-[var(--border)] rounded-xl px-3 py-2 focus-within:border-[#6c47ff]/40 transition-colors mb-2">
+          <input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Ask anything across the meetings"
+            className="flex-1 bg-transparent text-sm text-[var(--text-1)] placeholder:text-[var(--text-4)] outline-none min-w-0"
+          />
+        </div>
+        <div className="flex items-center justify-between px-0.5">
+          <div className="flex items-center gap-2">
+            <button className="text-[var(--text-4)] hover:text-[var(--text-2)] transition-colors">
+              <Plus size={14} />
+            </button>
+            <button className="text-[var(--text-4)] hover:text-[var(--text-2)] transition-colors">
+              <Layers size={13} />
+            </button>
+          </div>
+          <div className="flex items-center gap-2">
+            <button className="text-[var(--text-4)] hover:text-[var(--text-2)] transition-colors">
+              <Mic size={14} />
+            </button>
+            <button
+              disabled={!input.trim()}
+              className="w-6 h-6 rounded-md bg-[#6c47ff] disabled:bg-[var(--border-strong)] flex items-center justify-center transition-colors disabled:cursor-not-allowed"
+            >
+              <Send size={10} className="text-white" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Page ──────────────────────────────────────────────────────────────────────
 export function HomeClient() {
   const [meetings, setMeetings] = useState<MeetingListItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -47,109 +134,61 @@ export function HomeClient() {
       .finally(() => setLoading(false));
   }, []);
 
-  const recentMeetings = meetings.slice(0, 5);
-
   return (
-    <div className="min-h-full bg-[var(--bg)]">
-      {/* Welcome card — light gradient matching reference */}
-      <div
-        className="mx-6 mt-6 mb-6 rounded-2xl overflow-hidden relative"
-        style={{
-          background:
-            "linear-gradient(135deg, #fde8d8 0%, #f3e8ff 40%, #dde9ff 100%)",
-          minHeight: 160,
-        }}
-      >
-        <div className="px-8 py-7 flex items-center gap-6">
-          <div className="flex-1 min-w-0">
-            <h1 className="text-xl font-bold text-[#1a1040] mb-2">
-              Welcome Aboard, Devansh!
+    <div className="flex h-full overflow-hidden">
+      {/* ── Main scrollable content ── */}
+      <div className="flex-1 min-w-0 overflow-y-auto">
+        {/* Gradient hero */}
+        <div
+          style={{
+            background: "linear-gradient(135deg, #fde8d8 0%, #f5e6ff 40%, #dde9ff 100%)",
+          }}
+          className="px-6 pt-5 pb-6"
+        >
+          <div className="flex items-start justify-between mb-4">
+            <h1 className="text-2xl font-bold text-[#1a1040]">
+              {getGreeting()}, Devansh 🌙
             </h1>
-            <p className="text-sm text-[#5a4a7a]">
-              Fireflies is now ready to automate your meetings and streamline
-              your workflows.
-            </p>
+            <button className="flex items-center gap-1.5 text-sm text-[#6b5a8a] hover:text-[#1a1040] transition-colors mt-1">
+              <MessageSquare size={13} />
+              Feedback
+            </button>
           </div>
-          {/* Video thumbnail */}
-          <div className="hidden lg:flex shrink-0">
-            <div className="w-[170px] h-[108px] rounded-xl bg-[#12082c] border border-[#6c47ff]/30 flex flex-col items-center justify-center gap-2 shadow-lg overflow-hidden relative">
-              <div className="absolute top-2 left-3 flex items-center gap-1.5">
-                <div className="w-3 h-3 rounded-sm bg-[#6c47ff]" />
-                <span className="text-[9px] text-white/70 font-medium">
-                  Fireflies | Product Demo
-                </span>
-              </div>
-              <div className="w-10 h-10 rounded-full bg-[#6c47ff] flex items-center justify-center">
-                <Play size={16} className="text-white ml-0.5" fill="white" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <div className="px-6 max-w-5xl">
-        {/* Quick Start */}
-        <div className="mb-7">
-          <h2 className="text-sm font-semibold text-[var(--text-1)] mb-0.5">
-            Quick Start
-          </h2>
-          <p className="text-xs text-[var(--text-3)] mb-4">
-            Capture your first meeting or upload a recording to see Fireflies in
-            action.
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-1.5">
+              <span className="text-sm font-medium text-[#1a1040]">✦ Personal Assistant</span>
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+                <circle cx="7" cy="7" r="6.5" stroke="#6b5a8a" />
+                <text x="7" y="11" textAnchor="middle" fill="#6b5a8a" fontSize="8" fontFamily="sans-serif">i</text>
+              </svg>
+            </div>
+            <button className="flex items-center gap-1 text-xs text-[#6b5a8a] hover:text-[#1a1040] transition-colors">
+              <Settings size={12} />
+              Manage
+            </button>
+          </div>
+
+          <div className="grid grid-cols-3 gap-3">
             {[
-              {
-                label: "Schedule Meeting",
-                icon: Calendar,
-                href: "/meetings/new",
-                color: "#f472b6",
-                bg: "#fdf2f8",
-              },
-              {
-                label: "Upload File",
-                icon: Upload,
-                href: "/meetings/new",
-                color: "#34d399",
-                bg: "#f0fdf4",
-              },
-              {
-                label: "Capture Meeting",
-                icon: Mic2,
-                href: "/meetings/new",
-                color: "#a78bfa",
-                bg: "#faf5ff",
-              },
-            ].map(({ label, icon: Icon, href, color, bg }) => (
-              <Link
-                key={label}
-                href={href}
-                className="flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl bg-[var(--bg-card)] border border-[var(--border)] hover:border-[var(--border-strong)] hover:bg-[var(--bg-elevated)] transition-all group"
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-                    style={{ background: bg }}
-                  >
-                    <Icon size={15} style={{ color }} />
-                  </div>
-                  <span className="text-sm text-[var(--text-1)] font-medium">
-                    {label}
-                  </span>
-                </div>
-                <ChevronRight
-                  size={14}
-                  className="text-[var(--text-4)] group-hover:text-[var(--text-2)] transition-colors"
-                />
-              </Link>
+              { emoji: "📡", title: "Daily Brief", sub: "No brief yet" },
+              { emoji: "📅", title: "Meeting Prep", sub: "No upcoming meetings" },
+              { emoji: "✅", title: "Tasks", sub: "Last 7 Days" },
+            ].map(({ emoji, title, sub }) => (
+              <div key={title} className="bg-white/60 rounded-xl p-3.5 backdrop-blur-sm">
+                <div className="text-xl mb-2">{emoji}</div>
+                <p className="text-sm font-semibold text-[#1a1040]">{title}</p>
+                <p className="text-xs text-[#6b5a8a] mt-0.5">{sub}</p>
+              </div>
             ))}
           </div>
         </div>
 
-        {/* Recent / Upcoming / AI Feed tabs */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-1">
-            <div className="flex items-center gap-1 border-b border-[var(--border)] flex-1">
+        {/* Below gradient */}
+        <div className="px-6 py-5">
+          {/* Tabs row */}
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-1">
               {(
                 [
                   { id: "recent", label: "Recent" },
@@ -160,44 +199,35 @@ export function HomeClient() {
                 <button
                   key={id}
                   onClick={() => setActiveTab(id)}
-                  className={`px-4 pb-2.5 text-sm font-medium border-b-2 -mb-px transition-colors ${
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                     activeTab === id
-                      ? "border-[#6c47ff] text-[var(--text-1)]"
-                      : "border-transparent text-[var(--text-3)] hover:text-[var(--text-2)]"
+                      ? "bg-[var(--bg-card)] text-[var(--text-1)] border border-[var(--border)] shadow-sm"
+                      : "text-[var(--text-3)] hover:text-[var(--text-2)]"
                   }`}
                 >
                   {label}
                 </button>
               ))}
             </div>
-            <Link
-              href="/settings"
-              className="pb-2.5 text-[var(--text-3)] hover:text-[var(--text-2)] transition-colors"
-            >
+            <Link href="/settings" className="text-[var(--text-3)] hover:text-[var(--text-2)] transition-colors">
               <Settings size={15} />
             </Link>
           </div>
 
-          {loading ? (
-            <div className="space-y-2 mt-3">
+          {/* Tab content */}
+          {activeTab === "upcoming" ? (
+            <div className="py-8 text-center text-[var(--text-3)] text-sm">No upcoming meetings</div>
+          ) : activeTab === "ai-feed" ? (
+            <div className="py-8 text-center text-[var(--text-3)] text-sm">AI insights will appear here</div>
+          ) : loading ? (
+            <div className="space-y-2">
               {[1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  className="h-14 rounded-lg bg-[var(--bg-card)] animate-pulse"
-                />
+                <div key={i} className="h-12 rounded-lg bg-[var(--bg-card)] animate-pulse" />
               ))}
             </div>
-          ) : activeTab === "upcoming" ? (
-            <div className="py-12 text-center text-[var(--text-3)] text-sm">
-              No upcoming meetings
-            </div>
-          ) : activeTab === "ai-feed" ? (
-            <div className="py-12 text-center text-[var(--text-3)] text-sm">
-              AI-generated insights from your meetings will appear here.
-            </div>
-          ) : recentMeetings.length === 0 ? (
-            <div className="py-12 text-center">
-              <p className="text-[var(--text-3)] text-sm mb-4">No meetings yet</p>
+          ) : meetings.length === 0 ? (
+            <div className="py-8 text-center">
+              <p className="text-sm text-[var(--text-3)] mb-3">No meetings yet</p>
               <Link
                 href="/meetings/new"
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#6c47ff] hover:bg-[#5535ee] text-white text-sm font-medium transition-colors"
@@ -207,84 +237,62 @@ export function HomeClient() {
               </Link>
             </div>
           ) : (
-            <div className="space-y-1 mt-2">
-              {recentMeetings.map((m) => (
+            <div className="space-y-1">
+              {meetings.slice(0, 6).map((m) => (
                 <Link
                   key={m.id}
                   href={`/meetings/${m.id}`}
-                  className="flex items-center gap-4 px-3 py-3 rounded-lg hover:bg-[var(--bg-card)] transition-colors group"
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-[var(--bg-card)] transition-colors"
                 >
-                  {/* Fireflies-style meeting logo placeholder */}
-                  <div className="w-9 h-9 rounded-lg bg-[#6c47ff]/10 flex items-center justify-center shrink-0">
-                    <Video size={16} className="text-[var(--accent-text)]" />
+                  <div className="w-8 h-8 rounded-full bg-[#6c47ff]/15 flex items-center justify-center shrink-0 text-sm font-semibold text-[#6c47ff]">
+                    {m.title[0]?.toUpperCase() ?? "M"}
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-[var(--text-1)] truncate">
-                      {m.title}
-                    </p>
-                    <p className="text-xs text-[var(--text-3)] mt-0.5 flex items-center gap-1">
-                      <Clock size={11} />
-                      {formatDate(m.date)}
-                      <span className="text-[var(--text-4)]">·</span>
-                      {formatDuration(m.duration)}
-                    </p>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-[var(--text-1)] truncate">{m.title}</p>
+                    <p className="text-xs text-[var(--text-3)]">{formatMeetingDate(m.date)}</p>
                   </div>
-                  <ChevronRight
-                    size={14}
-                    className="text-[var(--text-4)] opacity-0 group-hover:opacity-100 transition-opacity"
-                  />
                 </Link>
               ))}
-              {meetings.length > 5 && (
-                <div className="pt-2">
-                  <Link
-                    href="/meetings"
-                    className="flex items-center justify-center gap-1.5 py-2.5 text-xs font-medium text-[var(--accent-text)] hover:text-[var(--accent-hover)] transition-colors"
-                  >
-                    View all {meetings.length} meetings
-                    <ChevronRight size={12} />
-                  </Link>
-                </div>
-              )}
+              <p className="text-center text-sm text-[#6c47ff] py-3">All caught up!</p>
             </div>
           )}
-        </div>
 
-        {/* Try More section */}
-        <div className="mb-8">
-          <h2 className="text-sm font-semibold text-[var(--text-1)] mb-4">
-            Try More
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] hover:border-[var(--border-strong)] transition-colors cursor-pointer">
-              <div className="w-10 h-10 rounded-xl bg-[var(--bg-elevated)] flex items-center justify-center shrink-0">
-                <Monitor size={18} className="text-[var(--text-3)]" />
+          {/* Try More */}
+          <div className="mt-8">
+            <h2 className="text-sm font-semibold text-[var(--text-1)] mb-4">Try More</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--bg-card)]">
+                <Monitor size={24} className="text-[var(--text-3)] mb-3" />
+                <p className="text-sm font-semibold text-[var(--text-1)] mb-1">Desktop App</p>
+                <p className="text-xs text-[var(--text-3)] mb-3">
+                  Capture conversations without any bot present in your meeting.
+                </p>
+                <button className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#6c47ff] hover:bg-[#5535ee] text-white text-xs font-medium transition-colors">
+                  ↓ Download
+                </button>
               </div>
-              <div className="min-w-0">
-                <p className="text-sm font-medium text-[var(--text-1)]">
-                  Download Desktop App
+              <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--bg-card)]">
+                <Smartphone size={24} className="text-[var(--text-3)] mb-3" />
+                <p className="text-sm font-semibold text-[var(--text-1)] mb-1">Mobile App</p>
+                <p className="text-xs text-[var(--text-3)] mb-3">
+                  Record in-person conversations and review meetings on the go.
                 </p>
-                <p className="text-xs text-[var(--text-3)] mt-0.5">
-                  Bot-less recording with the desktop app
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] hover:border-[var(--border-strong)] transition-colors cursor-pointer">
-              <div className="w-10 h-10 rounded-xl bg-[var(--bg-elevated)] flex items-center justify-center shrink-0">
-                <Smartphone size={18} className="text-[var(--text-3)]" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-sm font-medium text-[var(--text-1)]">
-                  Get Mobile App
-                </p>
-                <p className="text-xs text-[var(--text-3)] mt-0.5">
-                  Record in-person meetings on mobile
-                </p>
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-1 rounded-md bg-[var(--bg-elevated)] border border-[var(--border)] text-[10px] text-[var(--text-3)] font-medium">
+                    App Store
+                  </span>
+                  <span className="px-2 py-1 rounded-md bg-[var(--bg-elevated)] border border-[var(--border)] text-[10px] text-[var(--text-3)] font-medium">
+                    Google Play
+                  </span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* ── Right AskFred panel ── */}
+      <AskFredPanel />
     </div>
   );
 }
