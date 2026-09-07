@@ -150,7 +150,10 @@ export function TopBar() {
 
         {/* Global search */}
         <div className="flex-1 flex items-center gap-2 max-w-md">
-          <div className="flex-1 flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-sub)] hover:border-[var(--border-strong)] cursor-text transition-colors">
+          <button
+            onClick={() => router.push("/meetings?focus=search")}
+            className="flex-1 flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-sub)] hover:border-[var(--border-strong)] cursor-text transition-colors text-left"
+          >
             <Search size={13} className="text-[var(--text-4)] shrink-0" />
             <span className="text-sm text-[var(--text-4)] flex-1 select-none">
               Search by title or keyword
@@ -158,7 +161,7 @@ export function TopBar() {
             <span className="text-[10px] text-[var(--text-4)] bg-[var(--bg-elevated)] border border-[var(--border)] px-1.5 py-0.5 rounded font-mono shrink-0">
               Ctrl + K
             </span>
-          </div>
+          </button>
         </div>
 
         {/* Right actions */}

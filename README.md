@@ -6,9 +6,11 @@ A Fireflies.ai-inspired meeting assistant built with Next.js + FastAPI + SQLite.
 
 | Service | URL |
 |---------|-----|
-| Frontend (Vercel) | https://fireflies-clone-tz2k.vercel.app |
-| Backend API (Render) | https://fireflies-clone-api-mm2v.onrender.com/api |
-| API Docs (Swagger) | https://fireflies-clone-api-mm2v.onrender.com/docs |
+| Frontend (Vercel) | https://fireflies-clone-xi.vercel.app |
+| Backend API (Render) | https://fireflies-clone-api-mmzv.onrender.com/api |
+| API Docs (Swagger) | https://fireflies-clone-api-mmzv.onrender.com/docs |
+
+> **Note:** The Render free tier spins down after inactivity. The first request may take 30–60 seconds to wake the server. If both URLs are unresponsive, re-deploy from the latest commit.
 
 ## Tech Stack
 
