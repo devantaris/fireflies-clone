@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, SessionLocal
@@ -7,6 +8,14 @@ from app.routers import meetings, transcripts, summaries, action_items
 # Create all tables on startup
 Base.metadata.create_all(bind=engine)
 
+# CORS origins — comma-separated list via env var, falls back to localhost defaults
+_cors_env = os.environ.get("CORS_ORIGINS", "")
+cors_origins = (
+    [o.strip() for o in _cors_env.split(",") if o.strip()]
+    if _cors_env
+    else ["http://localhost:3000", "http://127.0.0.1:3000"]
+)
+
 app = FastAPI(
     title="Fireflies Clone API",
     version="1.0.0",
@@ -15,7 +24,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
