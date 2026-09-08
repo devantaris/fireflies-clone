@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Search, Bell, Video, ChevronDown, X, Clock, Loader2 } from "lucide-react";
+import { Search, Bell, Video, ChevronDown, X, Clock, Loader2, MessageSquare, Mail, GraduationCap, Mic, CheckSquare, Download } from "lucide-react";
 import { getMeetings } from "@/lib/api";
 import type { MeetingListItem } from "@/lib/types";
 import { formatDuration } from "@/lib/utils";
@@ -274,6 +274,239 @@ function GlobalSearchModal({ onClose }: { onClose: () => void }) {
   );
 }
 
+// ── Notification types & data ─────────────────────────────────────────────────
+
+type NotificationTab = "All" | "Updates" | "Auto-Fill" | "Status";
+
+interface NotificationItem {
+  id: number;
+  icon: React.ReactNode;
+  iconBg: string;
+  title: string;
+  titleEmoji?: string;
+  description: string;
+  time: string;
+  cta?: { label: string; href?: string };
+  unread: boolean;
+  badge?: string;
+}
+
+const MOCK_NOTIFICATIONS: NotificationItem[] = [
+  {
+    id: 1,
+    icon: <MessageSquare size={18} className="text-white" />,
+    iconBg: "bg-[#6c47ff]",
+    title: "Your Slack recaps, your way",
+    titleEmoji: "🧊",
+    description: "Pick what Fireflies sends to Slack after every call.",
+    time: "10:51 AM",
+    cta: { label: "See How It Works" },
+    unread: true,
+  },
+  {
+    id: 2,
+    icon: <Mail size={18} className="text-white" />,
+    iconBg: "bg-[#7c3aed]",
+    title: "Email Assistant webinar",
+    titleEmoji: "🟢",
+    badge: "New",
+    description: "Tomorrow, Aug 18, 2 PM UTC. See replies drafted live.",
+    time: "10:51 AM",
+    cta: { label: "Save Your Spot" },
+    unread: true,
+  },
+  {
+    id: 3,
+    icon: <GraduationCap size={18} className="text-white" />,
+    iconBg: "bg-[#10b981]",
+    title: "New course: Admin Onboarding",
+    titleEmoji: "🎓",
+    description: "Set up right. Now in the community courses directory.",
+    time: "10:51 AM",
+    cta: { label: "Browse Courses" },
+    unread: true,
+  },
+  {
+    id: 4,
+    icon: <Mic size={16} className="text-[#6c47ff]" />,
+    iconBg: "bg-[#ede9fe]",
+    title: "New: Dictate your questions to Fred",
+    description: "Ask your next question out loud.",
+    time: "10:51 AM",
+    unread: true,
+  },
+];
+
+function NotificationPanel({ onClose }: { onClose: () => void }) {
+  const [activeTab, setActiveTab] = useState<NotificationTab>("All");
+  const [unreadOnly, setUnreadOnly] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  const tabs: { label: NotificationTab; count?: number; isNew?: boolean }[] = [
+    { label: "All", count: 7 },
+    { label: "Updates", count: 6 },
+    { label: "Auto-Fill" },
+    { label: "Status", isNew: true },
+  ];
+
+  // Close on click outside
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
+        onClose();
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [onClose]);
+
+  // Close on Escape
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
+  const filtered = unreadOnly
+    ? MOCK_NOTIFICATIONS.filter((n) => n.unread)
+    : MOCK_NOTIFICATIONS;
+
+  return (
+    <div
+      ref={panelRef}
+      className="absolute right-0 top-full mt-2 w-[420px] max-h-[520px] rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] shadow-2xl z-50 flex flex-col overflow-hidden"
+      style={{ boxShadow: "0 12px 48px rgba(0,0,0,0.15)" }}
+    >
+      {/* Header: Tabs + Unread toggle */}
+      <div className="flex items-center justify-between px-4 pt-3 pb-0">
+        <div className="flex items-center gap-1">
+          {tabs.map((tab) => (
+            <button
+              key={tab.label}
+              onClick={() => setActiveTab(tab.label)}
+              className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                activeTab === tab.label
+                  ? "text-[var(--text-1)] bg-[var(--bg-hover)]"
+                  : "text-[var(--text-3)] hover:text-[var(--text-2)] hover:bg-[var(--bg-hover)]"
+              }`}
+            >
+              {tab.label}
+              {tab.count !== undefined && (
+                <span className="text-[10px] text-[var(--text-4)]">· {tab.count}</span>
+              )}
+              {tab.isNew && (
+                <span className="text-[9px] font-semibold bg-[#6c47ff] text-white px-1.5 py-[1px] rounded-full leading-tight">
+                  New
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <label className="flex items-center gap-1.5 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={unreadOnly}
+              onChange={(e) => setUnreadOnly(e.target.checked)}
+              className="w-3.5 h-3.5 rounded border-[var(--border-strong)] accent-[#6c47ff]"
+            />
+            <span className="text-xs text-[var(--text-3)]">Unread</span>
+          </label>
+          <button
+            className="p-1 rounded-md text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[var(--bg-hover)] transition-colors"
+            title="Mark all as read"
+          >
+            <CheckSquare size={14} />
+          </button>
+        </div>
+      </div>
+
+      {/* "New" section label */}
+      <div className="px-4 pt-3 pb-1">
+        <span className="text-xs text-[var(--text-4)] font-medium">New</span>
+      </div>
+
+      <hr className="border-[var(--border)] mx-4" />
+
+      {/* Notification list */}
+      <div className="flex-1 overflow-y-auto px-2 py-1">
+        {filtered.length === 0 ? (
+          <div className="px-4 py-8 text-center text-sm text-[var(--text-4)]">
+            No notifications
+          </div>
+        ) : (
+          filtered.map((n) => (
+            <div
+              key={n.id}
+              className="flex gap-3 px-3 py-3 rounded-xl hover:bg-[var(--bg-hover)] transition-colors cursor-pointer group"
+            >
+              {/* Icon */}
+              <div
+                className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${n.iconBg}`}
+              >
+                {n.icon}
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between gap-2">
+                  <p className="text-[13px] font-semibold text-[var(--text-1)] leading-snug">
+                    {n.title}
+                    {n.titleEmoji && <span className="ml-1">{n.titleEmoji}</span>}
+                    {n.badge && (
+                      <span className="ml-1.5 text-[9px] font-semibold bg-[#6c47ff] text-white px-1.5 py-[1px] rounded-full leading-tight align-middle">
+                        {n.badge}
+                      </span>
+                    )}
+                  </p>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    {n.unread && (
+                      <span className="w-2 h-2 rounded-full bg-[#ef4444]" />
+                    )}
+                    <span className="text-[11px] text-[var(--text-4)] whitespace-nowrap">
+                      {n.time}
+                    </span>
+                  </div>
+                </div>
+                <p className="text-xs text-[var(--text-3)] mt-0.5 leading-relaxed">
+                  {n.description}
+                </p>
+                {n.cta && (
+                  <button className="mt-2 px-3 py-1.5 rounded-lg bg-[#6c47ff] hover:bg-[#5535ee] text-white text-xs font-semibold transition-colors">
+                    {n.cta.label}
+                  </button>
+                )}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Bottom banner: Desktop App promo */}
+      <div className="mx-3 mb-3 mt-1 rounded-xl bg-[#1a1a2e] px-4 py-3 flex items-center gap-3">
+        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6c47ff] to-[#f97316] flex items-center justify-center shrink-0">
+          <span className="text-white text-sm font-bold">F</span>
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-[13px] font-semibold text-white leading-snug">
+            Fireflies Desktop App
+          </p>
+          <p className="text-[11px] text-gray-400">
+            Capture conversations without a bot.
+          </p>
+        </div>
+        <button className="flex items-center gap-1.5 text-white text-xs font-medium hover:text-gray-300 transition-colors shrink-0">
+          Download
+          <Download size={13} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // ── TopBar ────────────────────────────────────────────────────────────────────
 
 export function TopBar() {
@@ -282,6 +515,7 @@ export function TopBar() {
   const [captureOpen, setCaptureOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Ctrl+K global keyboard shortcut
@@ -348,13 +582,16 @@ export function TopBar() {
           </button>
 
           {/* Notification bell */}
-          <button
-            onClick={() => { const { default: t } = require("react-hot-toast"); t("No new notifications", { icon: "🔔", duration: 2000, style: { borderRadius: "8px", fontSize: "13px" } }); }}
-            className="relative p-1.5 rounded-lg text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[var(--bg-hover)] transition-colors"
-          >
-            <Bell size={16} />
-            <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-[#ef4444]" />
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => setNotifOpen((v) => !v)}
+              className="relative p-1.5 rounded-lg text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[var(--bg-hover)] transition-colors"
+            >
+              <Bell size={16} />
+              <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-[#ef4444]" />
+            </button>
+            {notifOpen && <NotificationPanel onClose={() => setNotifOpen(false)} />}
+          </div>
 
           {/* Capture split button */}
           <div className="relative" ref={dropdownRef}>
