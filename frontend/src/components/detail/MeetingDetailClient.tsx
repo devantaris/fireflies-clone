@@ -423,67 +423,145 @@ function CenterPanel({
 
 // ── Main component ────────────────────────────────────────────────────────────
 
-function exportMeeting(meeting: MeetingDetail, format: "txt" | "md") {
-  const lines = meeting.transcript_lines;
-  const summary = meeting.summary;
-  const actions = meeting.action_items;
+function fmtTime(sec: number) {
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60).toString().padStart(2, "0");
+  return `${m}:${s}`;
+}
 
-  let content = "";
+function exportMeetingText(meeting: MeetingDetail, format: "txt" | "md") {
+  const { transcript_lines: lines, summary, action_items: actions } = meeting;
+  let c = "";
   if (format === "md") {
-    content += `# ${meeting.title}\n\n`;
-    content += `**Date:** ${formatMeetingDate(meeting.date)}  \n`;
-    content += `**Duration:** ${formatDuration(meeting.duration)}  \n`;
-    content += `**Participants:** ${meeting.participants.map((p) => p.name).join(", ")}\n\n`;
-    if (summary?.overview) {
-      content += `## Summary\n\n${summary.overview}\n\n`;
-    }
+    c += `# ${meeting.title}\n\n`;
+    c += `**Date:** ${formatMeetingDate(meeting.date)}  \n`;
+    c += `**Duration:** ${formatDuration(meeting.duration)}  \n`;
+    c += `**Participants:** ${meeting.participants.map((p) => p.name).join(", ")}\n\n`;
+    if (summary?.overview) c += `## Summary\n\n${summary.overview}\n\n`;
     if (actions.length) {
-      content += `## Action Items\n\n`;
-      for (const a of actions) {
-        content += `- [${a.completed ? "x" : " "}] ${a.text}${a.assignee ? ` _(${a.assignee})_` : ""}\n`;
-      }
-      content += "\n";
+      c += `## Action Items\n\n`;
+      for (const a of actions) c += `- [${a.completed ? "x" : " "}] ${a.text}${a.assignee ? ` _(${a.assignee})_` : ""}\n`;
+      c += "\n";
     }
     if (lines.length) {
-      content += `## Transcript\n\n`;
-      for (const l of lines) {
-        const mins = Math.floor(l.start_time / 60);
-        const secs = Math.floor(l.start_time % 60).toString().padStart(2, "0");
-        content += `**[${mins}:${secs}] ${l.speaker}:** ${l.text}\n\n`;
-      }
+      c += `## Transcript\n\n`;
+      for (const l of lines) c += `**[${fmtTime(l.start_time)}] ${l.speaker}:** ${l.text}\n\n`;
     }
   } else {
-    content += `${meeting.title}\n${"=".repeat(meeting.title.length)}\n\n`;
-    content += `Date: ${formatMeetingDate(meeting.date)}\n`;
-    content += `Duration: ${formatDuration(meeting.duration)}\n`;
-    content += `Participants: ${meeting.participants.map((p) => p.name).join(", ")}\n\n`;
-    if (summary?.overview) {
-      content += `SUMMARY\n${"-".repeat(40)}\n${summary.overview}\n\n`;
-    }
+    c += `${meeting.title}\n${"=".repeat(meeting.title.length)}\n\n`;
+    c += `Date: ${formatMeetingDate(meeting.date)}\nDuration: ${formatDuration(meeting.duration)}\n`;
+    c += `Participants: ${meeting.participants.map((p) => p.name).join(", ")}\n\n`;
+    if (summary?.overview) c += `SUMMARY\n${"-".repeat(40)}\n${summary.overview}\n\n`;
     if (actions.length) {
-      content += `ACTION ITEMS\n${"-".repeat(40)}\n`;
-      for (const a of actions) {
-        content += `[${a.completed ? "x" : " "}] ${a.text}${a.assignee ? ` (${a.assignee})` : ""}\n`;
-      }
-      content += "\n";
+      c += `ACTION ITEMS\n${"-".repeat(40)}\n`;
+      for (const a of actions) c += `[${a.completed ? "x" : " "}] ${a.text}${a.assignee ? ` (${a.assignee})` : ""}\n`;
+      c += "\n";
     }
     if (lines.length) {
-      content += `TRANSCRIPT\n${"-".repeat(40)}\n`;
-      for (const l of lines) {
-        const mins = Math.floor(l.start_time / 60);
-        const secs = Math.floor(l.start_time % 60).toString().padStart(2, "0");
-        content += `[${mins}:${secs}] ${l.speaker}: ${l.text}\n`;
-      }
+      c += `TRANSCRIPT\n${"-".repeat(40)}\n`;
+      for (const l of lines) c += `[${fmtTime(l.start_time)}] ${l.speaker}: ${l.text}\n`;
     }
   }
-
-  const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+  const blob = new Blob([c], { type: "text/plain;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `${meeting.title.replace(/[^a-zA-Z0-9]+/g, "_")}.${format === "md" ? "md" : "txt"}`;
+  a.download = `${meeting.title.replace(/[^a-zA-Z0-9]+/g, "_")}.${format}`;
   a.click();
   URL.revokeObjectURL(url);
+}
+
+async function exportMeetingPDF(meeting: MeetingDetail) {
+  const { jsPDF } = await import("jspdf");
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  const pw = doc.internal.pageSize.getWidth();
+  const margin = 16;
+  const maxW = pw - margin * 2;
+  let y = 20;
+
+  function checkPage(needed: number) {
+    if (y + needed > doc.internal.pageSize.getHeight() - 15) {
+      doc.addPage();
+      y = 20;
+    }
+  }
+
+  // Title
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text(meeting.title, margin, y);
+  y += 10;
+
+  // Meta
+  doc.setFontSize(9);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(100);
+  doc.text(`Date: ${formatMeetingDate(meeting.date)}   |   Duration: ${formatDuration(meeting.duration)}`, margin, y);
+  y += 5;
+  doc.text(`Participants: ${meeting.participants.map((p) => p.name).join(", ")}`, margin, y);
+  y += 8;
+  doc.setTextColor(0);
+
+  // Summary
+  if (meeting.summary?.overview) {
+    doc.setFontSize(13);
+    doc.setFont("helvetica", "bold");
+    doc.text("Summary", margin, y);
+    y += 6;
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const sLines = doc.splitTextToSize(meeting.summary.overview, maxW) as string[];
+    for (const sl of sLines) {
+      checkPage(5);
+      doc.text(sl, margin, y);
+      y += 5;
+    }
+    y += 4;
+  }
+
+  // Action Items
+  if (meeting.action_items.length) {
+    checkPage(12);
+    doc.setFontSize(13);
+    doc.setFont("helvetica", "bold");
+    doc.text("Action Items", margin, y);
+    y += 6;
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    for (const ai of meeting.action_items) {
+      checkPage(6);
+      const prefix = ai.completed ? "[x] " : "[ ] ";
+      const suffix = ai.assignee ? ` (${ai.assignee})` : "";
+      const aiLines = doc.splitTextToSize(`${prefix}${ai.text}${suffix}`, maxW) as string[];
+      for (const al of aiLines) { doc.text(al, margin, y); y += 5; }
+      y += 1;
+    }
+    y += 4;
+  }
+
+  // Transcript
+  if (meeting.transcript_lines.length) {
+    checkPage(12);
+    doc.setFontSize(13);
+    doc.setFont("helvetica", "bold");
+    doc.text("Transcript", margin, y);
+    y += 7;
+    doc.setFontSize(9);
+    for (const line of meeting.transcript_lines) {
+      const ts = fmtTime(line.start_time);
+      const header = `[${ts}] ${line.speaker}:`;
+      checkPage(10);
+      doc.setFont("helvetica", "bold");
+      doc.text(header, margin, y);
+      y += 4;
+      doc.setFont("helvetica", "normal");
+      const tLines = doc.splitTextToSize(line.text, maxW) as string[];
+      for (const tl of tLines) { checkPage(4); doc.text(tl, margin, y); y += 4; }
+      y += 2;
+    }
+  }
+
+  doc.save(`${meeting.title.replace(/[^a-zA-Z0-9]+/g, "_")}.pdf`);
 }
 
 export function MeetingDetailClient({ meetingId }: Props) {
@@ -550,13 +628,19 @@ export function MeetingDetailClient({ meetingId }: Props) {
                 <div className="fixed inset-0 z-40" onClick={() => setShowExport(false)} />
                 <div className="absolute left-0 top-full mt-1 z-50 w-44 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] shadow-lg overflow-hidden py-1">
                   <button
-                    onClick={() => { exportMeeting(meeting, "md"); setShowExport(false); toast.success("Exported as Markdown"); }}
+                    onClick={() => { exportMeetingPDF(meeting); setShowExport(false); toast.success("Exported as PDF"); }}
+                    className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-[var(--text-2)] hover:bg-[var(--bg-hover)] transition-colors text-left"
+                  >
+                    <Download size={13} /> Export PDF
+                  </button>
+                  <button
+                    onClick={() => { exportMeetingText(meeting, "md"); setShowExport(false); toast.success("Exported as Markdown"); }}
                     className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-[var(--text-2)] hover:bg-[var(--bg-hover)] transition-colors text-left"
                   >
                     <Download size={13} /> Export .md
                   </button>
                   <button
-                    onClick={() => { exportMeeting(meeting, "txt"); setShowExport(false); toast.success("Exported as text"); }}
+                    onClick={() => { exportMeetingText(meeting, "txt"); setShowExport(false); toast.success("Exported as text"); }}
                     className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-[var(--text-2)] hover:bg-[var(--bg-hover)] transition-colors text-left"
                   >
                     <Download size={13} /> Export .txt
