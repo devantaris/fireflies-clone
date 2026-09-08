@@ -111,3 +111,10 @@ export async function updateActionItem(
 export async function deleteActionItem(itemId: number): Promise<void> {
   await api.delete(`/action-items/${itemId}`);
 }
+
+// ── AskFred ──────────────────────────────────────────────────────────────────
+
+export async function askFred(question: string): Promise<{ answer: string; sources: string[] }> {
+  const { data } = await api.post<{ answer: string; sources: string[] }>("/ask", { question });
+  return data;
+}
