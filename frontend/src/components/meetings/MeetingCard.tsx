@@ -34,6 +34,7 @@ import {
   getInitials,
   getAvatarColor,
   getCardBanner,
+  getAvatarImage,
 } from "@/lib/utils";
 import type { MeetingListItem } from "@/lib/types";
 
@@ -46,10 +47,15 @@ function Avatar({ name }: { name: string }) {
   return (
     <div
       title={name}
-      className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white ring-2 ring-[var(--bg-elevated)] shrink-0"
-      style={{ background: getAvatarColor(name) }}
+      className="w-6 h-6 rounded-full overflow-hidden relative ring-2 ring-[var(--bg-elevated)] shrink-0 bg-[var(--bg-elevated)]"
     >
-      {getInitials(name)}
+      <Image
+        src={getAvatarImage(name)}
+        alt={name}
+        fill
+        className="object-cover"
+        sizes="24px"
+      />
     </div>
   );
 }

@@ -28,6 +28,7 @@ import { getMeetings, deleteMeeting } from "@/lib/api";
 import type { MeetingListItem, MeetingDetail } from "@/lib/types";
 import { CreateMeetingModal } from "@/components/meetings/CreateMeetingModal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { getAvatarImage } from "@/lib/utils";
 
 const FALLBACK_MEETINGS: MeetingListItem[] = [
   {
@@ -462,11 +463,14 @@ function MeetingsContent() {
                       >
                         <Link href={`/meetings/${m.id}`} className="flex items-center gap-3.5 flex-1 min-w-0">
                           {/* Left Avatar Thumbnail */}
-                          <div
-                            className="w-10 h-10 rounded-xl overflow-hidden text-white font-bold text-xs flex items-center justify-center shrink-0 border border-black/10 shadow-xs"
-                            style={{ background: user.color || "#6c47ff" }}
-                          >
-                            {m.participants[0]?.name ? m.participants[0].name.slice(0, 2).toUpperCase() : user.initials}
+                          <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0 border border-black/10 shadow-xs relative bg-[var(--bg-elevated)]">
+                            <Image
+                              src={getAvatarImage(m.participants[0]?.name || m.title || m.id)}
+                              alt={m.participants[0]?.name || m.title}
+                              fill
+                              className="object-cover"
+                              sizes="40px"
+                            />
                           </div>
 
                           {/* Meeting Info */}

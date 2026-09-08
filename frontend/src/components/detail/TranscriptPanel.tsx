@@ -1,8 +1,9 @@
 "use client";
 
 import { useMemo, useState, useEffect, useRef, useCallback } from "react";
+import Image from "next/image";
 import { Search, X, ChevronUp, ChevronDown, Maximize2 } from "lucide-react";
-import { formatTimestamp, getInitials, getAvatarColor } from "@/lib/utils";
+import { formatTimestamp, getInitials, getAvatarColor, getAvatarImage } from "@/lib/utils";
 import type { TranscriptLine } from "@/lib/types";
 
 // ── Text highlight helper ─────────────────────────────────────────────────────
@@ -57,11 +58,16 @@ function TranscriptLineItem({ line, isActive, isMatch, searchQuery, onSeek, acti
       {/* Avatar */}
       <div className="shrink-0 mt-0.5">
         <div
-          className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white"
-          style={{ background: getAvatarColor(line.speaker) }}
+          className="w-7 h-7 rounded-full overflow-hidden relative ring-1 ring-[var(--border)] shrink-0 bg-[var(--bg-elevated)]"
           title={line.speaker}
         >
-          {getInitials(line.speaker)}
+          <Image
+            src={getAvatarImage(line.speaker)}
+            alt={line.speaker}
+            fill
+            className="object-cover"
+            sizes="28px"
+          />
         </div>
       </div>
 

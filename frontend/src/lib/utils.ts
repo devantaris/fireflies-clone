@@ -50,6 +50,35 @@ export function getInitials(name: string): string {
     .slice(0, 2);
 }
 
+const AVATAR_IMAGES = [
+  "/assets/avatars/avatar-1.jpg",
+  "/assets/avatars/avatar-2.jpg",
+  "/assets/avatars/avatar-3.jpg",
+  "/assets/avatars/avatar-4.jpg",
+  "/assets/avatars/avatar-5.jpg",
+  "/assets/avatars/avatar-6.jpg",
+  "/assets/avatars/avatar-7.jpg",
+  "/assets/avatars/avatar-8.jpg",
+  "/assets/avatars/avatar-9.jpg",
+  "/assets/avatars/avatar-10.jpg",
+  "/assets/avatars/avatar-11.jpg",
+  "/assets/avatars/avatar-12.jpg",
+];
+
+export function getAvatarImage(key: string | number | undefined | null): string {
+  if (key === undefined || key === null || key === "") {
+    return AVATAR_IMAGES[0];
+  }
+  if (typeof key === "number") {
+    return AVATAR_IMAGES[Math.abs(key) % AVATAR_IMAGES.length];
+  }
+  let hash = 0;
+  for (let i = 0; i < key.length; i++) {
+    hash = key.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return AVATAR_IMAGES[Math.abs(hash) % AVATAR_IMAGES.length];
+}
+
 const AVATAR_PALETTE = [
   "#6c47ff", "#0891b2", "#059669", "#d97706",
   "#dc2626", "#7c3aed", "#0e7490", "#047857",

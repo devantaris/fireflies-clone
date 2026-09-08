@@ -571,7 +571,7 @@ export function TopBar() {
           {/* Free meetings badge */}
           <div className="hidden sm:flex items-center gap-1.5 text-xs text-[var(--text-2)] pr-1">
             <div className="w-4 h-4 rounded-full bg-[#22c55e] flex items-center justify-center shrink-0">
-              <span className="text-white text-[8px] font-bold leading-none">3</span>
+              <span className="text-white text-[8px] font-bold leading-none">2</span>
             </div>
             <span className="whitespace-nowrap">Free meetings</span>
           </div>

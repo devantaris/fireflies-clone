@@ -24,11 +24,13 @@ import { usePlayer } from "@/hooks/usePlayer";
 import { MediaPlayer } from "@/components/detail/MediaPlayer";
 import { TranscriptPanel } from "@/components/detail/TranscriptPanel";
 import { RightPanel } from "@/components/detail/RightPanel";
+import Image from "next/image";
 import {
   formatMeetingDate,
   formatDuration,
   getInitials,
   getAvatarColor,
+  getAvatarImage,
 } from "@/lib/utils";
 import { useUser } from "@/lib/currentUser";
 
@@ -356,10 +358,15 @@ function CenterPanel({
         <div className="flex items-center gap-3 mb-4 text-sm text-[var(--text-3)]">
           <div className="flex items-center gap-1.5">
             <div
-              className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white shrink-0"
-              style={{ background: getAvatarColor(user.name) }}
+              className="w-6 h-6 rounded-full overflow-hidden relative ring-1 ring-[var(--border)] shrink-0 bg-[var(--bg-elevated)]"
             >
-              {getInitials(user.name)}
+              <Image
+                src={getAvatarImage(user.name)}
+                alt={user.name}
+                fill
+                className="object-cover"
+                sizes="24px"
+              />
             </div>
             <span className="text-[var(--accent-text)] text-xs font-medium hover:underline cursor-pointer">
               {user.name}
