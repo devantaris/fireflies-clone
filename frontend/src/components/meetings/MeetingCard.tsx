@@ -1,6 +1,24 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
+
+function getMeetingPlatform(title: string, id: number) {
+  const t = title.toLowerCase();
+  if (t.includes("roadmap") || t.includes("q4") || t.includes("zoom") || id % 4 === 0) {
+    return { name: "Zoom", icon: "/assets/logos/zoom-app.svg" };
+  }
+  if (t.includes("sprint") || t.includes("standup") || t.includes("planning") || t.includes("sync") || id % 4 === 1) {
+    return { name: "Google Meet", icon: "/assets/logos/google-meet.svg" };
+  }
+  if (t.includes("pipeline") || t.includes("sales") || t.includes("teams") || id % 4 === 2) {
+    return { name: "Microsoft Teams", icon: "/assets/logos/ms-teams.svg" };
+  }
+  if (t.includes("feedback") || t.includes("slack") || t.includes("review") || id % 4 === 3) {
+    return { name: "Slack", icon: "/assets/logos/slack.svg" };
+  }
+  return { name: "Fireflies", icon: "/assets/logos/fireflies-logo.svg" };
+}
 import {
   Clock,
   FileText,
@@ -52,6 +70,7 @@ export function MeetingCard({ meeting, onDelete }: Props) {
   }, [menuOpen]);
 
   const banner = getCardBanner(meeting.id);
+  const platform = getMeetingPlatform(meeting.title, meeting.id);
   const displayParticipants = meeting.participants.slice(0, 4);
   const extraCount = meeting.participants.length - 4;
 
@@ -63,6 +82,12 @@ export function MeetingCard({ meeting, onDelete }: Props) {
           className="h-[72px] relative flex items-end px-4 pb-3"
           style={{ background: banner }}
         >
+          {/* Platform badge */}
+          <div className="absolute top-2.5 left-3 flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-2 py-0.5 rounded-full border border-white/15 shadow-xs">
+            <Image src={platform.icon} alt={platform.name} width={12} height={12} className="object-contain" />
+            <span className="text-[10px] font-medium text-white/90">{platform.name}</span>
+          </div>
+
           {/* Waveform decoration */}
           <div className="flex items-end gap-[3px] opacity-25">
             {[20, 35, 28, 45, 32, 50, 38, 42, 30, 48, 36, 44, 26, 40].map(
@@ -76,7 +101,7 @@ export function MeetingCard({ meeting, onDelete }: Props) {
             )}
           </div>
           {meeting.duration > 0 && (
-            <div className="absolute top-3 right-3">
+            <div className="absolute top-2.5 right-3">
               <span className="text-[11px] text-white/80 bg-black/30 px-2 py-0.5 rounded-full">
                 {formatDuration(meeting.duration)}
               </span>

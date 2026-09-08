@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   Settings,
@@ -75,6 +76,134 @@ export function Sidebar({ onNavClick }: Props) {
     if (href === "/home") return pathname === "/home";
     if (href === "/meetings") return pathname.startsWith("/meetings");
     return pathname === href || pathname.startsWith(href + "/");
+  }
+
+  if (pathname === "/meetings") {
+    return (
+      <aside className="w-14 shrink-0 flex flex-col h-full bg-[var(--bg-sub)] border-r border-[var(--border)] items-center py-3 justify-between select-none">
+        {/* Top: User Avatar */}
+        <div className="flex flex-col items-center gap-3 w-full">
+          <div className="relative" ref={profileRef}>
+            <button
+              onClick={() => setProfileOpen((v) => !v)}
+              title={user.name}
+              className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-xs hover:ring-2 hover:ring-[#6c47ff]/40 transition-all overflow-hidden"
+              style={{ background: user.color }}
+            >
+              {user.initials}
+            </button>
+            {profileOpen && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setProfileOpen(false)} />
+                <div className="absolute left-10 top-0 z-50 w-48 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] shadow-xl overflow-hidden">
+                  <div className="px-4 py-3 border-b border-[var(--border)]">
+                    <p className="text-sm font-medium text-[var(--text-1)]">{user.name}</p>
+                    <p className="text-xs text-[var(--text-3)] mt-0.5">Free Plan</p>
+                  </div>
+                  <div className="py-1">
+                    <button
+                      onClick={() => { setProfileOpen(false); onNavClick?.(); window.location.href = "/settings"; }}
+                      className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-[var(--text-2)] hover:bg-[var(--bg-hover)] transition-colors text-left"
+                    >
+                      <Settings size={14} />
+                      Settings
+                    </button>
+                    <button
+                      onClick={() => { clearName(); window.location.reload(); }}
+                      className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-[var(--text-2)] hover:bg-[var(--bg-hover)] transition-colors text-left"
+                    >
+                      <LogOut size={14} />
+                      Switch User
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Nav Icons Stack */}
+          <nav className="flex flex-col items-center gap-1 w-full px-2">
+            <Link
+              href="/home"
+              title="Home"
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[var(--bg-hover)] transition-colors"
+            >
+              <Home size={18} />
+            </Link>
+            <Link
+              href="/askfred"
+              title="AskFred"
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[var(--bg-hover)] transition-colors"
+            >
+              <Bot size={18} />
+            </Link>
+            <Link
+              href="/meetings"
+              title="Meetings"
+              className="w-9 h-9 rounded-xl flex items-center justify-center bg-[#6c47ff]/15 text-[#6c47ff] transition-colors"
+            >
+              <Video size={18} />
+            </Link>
+            <Link
+              href="/tasks"
+              title="Tasks"
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[var(--bg-hover)] transition-colors"
+            >
+              <ListTodo size={18} />
+            </Link>
+            <Link
+              href="/ai-skills"
+              title="AI Skills"
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[var(--bg-hover)] transition-colors"
+            >
+              <Sparkles size={18} />
+            </Link>
+            <Link
+              href="/analytics"
+              title="Analytics"
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[var(--bg-hover)] transition-colors"
+            >
+              <BarChart2 size={18} />
+            </Link>
+            <Link
+              href="/voice-agents"
+              title="Voice Agents"
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[var(--bg-hover)] transition-colors"
+            >
+              <Mic size={18} />
+            </Link>
+            <Link
+              href="/integrations"
+              title="Integrations"
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[var(--bg-hover)] transition-colors"
+            >
+              <Zap size={18} />
+            </Link>
+          </nav>
+        </div>
+
+        {/* Bottom Icons: Invite & Settings */}
+        <div className="flex flex-col items-center gap-1.5 w-full px-2">
+          <button
+            title="Invite coworkers"
+            onClick={() => setShowInviteCard(true)}
+            className="w-9 h-9 rounded-xl flex items-center justify-center text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[var(--bg-hover)] transition-colors"
+          >
+            <Users size={17} />
+          </button>
+          <Link
+            href="/settings"
+            title="Settings"
+            className="w-9 h-9 rounded-xl flex items-center justify-center text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[var(--bg-hover)] transition-colors"
+          >
+            <Settings size={17} />
+          </Link>
+          <div className="pt-1">
+            <ThemeToggle />
+          </div>
+        </div>
+      </aside>
+    );
   }
 
   return (
@@ -152,12 +281,12 @@ export function Sidebar({ onNavClick }: Props) {
       <div className="px-3 pb-1">
         <Link
           href="#"
-          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-[var(--text-2)] hover:text-[var(--text-1)] hover:bg-[var(--bg-hover)] transition-colors"
+          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-[var(--text-2)] hover:text-[var(--text-1)] hover:bg-[var(--bg-hover)] transition-colors group"
         >
-          <div className="w-5 h-5 rounded bg-[#ea4335]/15 flex items-center justify-center shrink-0">
-            <Mail size={11} className="text-[#ea4335]" />
+          <div className="w-5 h-5 rounded bg-white dark:bg-zinc-800 shadow-xs border border-[var(--border)] flex items-center justify-center shrink-0 p-0.5 group-hover:scale-105 transition-transform">
+            <Image src="/assets/logos/gmail.svg" alt="Gmail" width={13} height={13} className="object-contain" />
           </div>
-          <span className="flex-1 text-sm">Try Email Assistant</span>
+          <span className="flex-1 text-sm font-medium">Try Email Assistant</span>
         </Link>
       </div>
 

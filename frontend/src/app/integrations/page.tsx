@@ -1,27 +1,32 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Puzzle, Search, X, MessageSquare } from "lucide-react";
 
 const CATEGORIES = ["All", "Audio recording", "Applicant tracking system", "CRM", "MCP", "More"];
 
 const INTEGRATIONS = [
-  { name: "ActiveCampaign", category: "CRM", desc: "Sync Fireflies meeting notes to ActiveCampaign CRM and keep your contacts and companies automatically...", color: "#356ae6", letter: "AC" },
-  { name: "Activepieces", category: "MCP", desc: "Activepieces offers a no-code integration with Fireflies.ai, enabling users to automate workflows involving...", color: "#7c3aed", letter: "Ap" },
-  { name: "Affinity", category: "CRM", desc: "Automatically sync meeting data and tasks to the relevant people and companies in Affinity, streamlining your...", color: "#2563eb", letter: "Af" },
-  { name: "Aircall", category: "Audio recording", desc: "Automatically capture, transcribe, and summarize all your Aircall calls with Fireflies.", color: "#00b388", letter: "Ac" },
-  { name: "Airtable", category: "MCP", desc: "Automatically push meeting notes and tasks to your Airtable base after every call.", color: "#f97316", letter: "At" },
-  { name: "Allo", category: "Audio recording", desc: "Automatically capture, transcribe, and analyze your Allo video meetings.", color: "#eab308", letter: "Al" },
-  { name: "Slack", category: "CRM", desc: "Send meeting summaries and action items directly to Slack channels.", color: "#e01e5a", letter: "Sl" },
-  { name: "Notion", category: "CRM", desc: "Sync meeting notes and transcripts to your Notion workspace.", color: "#374151", letter: "No" },
-  { name: "HubSpot", category: "CRM", desc: "Log meeting activity and insights into your HubSpot CRM automatically.", color: "#ff7a59", letter: "Hs" },
-  { name: "Salesforce", category: "CRM", desc: "Push meeting data, notes, and action items into Salesforce records.", color: "#00a1e0", letter: "SF" },
-  { name: "Zapier", category: "MCP", desc: "Connect Fireflies to 5,000+ apps with automated Zap workflows.", color: "#ff4a00", letter: "Zp" },
-  { name: "Google Drive", category: "Audio recording", desc: "Save meeting recordings and transcripts directly to Google Drive.", color: "#34a853", letter: "GD" },
-  { name: "Zoom", category: "Audio recording", desc: "Automatically join and transcribe all your Zoom meetings.", color: "#2d8cff", letter: "Zm" },
-  { name: "Microsoft Teams", category: "Audio recording", desc: "Record and transcribe Microsoft Teams meetings automatically.", color: "#5059c9", letter: "MT" },
-  { name: "Greenhouse", category: "Applicant tracking system", desc: "Automatically log interview insights into Greenhouse ATS.", color: "#24a47f", letter: "Gh" },
-  { name: "Lever", category: "Applicant tracking system", desc: "Sync candidate interview notes and recordings to Lever automatically.", color: "#1da462", letter: "Lv" },
+  { name: "ActiveCampaign", category: "CRM", desc: "Sync Fireflies meeting notes to ActiveCampaign CRM and keep your contacts and companies automatically updated.", logo: "/assets/logos/activecampaign.png" },
+  { name: "Activepieces", category: "MCP", desc: "Activepieces offers a no-code integration with Fireflies.ai, enabling users to automate workflows involving meeting data.", logo: "/assets/logos/activepieces.svg" },
+  { name: "Affinity", category: "CRM", desc: "Automatically sync meeting data and tasks to the relevant people and companies in Affinity, streamlining your pipeline.", logo: "/assets/logos/affinity.png" },
+  { name: "Aircall", category: "Audio recording", desc: "Automatically capture, transcribe, and summarize all your Aircall calls with Fireflies.", logo: "/assets/logos/aircall.svg" },
+  { name: "Airtable", category: "MCP", desc: "Automatically push meeting notes and tasks to your Airtable base after every call.", logo: "/assets/logos/airtable.svg" },
+  { name: "Allo", category: "Audio recording", desc: "Automatically capture, transcribe, and analyze your Allo video meetings.", logo: "/assets/logos/allo.png" },
+  { name: "Slack", category: "CRM", desc: "Send meeting summaries and action items directly to Slack channels.", logo: "/assets/logos/slack.svg" },
+  { name: "Notion", category: "CRM", desc: "Sync meeting notes and transcripts to your Notion workspace.", logo: "/assets/logos/notion.svg" },
+  { name: "HubSpot", category: "CRM", desc: "Log meeting activity and insights into your HubSpot CRM automatically.", logo: "/assets/logos/hubspot.svg" },
+  { name: "Salesforce", category: "CRM", desc: "Push meeting data, notes, and action items into Salesforce records.", logo: "/assets/logos/salesforce.svg" },
+  { name: "Zapier", category: "MCP", desc: "Connect Fireflies to 5,000+ apps with automated Zap workflows.", logo: "/assets/logos/zapier.svg" },
+  { name: "Google Drive", category: "Audio recording", desc: "Save meeting recordings and transcripts directly to Google Drive.", logo: "/assets/logos/googledrive.svg" },
+  { name: "Zoom", category: "Audio recording", desc: "Automatically join and transcribe all your Zoom meetings.", logo: "/assets/logos/zoom-app.svg" },
+  { name: "Microsoft Teams", category: "Audio recording", desc: "Record and transcribe Microsoft Teams meetings automatically.", logo: "/assets/logos/ms-teams.svg" },
+  { name: "Greenhouse", category: "Applicant tracking system", desc: "Automatically log interview insights into Greenhouse ATS.", logo: "/assets/logos/greenhouse.svg" },
+  { name: "Lever", category: "Applicant tracking system", desc: "Sync candidate interview notes and recordings to Lever automatically.", logo: "/assets/logos/lever.svg" },
+  { name: "Asana", category: "CRM", desc: "Create and assign action items directly into your Asana projects.", logo: "/assets/logos/asana.svg" },
+  { name: "Trello", category: "MCP", desc: "Automatically generate cards and tasks on Trello boards.", logo: "/assets/logos/trello.svg" },
+  { name: "Google Docs", category: "Audio recording", desc: "Export formatted meeting notes and transcripts to Google Docs.", logo: "/assets/logos/google-docs.svg" },
+  { name: "Google Meet", category: "Audio recording", desc: "Automatically transcribe and capture insights from Google Meet calls.", logo: "/assets/logos/google-meet.svg" },
 ];
 
 export default function IntegrationsPage() {
@@ -109,8 +114,14 @@ export default function IntegrationsPage() {
                 {/* Left side */}
                 <div className="flex-1 p-8">
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-12 h-12 rounded-full bg-[#2196f3] flex items-center justify-center">
-                      <span className="text-white font-bold text-xl">✈</span>
+                    <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center shrink-0 p-1.5 border border-[#24A1DE]/20">
+                      <Image
+                        src="/assets/logos/telegram.svg"
+                        alt="Telegram"
+                        width={36}
+                        height={36}
+                        className="object-contain"
+                      />
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
@@ -194,14 +205,17 @@ export default function IntegrationsPage() {
                 className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-5 hover:border-[var(--border-strong)] transition-colors"
               >
                 <div className="flex items-center gap-3 mb-3">
-                  <div
-                    className="w-9 h-9 rounded-lg flex items-center justify-center text-white text-xs font-bold shrink-0"
-                    style={{ background: integration.color }}
-                  >
-                    {integration.letter}
+                  <div className="w-11 h-11 rounded-xl bg-white dark:bg-zinc-800 border border-[var(--border)] p-2 flex items-center justify-center shrink-0 overflow-hidden shadow-xs">
+                    <Image
+                      src={integration.logo}
+                      alt={integration.name}
+                      width={28}
+                      height={28}
+                      className="object-contain w-7 h-7"
+                    />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-[var(--text-1)]">{integration.name}</p>
+                    <p className="text-sm font-semibold text-[var(--text-1)]">{integration.name}</p>
                     <p className="text-[10px] text-[var(--text-4)]">Fireflies</p>
                   </div>
                 </div>

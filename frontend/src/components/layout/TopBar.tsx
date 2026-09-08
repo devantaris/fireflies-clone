@@ -530,8 +530,8 @@ export function TopBar() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Don't render on meeting detail pages — they have their own header
-  if (isMeetingDetailRoute(pathname)) return null;
+  // Don't render on meetings list or meeting detail pages — meetings page has its own column-aligned headers
+  if (pathname === "/meetings" || isMeetingDetailRoute(pathname)) return null;
 
   const pageTitle = getPageTitle(pathname);
 

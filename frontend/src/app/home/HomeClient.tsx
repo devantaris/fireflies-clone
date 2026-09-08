@@ -2,8 +2,26 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { getMeetings } from "@/lib/api";
 import type { MeetingListItem } from "@/lib/types";
+
+function getMeetingPlatform(title: string, id: number) {
+  const t = title.toLowerCase();
+  if (t.includes("roadmap") || t.includes("q4") || t.includes("zoom") || id % 4 === 0) {
+    return { name: "Zoom", icon: "/assets/logos/zoom-app.svg", bg: "bg-[#2d8cff]/10" };
+  }
+  if (t.includes("sprint") || t.includes("standup") || t.includes("planning") || t.includes("sync") || id % 4 === 1) {
+    return { name: "Google Meet", icon: "/assets/logos/google-meet.svg", bg: "bg-[#00ac47]/10" };
+  }
+  if (t.includes("pipeline") || t.includes("sales") || t.includes("teams") || id % 4 === 2) {
+    return { name: "Microsoft Teams", icon: "/assets/logos/ms-teams.svg", bg: "bg-[#5059c9]/10" };
+  }
+  if (t.includes("feedback") || t.includes("slack") || t.includes("review") || id % 4 === 3) {
+    return { name: "Slack", icon: "/assets/logos/slack.svg", bg: "bg-[#e01e5a]/10" };
+  }
+  return { name: "Fireflies", icon: "/assets/logos/fireflies-logo.svg", bg: "bg-[#6c47ff]/10" };
+}
 import {
   Settings,
   Monitor,
@@ -294,21 +312,30 @@ export function HomeClient() {
             </div>
           ) : (
             <div className="space-y-1">
-              {meetings.slice(0, 6).map((m) => (
-                <Link
-                  key={m.id}
-                  href={`/meetings/${m.id}`}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-[var(--bg-card)] transition-colors"
-                >
-                  <div className="w-8 h-8 rounded-full bg-[#6c47ff]/15 flex items-center justify-center shrink-0 text-sm font-semibold text-[#6c47ff]">
-                    {m.title[0]?.toUpperCase() ?? "M"}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-[var(--text-1)] truncate">{m.title}</p>
-                    <p className="text-xs text-[var(--text-3)]">{formatMeetingDate(m.date)}</p>
-                  </div>
-                </Link>
-              ))}
+              {meetings.slice(0, 6).map((m) => {
+                const platform = getMeetingPlatform(m.title, m.id);
+                return (
+                  <Link
+                    key={m.id}
+                    href={`/meetings/${m.id}`}
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-[var(--bg-card)] transition-colors group"
+                  >
+                    <div className={`w-8 h-8 rounded-lg ${platform.bg} border border-[var(--border)] flex items-center justify-center shrink-0 p-1.5 shadow-xs transition-transform group-hover:scale-105`}>
+                      <Image
+                        src={platform.icon}
+                        alt={platform.name}
+                        width={20}
+                        height={20}
+                        className="object-contain w-5 h-5"
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-[var(--text-1)] truncate group-hover:text-[#6c47ff] transition-colors">{m.title}</p>
+                      <p className="text-xs text-[var(--text-3)]">{formatMeetingDate(m.date)}</p>
+                    </div>
+                  </Link>
+                );
+              })}
               <p className="text-center text-sm text-[#6c47ff] py-3">All caught up!</p>
             </div>
           )}
@@ -317,29 +344,51 @@ export function HomeClient() {
           <div className="mt-8">
             <h2 className="text-sm font-semibold text-[var(--text-1)] mb-4">Try More</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--bg-card)]">
-                <Monitor size={24} className="text-[var(--text-3)] mb-3" />
-                <p className="text-sm font-semibold text-[var(--text-1)] mb-1">Desktop App</p>
-                <p className="text-xs text-[var(--text-3)] mb-3">
-                  Capture conversations without any bot present in your meeting.
-                </p>
-                <button className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#6c47ff] hover:bg-[#5535ee] text-white text-xs font-medium transition-colors">
+              <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] flex flex-col justify-between">
+                <div>
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#6c47ff]/20 to-[#8b5cf6]/10 border border-[#6c47ff]/30 flex items-center justify-center p-2 mb-3 shadow-xs">
+                    <Image src="/assets/logos/fireflies-logo.svg" alt="Fireflies Desktop" width={22} height={22} className="object-contain" />
+                  </div>
+                  <p className="text-sm font-semibold text-[var(--text-1)] mb-1">Desktop App</p>
+                  <p className="text-xs text-[var(--text-3)] mb-3">
+                    Capture conversations without any bot present in your meeting.
+                  </p>
+                </div>
+                <button className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#6c47ff] hover:bg-[#5535ee] text-white text-xs font-medium transition-colors w-fit">
                   ↓ Download
                 </button>
               </div>
-              <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--bg-card)]">
-                <Smartphone size={24} className="text-[var(--text-3)] mb-3" />
-                <p className="text-sm font-semibold text-[var(--text-1)] mb-1">Mobile App</p>
-                <p className="text-xs text-[var(--text-3)] mb-3">
-                  Record in-person conversations and review meetings on the go.
-                </p>
+              <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] flex flex-col justify-between">
+                <div>
+                  <div className="w-10 h-10 rounded-xl bg-[var(--bg-sub)] border border-[var(--border)] flex items-center justify-center p-2 mb-3 shadow-xs">
+                    <Smartphone size={20} className="text-[#6c47ff]" />
+                  </div>
+                  <p className="text-sm font-semibold text-[var(--text-1)] mb-1">Mobile App</p>
+                  <p className="text-xs text-[var(--text-3)] mb-3">
+                    Record in-person conversations and review meetings on the go.
+                  </p>
+                </div>
                 <div className="flex items-center gap-2">
-                  <span className="px-2 py-1 rounded-md bg-[var(--bg-elevated)] border border-[var(--border)] text-[10px] text-[var(--text-3)] font-medium">
-                    App Store
-                  </span>
-                  <span className="px-2 py-1 rounded-md bg-[var(--bg-elevated)] border border-[var(--border)] text-[10px] text-[var(--text-3)] font-medium">
-                    Google Play
-                  </span>
+                  <a
+                    href="https://apps.apple.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--bg-elevated)] border border-[var(--border)] hover:border-[var(--border-strong)] hover:bg-[var(--bg-card)] transition-colors group"
+                  >
+                    <div className="w-3.5 h-3.5 flex items-center justify-center text-[var(--text-1)]">
+                      <Image src="/assets/logos/apple.svg" alt="App Store" width={13} height={13} className="object-contain dark:invert" />
+                    </div>
+                    <span className="text-[11px] font-medium text-[var(--text-1)]">App Store</span>
+                  </a>
+                  <a
+                    href="https://play.google.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--bg-elevated)] border border-[var(--border)] hover:border-[var(--border-strong)] hover:bg-[var(--bg-card)] transition-colors group"
+                  >
+                    <Image src="/assets/logos/google-play.svg" alt="Google Play" width={13} height={13} className="object-contain" />
+                    <span className="text-[11px] font-medium text-[var(--text-1)]">Google Play</span>
+                  </a>
                 </div>
               </div>
             </div>

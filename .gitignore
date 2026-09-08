@@ -51,10 +51,11 @@ MEMORY.md
 AGENTS.md
 CLAUDE.md
 
-# ── Misc ─────────────────────────────────────────────────────────────────────
 *.log
 *.har
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .cache/
+*.docx
+frontend/README.md
