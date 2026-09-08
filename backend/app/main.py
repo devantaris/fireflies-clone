@@ -8,6 +8,15 @@ from app.routers import meetings, transcripts, summaries, action_items
 # Create all tables on startup
 Base.metadata.create_all(bind=engine)
 
+# Ensure is_hosted column exists on existing SQLite databases
+from sqlalchemy import text
+with engine.connect() as conn:
+    try:
+        conn.execute(text("ALTER TABLE meetings ADD COLUMN is_hosted BOOLEAN NOT NULL DEFAULT 1"))
+        conn.commit()
+    except Exception:
+        pass  # Column already exists
+
 # CORS origins — comma-separated list via env var, falls back to localhost defaults
 _cors_env = os.environ.get("CORS_ORIGINS", "")
 cors_origins = (
@@ -42,12 +51,12 @@ def health():
 
 
 @app.post("/api/seed")
-def seed():
-    """Seed the database with sample meetings (idempotent)."""
+def seed(force: bool = False):
+    """Seed the database with sample meetings (idempotent unless force=True)."""
     from app.services.seed_service import seed_database
     db = SessionLocal()
     try:
-        count = seed_database(db)
+        count = seed_database(db, force=force)
         return {"seeded": count, "message": f"Created {count} meetings" if count else "Data already exists"}
     finally:
         db.close()

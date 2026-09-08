@@ -15,6 +15,7 @@ import {
   Plus,
   Video,
   Sparkles,
+  Download,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { getMeeting } from "@/lib/api";
@@ -422,12 +423,76 @@ function CenterPanel({
 
 // ── Main component ────────────────────────────────────────────────────────────
 
+function exportMeeting(meeting: MeetingDetail, format: "txt" | "md") {
+  const lines = meeting.transcript_lines;
+  const summary = meeting.summary;
+  const actions = meeting.action_items;
+
+  let content = "";
+  if (format === "md") {
+    content += `# ${meeting.title}\n\n`;
+    content += `**Date:** ${formatMeetingDate(meeting.date)}  \n`;
+    content += `**Duration:** ${formatDuration(meeting.duration)}  \n`;
+    content += `**Participants:** ${meeting.participants.map((p) => p.name).join(", ")}\n\n`;
+    if (summary?.overview) {
+      content += `## Summary\n\n${summary.overview}\n\n`;
+    }
+    if (actions.length) {
+      content += `## Action Items\n\n`;
+      for (const a of actions) {
+        content += `- [${a.completed ? "x" : " "}] ${a.text}${a.assignee ? ` _(${a.assignee})_` : ""}\n`;
+      }
+      content += "\n";
+    }
+    if (lines.length) {
+      content += `## Transcript\n\n`;
+      for (const l of lines) {
+        const mins = Math.floor(l.start_time / 60);
+        const secs = Math.floor(l.start_time % 60).toString().padStart(2, "0");
+        content += `**[${mins}:${secs}] ${l.speaker}:** ${l.text}\n\n`;
+      }
+    }
+  } else {
+    content += `${meeting.title}\n${"=".repeat(meeting.title.length)}\n\n`;
+    content += `Date: ${formatMeetingDate(meeting.date)}\n`;
+    content += `Duration: ${formatDuration(meeting.duration)}\n`;
+    content += `Participants: ${meeting.participants.map((p) => p.name).join(", ")}\n\n`;
+    if (summary?.overview) {
+      content += `SUMMARY\n${"-".repeat(40)}\n${summary.overview}\n\n`;
+    }
+    if (actions.length) {
+      content += `ACTION ITEMS\n${"-".repeat(40)}\n`;
+      for (const a of actions) {
+        content += `[${a.completed ? "x" : " "}] ${a.text}${a.assignee ? ` (${a.assignee})` : ""}\n`;
+      }
+      content += "\n";
+    }
+    if (lines.length) {
+      content += `TRANSCRIPT\n${"-".repeat(40)}\n`;
+      for (const l of lines) {
+        const mins = Math.floor(l.start_time / 60);
+        const secs = Math.floor(l.start_time % 60).toString().padStart(2, "0");
+        content += `[${mins}:${secs}] ${l.speaker}: ${l.text}\n`;
+      }
+    }
+  }
+
+  const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${meeting.title.replace(/[^a-zA-Z0-9]+/g, "_")}.${format === "md" ? "md" : "txt"}`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 export function MeetingDetailClient({ meetingId }: Props) {
   const router = useRouter();
   const [meeting, setMeeting] = useState<MeetingDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [mobilePanel, setMobilePanel] = useState<"notes" | "transcript">("notes");
+  const [showExport, setShowExport] = useState(false);
 
   useEffect(() => {
     getMeeting(meetingId)
@@ -469,13 +534,37 @@ export function MeetingDetailClient({ meetingId }: Props) {
           </Link>
           <span className="text-[var(--text-4)]">/</span>
           <span className="text-[var(--text-1)] font-medium truncate">{meeting.title}</span>
-          <button className="text-[var(--text-4)] hover:text-[var(--text-2)] shrink-0">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <circle cx="7" cy="3" r="0.8" fill="currentColor" />
-              <circle cx="7" cy="7" r="0.8" fill="currentColor" />
-              <circle cx="7" cy="11" r="0.8" fill="currentColor" />
-            </svg>
-          </button>
+          <div className="relative shrink-0">
+            <button
+              onClick={() => setShowExport(!showExport)}
+              className="text-[var(--text-4)] hover:text-[var(--text-2)]"
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <circle cx="7" cy="3" r="0.8" fill="currentColor" />
+                <circle cx="7" cy="7" r="0.8" fill="currentColor" />
+                <circle cx="7" cy="11" r="0.8" fill="currentColor" />
+              </svg>
+            </button>
+            {showExport && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setShowExport(false)} />
+                <div className="absolute left-0 top-full mt-1 z-50 w-44 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] shadow-lg overflow-hidden py-1">
+                  <button
+                    onClick={() => { exportMeeting(meeting, "md"); setShowExport(false); toast.success("Exported as Markdown"); }}
+                    className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-[var(--text-2)] hover:bg-[var(--bg-hover)] transition-colors text-left"
+                  >
+                    <Download size={13} /> Export .md
+                  </button>
+                  <button
+                    onClick={() => { exportMeeting(meeting, "txt"); setShowExport(false); toast.success("Exported as text"); }}
+                    className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-[var(--text-2)] hover:bg-[var(--bg-hover)] transition-colors text-left"
+                  >
+                    <Download size={13} /> Export .txt
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
 
         {/* Right: avatars + edit */}
