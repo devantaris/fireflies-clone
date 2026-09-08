@@ -14,6 +14,16 @@ const geistSans = Geist({
 export const metadata: Metadata = {
   title: "Fireflies — Meeting Transcripts & AI Notes",
   description: "AI-powered meeting transcription, summaries, and action items",
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    shortcut: "/icon.svg",
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 // Inline script runs before paint to avoid light→dark flash for returning dark-mode users
