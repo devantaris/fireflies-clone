@@ -29,6 +29,7 @@ import type { MeetingListItem, MeetingDetail } from "@/lib/types";
 import { CreateMeetingModal } from "@/components/meetings/CreateMeetingModal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { getAvatarImage } from "@/lib/utils";
+import { NotificationPanel } from "@/components/layout/TopBar";
 
 const FALLBACK_MEETINGS: MeetingListItem[] = [
   {
@@ -100,6 +101,7 @@ function MeetingsContent() {
   const [showSearchInput, setShowSearchInput] = useState(false);
   const [showFiltersBar, setShowFiltersBar] = useState(false);
   const [sortOrder, setSortOrder] = useState<"date_desc" | "date_asc">("date_desc");
+  const [notifOpen, setNotifOpen] = useState(false);
 
   // Data state
   const [meetings, setMeetings] = useState<MeetingListItem[]>([]);
@@ -324,13 +326,18 @@ function MeetingsContent() {
               Upgrade
             </Link>
 
-            <button
-              title="Notifications"
-              className="relative p-1.5 rounded-lg text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[var(--bg-hover)] transition-colors"
-            >
-              <Bell size={16} />
-              <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-[#ef4444]" />
-            </button>
+            {/* Notification bell */}
+            <div className="relative">
+              <button
+                onClick={() => setNotifOpen((v) => !v)}
+                title="Notifications"
+                className="relative p-1.5 rounded-lg text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[var(--bg-hover)] transition-colors cursor-pointer"
+              >
+                <Bell size={16} />
+                <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-[#ef4444]" />
+              </button>
+              {notifOpen && <NotificationPanel onClose={() => setNotifOpen(false)} />}
+            </div>
 
             <button
               onClick={() => setCreateOpen(true)}

@@ -115,7 +115,7 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: () => void 
         onChange();
       }}
       className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full p-0.5 transition-colors duration-200 ease-in-out focus:outline-none ${
-        checked ? "bg-[#6c47ff]" : "bg-[var(--border-strong)]"
+        checked ? "bg-[#6c47ff]" : "bg-[#d1d5db]"
       }`}
       aria-label={checked ? "Disable" : "Enable"}
     >
@@ -176,27 +176,27 @@ export default function AISkillsPage() {
   });
 
   return (
-    <div className="min-h-full flex flex-col bg-[var(--bg)] relative">
-      {/* ── Top Banner ── */}
+    <div className="min-h-full flex flex-col bg-white relative">
+      {/* ── Top Banner (Clean Light-mode Pink) ── */}
       {showBanner && (
-        <div className="flex items-center justify-between px-8 py-2.5 bg-gradient-to-r from-pink-50/70 via-purple-50/40 to-pink-50/70 dark:from-pink-950/25 dark:via-purple-950/20 dark:to-pink-950/25 border-b border-pink-100/80 dark:border-pink-900/30 text-xs">
+        <div className="flex items-center justify-between px-8 py-2.5 bg-[#fdf2f8] border-b border-[#fce7f3] text-xs">
           <div className="flex items-center gap-2 mx-auto sm:mx-0">
             <span className="text-pink-500 font-bold text-sm">✦</span>
-            <span className="text-[var(--text-1)] font-semibold">Meet AI Skills</span>
-            <span className="text-[var(--text-3)]">—</span>
-            <span className="text-[var(--text-2)]">
+            <span className="text-[#111827] font-semibold">Meet AI Skills</span>
+            <span className="text-[#9ca3af]">—</span>
+            <span className="text-[#4b5563]">
               Automate meeting insights, follow-ups, and reports.
             </span>
             <button
               onClick={() => toast("AI Skills documentation opened", { icon: "✨" })}
-              className="text-[#6c47ff] hover:underline font-medium ml-1"
+              className="text-[#6c47ff] hover:underline font-medium ml-1 cursor-pointer"
             >
               See how it works →
             </button>
           </div>
           <button
             onClick={() => setShowBanner(false)}
-            className="text-[var(--text-4)] hover:text-[var(--text-2)] transition-colors p-1"
+            className="text-[#9ca3af] hover:text-[#4b5563] transition-colors p-1 cursor-pointer"
             aria-label="Dismiss banner"
           >
             <X size={14} />
@@ -205,7 +205,7 @@ export default function AISkillsPage() {
       )}
 
       {/* ── Header Tabs Row ── */}
-      <div className="border-b border-[var(--border)] px-8 flex items-center justify-between bg-[var(--bg)]">
+      <div className="border-b border-[#e5e7eb] px-8 flex items-center justify-between bg-white">
         <div className="flex items-center gap-6">
           {[
             { id: "discover", label: "Discover" },
@@ -215,10 +215,10 @@ export default function AISkillsPage() {
             <button
               key={id}
               onClick={() => setActiveTab(id as typeof activeTab)}
-              className={`py-3.5 text-xs sm:text-sm font-medium border-b-2 -mb-px transition-colors ${
+              className={`py-3.5 text-xs sm:text-sm font-medium border-b-2 -mb-px transition-colors cursor-pointer ${
                 activeTab === id
                   ? "border-[#6c47ff] text-[#6c47ff] font-semibold"
-                  : "border-transparent text-[var(--text-3)] hover:text-[var(--text-1)]"
+                  : "border-transparent text-[#6b7280] hover:text-[#111827]"
               }`}
             >
               {label}
@@ -228,7 +228,7 @@ export default function AISkillsPage() {
 
         <button
           onClick={() => toast.success("Create Custom Skill modal coming soon!")}
-          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#6c47ff] hover:bg-[#5833e6] text-white text-xs font-semibold shadow-xs transition-colors"
+          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#6c47ff] hover:bg-[#5833e6] text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
         >
           <Plus size={14} strokeWidth={2.5} />
           Create Skill
@@ -241,36 +241,36 @@ export default function AISkillsPage() {
           <div className="w-12 h-12 rounded-2xl bg-[#6c47ff]/10 flex items-center justify-center mb-3">
             <Sparkles size={20} className="text-[#6c47ff]" />
           </div>
-          <h3 className="text-sm font-semibold text-[var(--text-1)] mb-1">AI Feed is Empty</h3>
-          <p className="text-xs text-[var(--text-3)] max-w-sm">
+          <h3 className="text-sm font-semibold text-[#111827] mb-1">AI Feed is Empty</h3>
+          <p className="text-xs text-[#6b7280] max-w-sm">
             Enable skills on your meetings to see automated summaries, action items, and insights stream in here.
           </p>
         </div>
       ) : activeTab === "active" ? (
-        <div className="flex-1 overflow-y-auto px-8 py-7">
+        <div className="flex-1 overflow-y-auto px-8 py-7 bg-white">
           {activeCount === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-center">
-              <div className="w-12 h-12 rounded-2xl bg-[var(--bg-sub)] flex items-center justify-center mb-3">
-                <Sparkles size={20} className="text-[var(--text-4)]" />
+              <div className="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center mb-3">
+                <Sparkles size={20} className="text-gray-400" />
               </div>
-              <p className="text-sm font-semibold text-[var(--text-1)] mb-1">No active skills yet</p>
-              <p className="text-xs text-[var(--text-3)] mb-4">Browse and enable skills from the Discover catalog.</p>
+              <p className="text-sm font-semibold text-[#111827] mb-1">No active skills yet</p>
+              <p className="text-xs text-[#6b7280] mb-4">Browse and enable skills from the Discover catalog.</p>
               <button
                 onClick={() => setActiveTab("discover")}
-                className="px-4 py-2 rounded-lg bg-[#6c47ff] text-white text-xs font-semibold hover:bg-[#5833e6] transition-colors"
+                className="px-4 py-2 rounded-lg bg-[#6c47ff] text-white text-xs font-semibold hover:bg-[#5833e6] transition-colors cursor-pointer"
               >
                 Browse Skills
               </button>
             </div>
           ) : (
             <div className="max-w-2xl space-y-3">
-              <p className="text-xs text-[var(--text-3)] mb-3">
+              <p className="text-xs text-[#6b7280] mb-3 font-medium">
                 {activeCount} skill{activeCount !== 1 ? "s" : ""} currently active across all your meetings
               </p>
               {skills.filter((s) => s.enabled).map((skill) => (
                 <div
                   key={skill.id}
-                  className="flex items-center gap-3.5 p-3.5 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] shadow-2xs"
+                  className="flex items-center gap-3.5 p-3.5 rounded-xl border border-[#e5e7eb] bg-white shadow-2xs"
                 >
                   <div
                     className="w-9 h-9 rounded-lg flex items-center justify-center text-white shrink-0 shadow-xs"
@@ -279,12 +279,12 @@ export default function AISkillsPage() {
                     <Plus size={16} className="text-white" strokeWidth={2.5} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-[var(--text-1)]">{skill.name}</p>
-                    <div className="flex items-center gap-1.5 text-xs text-[var(--text-3)] mt-0.5">
+                    <p className="text-sm font-semibold text-[#111827]">{skill.name}</p>
+                    <div className="flex items-center gap-1.5 text-xs text-[#6b7280] mt-0.5">
                       <span>Enabled</span>
                       <span>·</span>
                       <div className="flex items-center gap-0.5">
-                        <Zap size={11} className="text-[var(--text-4)]" />
+                        <Zap size={11} className="text-[#9ca3af]" />
                         <span>{skill.uses} uses</span>
                       </div>
                     </div>
@@ -296,8 +296,8 @@ export default function AISkillsPage() {
           )}
         </div>
       ) : (
-        /* ── Discover Tab (Sized & proportioned matching screenshot) ── */
-        <div className="flex-1 overflow-y-auto px-8 py-7 bg-[var(--bg)]">
+        /* ── Discover Tab (Optimized for Light Mode matching screenshot) ── */
+        <div className="flex-1 overflow-y-auto px-8 py-7 bg-white">
           <div className="max-w-[1240px] flex flex-col lg:flex-row gap-10 xl:gap-14 items-start">
             {/* Left Column: Skills List */}
             <div className="w-full lg:w-[440px] xl:w-[480px] shrink-0">
@@ -306,14 +306,14 @@ export default function AISkillsPage() {
                 <div className="relative">
                   <button
                     onClick={() => setFilterOpen((v) => !v)}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] text-xs text-[var(--text-2)] hover:border-[var(--border-strong)] transition-colors shadow-2xs"
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[#e5e7eb] bg-white text-xs text-[#374151] hover:border-[#d1d5db] transition-colors shadow-2xs cursor-pointer"
                   >
-                    <LayoutGrid size={13} className="text-[var(--text-3)]" />
-                    <span>{selectedCategory}</span>
-                    <ChevronDown size={13} className="text-[var(--text-4)] ml-1" />
+                    <LayoutGrid size={13} className="text-[#6b7280]" />
+                    <span className="font-medium">{selectedCategory}</span>
+                    <ChevronDown size={13} className="text-[#9ca3af] ml-1" />
                   </button>
                   {filterOpen && (
-                    <div className="absolute top-full left-0 mt-1 w-44 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] shadow-lg z-20 py-1">
+                    <div className="absolute top-full left-0 mt-1 w-44 rounded-xl border border-[#e5e7eb] bg-white shadow-lg z-20 py-1">
                       {CATEGORIES.map((cat) => (
                         <button
                           key={cat}
@@ -321,10 +321,10 @@ export default function AISkillsPage() {
                             setSelectedCategory(cat);
                             setFilterOpen(false);
                           }}
-                          className={`w-full text-left px-3 py-1.5 text-xs transition-colors ${
+                          className={`w-full text-left px-3 py-1.5 text-xs transition-colors cursor-pointer ${
                             selectedCategory === cat
                               ? "text-[#6c47ff] font-semibold bg-[#6c47ff]/10"
-                              : "text-[var(--text-2)] hover:bg-[var(--bg-hover)]"
+                              : "text-[#374151] hover:bg-gray-50"
                           }`}
                         >
                           {cat}
@@ -336,29 +336,30 @@ export default function AISkillsPage() {
 
                 <div className="relative flex-1">
                   {searchActive ? (
-                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-[#6c47ff] bg-[var(--bg-card)]">
-                      <Search size={13} className="text-[var(--text-4)]" />
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-[#6c47ff] bg-white">
+                      <Search size={13} className="text-[#9ca3af]" />
                       <input
                         type="text"
                         value={searchKeyword}
                         onChange={(e) => setSearchKeyword(e.target.value)}
                         placeholder="Search skills..."
                         autoFocus
-                        className="w-full text-xs bg-transparent outline-none text-[var(--text-1)] placeholder:text-[var(--text-4)]"
+                        className="w-full text-xs bg-transparent outline-none text-[#111827] placeholder:text-[#9ca3af]"
                       />
                       <button
                         onClick={() => {
                           setSearchActive(false);
                           setSearchKeyword("");
                         }}
+                        className="cursor-pointer"
                       >
-                        <X size={12} className="text-[var(--text-4)]" />
+                        <X size={12} className="text-[#9ca3af]" />
                       </button>
                     </div>
                   ) : (
                     <button
                       onClick={() => setSearchActive(true)}
-                      className="w-8 h-8 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] flex items-center justify-center text-[var(--text-3)] hover:text-[var(--text-2)] hover:border-[var(--border-strong)] transition-colors shadow-2xs"
+                      className="w-8 h-8 rounded-lg border border-[#e5e7eb] bg-white flex items-center justify-center text-[#6b7280] hover:text-[#111827] hover:border-[#d1d5db] transition-colors shadow-2xs cursor-pointer"
                       title="Search skills"
                     >
                       <Search size={13} />
@@ -368,7 +369,7 @@ export default function AISkillsPage() {
               </div>
 
               {/* Section title */}
-              <p className="text-xs font-medium text-[var(--text-4)] mb-2.5 select-none">Popular</p>
+              <p className="text-xs font-semibold text-[#6b7280] mb-2.5 select-none">Popular</p>
 
               {/* List of skills */}
               <div className="space-y-1.5">
@@ -383,8 +384,8 @@ export default function AISkillsPage() {
                       onKeyDown={(e) => e.key === "Enter" && setSelectedSkill(skill)}
                       className={`w-full flex items-center gap-3.5 px-3.5 py-3 rounded-xl transition-all cursor-pointer select-none ${
                         isSelected
-                          ? "border-2 border-[#8b5cf6]/70 bg-[#8b5cf6]/[0.03] shadow-2xs"
-                          : "border-2 border-transparent hover:bg-[var(--bg-sub)]"
+                          ? "border-2 border-[#8b5cf6] bg-[#f5f3ff]/40 shadow-xs"
+                          : "border-2 border-transparent hover:bg-gray-50/80"
                       }`}
                     >
                       {/* Plus Icon Box */}
@@ -396,13 +397,13 @@ export default function AISkillsPage() {
                       </div>
 
                       {/* Name */}
-                      <span className="flex-1 text-sm font-semibold text-[var(--text-1)] truncate">
+                      <span className="flex-1 text-sm font-semibold text-[#111827] truncate">
                         {skill.name}
                       </span>
 
                       {/* Zap Uses */}
-                      <div className="flex items-center gap-1 text-xs text-[var(--text-4)] font-medium mr-1 shrink-0">
-                        <Zap size={12} className="text-[var(--text-4)]" />
+                      <div className="flex items-center gap-1 text-xs text-[#6b7280] font-medium mr-1 shrink-0">
+                        <Zap size={12} className="text-[#9ca3af]" />
                         <span>{skill.uses}</span>
                       </div>
 
@@ -417,10 +418,10 @@ export default function AISkillsPage() {
               </div>
             </div>
 
-            {/* Right Column: Detail Card & Integrations */}
+            {/* Right Column: Detail Card & Integrations (Optimized Light Mode) */}
             <div className="flex-1 min-w-0 max-w-[620px] w-full">
-              {/* Detail Card with creamy tint matching screenshot */}
-              <div className="bg-[#fefcf8] dark:bg-zinc-900/90 border border-[#f3ebdc] dark:border-zinc-800 rounded-2xl p-7 shadow-xs">
+              {/* Detail Card with creamy warm eggshell tint matching Fireflies screenshot */}
+              <div className="bg-[#FEFCF6] border border-[#EFE9DC] rounded-2xl p-7 shadow-xs">
                 {/* Top icon and Copy link */}
                 <div className="flex items-start justify-between">
                   <div
@@ -432,18 +433,18 @@ export default function AISkillsPage() {
 
                   <button
                     onClick={copySkillLink}
-                    className="flex items-center gap-1.5 text-xs text-[var(--text-3)] hover:text-[var(--text-1)] font-medium transition-colors"
+                    className="flex items-center gap-1.5 text-xs text-[#6b7280] hover:text-[#111827] font-medium transition-colors cursor-pointer"
                   >
-                    <Link2 size={13} />
-                    Copy Link
+                    <Link2 size={13} className="text-[#6b7280]" />
+                    <span>Copy Link</span>
                   </button>
                 </div>
 
                 {/* Title & Description */}
-                <h2 className="text-xl font-bold text-[var(--text-1)] mt-5 mb-1.5">
+                <h2 className="text-xl font-bold text-[#111827] mt-5 mb-1.5">
                   {selectedSkill.name}
                 </h2>
-                <p className="text-sm text-[var(--text-3)] mb-5 leading-relaxed">
+                <p className="text-sm text-[#4b5563] mb-5 leading-relaxed">
                   {selectedSkill.description}
                 </p>
 
@@ -458,11 +459,11 @@ export default function AISkillsPage() {
                       sizes="20px"
                     />
                   </div>
-                  <span className="text-xs font-medium text-[var(--text-2)]">
+                  <span className="text-xs font-medium text-[#374151]">
                     {selectedSkill.author || user.name}
                   </span>
-                  <div className="flex items-center gap-1 text-xs text-[var(--text-4)] ml-1">
-                    <Zap size={11} className="text-[var(--text-4)]" />
+                  <div className="flex items-center gap-1 text-xs text-[#6b7280] ml-1 font-medium">
+                    <Zap size={11} className="text-[#9ca3af]" />
                     <span>{selectedSkill.uses}</span>
                   </div>
                 </div>
@@ -472,9 +473,9 @@ export default function AISkillsPage() {
                   <div className="flex items-center gap-2.5">
                     <button
                       onClick={() => toggleSkill(selectedSkill.id)}
-                      className={`px-5 py-2 rounded-lg text-xs font-semibold shadow-xs transition-colors ${
+                      className={`px-5 py-2 rounded-lg text-xs font-semibold shadow-xs transition-colors cursor-pointer ${
                         selectedSkill.enabled
-                          ? "bg-[var(--border-strong)] text-[var(--text-2)] hover:bg-[var(--border)]"
+                          ? "bg-[#e5e7eb] text-[#374151] hover:bg-[#d1d5db]"
                           : "bg-[#6c47ff] hover:bg-[#5833e6] text-white"
                       }`}
                     >
@@ -483,16 +484,16 @@ export default function AISkillsPage() {
 
                     <button
                       onClick={() => toast("Running skill on your latest meeting...", { icon: "✨" })}
-                      className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#6c47ff]/10 hover:bg-[#6c47ff]/15 text-[#6c47ff] text-xs font-semibold transition-colors"
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#f5f3ff] hover:bg-[#ede9fe] text-[#6c47ff] border border-[#ddd6fe] text-xs font-semibold transition-colors cursor-pointer"
                     >
-                      <Sparkles size={12} />
-                      Try Skill
+                      <Sparkles size={12} className="text-[#6c47ff]" />
+                      <span>Try Skill</span>
                     </button>
                   </div>
 
                   <button
                     onClick={() => toast("Editing skill prompts and output schema...")}
-                    className="px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] text-xs font-medium text-[var(--text-2)] hover:text-[var(--text-1)] transition-colors shadow-2xs"
+                    className="px-4 py-2 rounded-lg border border-[#e5e7eb] bg-white hover:bg-gray-50 text-xs font-medium text-[#374151] hover:text-[#111827] transition-colors shadow-2xs cursor-pointer"
                   >
                     Edit
                   </button>
@@ -502,14 +503,14 @@ export default function AISkillsPage() {
               {/* Share Feedback */}
               <button
                 onClick={() => toast("Thank you for your feedback!", { icon: "💬" })}
-                className="flex items-center gap-2 text-xs text-[var(--text-3)] hover:text-[var(--text-2)] my-5 transition-colors cursor-pointer"
+                className="flex items-center gap-2 text-xs text-[#6b7280] hover:text-[#374151] my-5 transition-colors cursor-pointer font-medium"
               >
-                <MessageSquare size={13} />
+                <MessageSquare size={13} className="text-[#9ca3af]" />
                 <span>Share Feedback</span>
               </button>
 
               {/* Slack integration banner */}
-              <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-4 flex items-center justify-between shadow-xs">
+              <div className="rounded-2xl border border-[#e5e7eb] bg-white p-4 flex items-center justify-between shadow-xs">
                 <div className="flex items-center gap-3 min-w-0 pr-2">
                   <Image
                     src="/assets/logos/slack.svg"
@@ -518,8 +519,8 @@ export default function AISkillsPage() {
                     height={18}
                     className="shrink-0 object-contain"
                   />
-                  <p className="text-xs text-[var(--text-2)] leading-relaxed">
-                    <span className="font-semibold text-[var(--text-1)]">Get insights on Slack</span>
+                  <p className="text-xs text-[#4b5563] leading-relaxed">
+                    <span className="font-semibold text-[#111827]">Get insights on Slack</span>
                     {" — "}Receive skills output to your Slack channel.
                   </p>
                 </div>

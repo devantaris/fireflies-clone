@@ -16,6 +16,7 @@ import {
   Video,
   Sparkles,
   Download,
+  Bell,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { getMeeting } from "@/lib/api";
@@ -24,6 +25,7 @@ import { usePlayer } from "@/hooks/usePlayer";
 import { MediaPlayer } from "@/components/detail/MediaPlayer";
 import { TranscriptPanel } from "@/components/detail/TranscriptPanel";
 import { RightPanel } from "@/components/detail/RightPanel";
+import { NotificationPanel } from "@/components/layout/TopBar";
 import Image from "next/image";
 import {
   formatMeetingDate,
@@ -578,6 +580,7 @@ export function MeetingDetailClient({ meetingId }: Props) {
   const [error, setError] = useState(false);
   const [mobilePanel, setMobilePanel] = useState<"notes" | "transcript">("notes");
   const [showExport, setShowExport] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
 
   useEffect(() => {
     getMeeting(meetingId)
@@ -642,6 +645,19 @@ export function MeetingDetailClient({ meetingId }: Props) {
               )}
             </div>
           )}
+
+          {/* Notification bell */}
+          <div className="relative">
+            <button
+              onClick={() => setNotifOpen((v) => !v)}
+              title="Notifications"
+              className="relative p-1.5 rounded-lg text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[var(--bg-hover)] transition-colors cursor-pointer"
+            >
+              <Bell size={16} />
+              <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-[#ef4444]" />
+            </button>
+            {notifOpen && <NotificationPanel onClose={() => setNotifOpen(false)} />}
+          </div>
 
           {/* Export dropdown */}
           <div className="relative">

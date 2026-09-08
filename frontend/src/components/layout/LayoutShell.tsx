@@ -56,7 +56,7 @@ export function LayoutShell({ children }: Props) {
           </header>
 
           {/* Desktop top bar — renders itself only on non-detail routes */}
-          <div className="hidden md:block">
+          <div className="hidden md:block relative z-40">
             <TopBar />
           </div>
 

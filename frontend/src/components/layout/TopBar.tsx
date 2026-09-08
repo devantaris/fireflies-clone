@@ -337,7 +337,7 @@ const MOCK_NOTIFICATIONS: NotificationItem[] = [
   },
 ];
 
-function NotificationPanel({ onClose }: { onClose: () => void }) {
+export function NotificationPanel({ onClose }: { onClose: () => void }) {
   const [activeTab, setActiveTab] = useState<NotificationTab>("All");
   const [unreadOnly, setUnreadOnly] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -542,7 +542,7 @@ export function TopBar() {
 
   return (
     <>
-      <header className="shrink-0 h-[52px] flex items-center gap-3 px-5 border-b border-[var(--border)] bg-[var(--bg)]">
+      <header className="relative z-40 shrink-0 h-[52px] flex items-center gap-3 px-5 border-b border-[var(--border)] bg-[var(--bg)]">
         {/* Page title */}
         {pageTitle && (
           <span className="text-sm font-medium text-[var(--text-1)] w-28 shrink-0">
