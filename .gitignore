@@ -43,9 +43,17 @@ Thumbs.db
 
 # ── Reference screenshots ─────────────────────────────────────────────────────
 reference/
+clone-workspace/
+
+# ── AI tool configs ──────────────────────────────────────────────────────────
+.claude/
+MEMORY.md
+AGENTS.md
+CLAUDE.md
 
 # ── Misc ─────────────────────────────────────────────────────────────────────
 *.log
+*.har
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
