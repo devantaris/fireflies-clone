@@ -49,7 +49,7 @@ A functional clone of the [Fireflies.ai](https://fireflies.ai) meeting-assistant
 - Edit meeting metadata (title, date, duration, participants)
 - Delete a meeting with confirmation dialog
 - Action items: create, edit, complete/toggle, delete per meeting
-- Export meeting to Markdown (.md) or plain text (.txt) — includes summary, action items, and full transcript
+- Export meeting to PDF, Markdown (.md), or plain text (.txt) — includes summary, action items, and full transcript
 
 ### 5. Fireflies Experience
 - Pixel-faithful landing page with real Fireflies assets and sections
@@ -63,7 +63,7 @@ A functional clone of the [Fireflies.ai](https://fireflies.ai) meeting-assistant
 
 ### Additional Pages (UI-complete)
 - **Home** — dashboard with recent meetings, quick-action cards, AskFred sidebar
-- **AskFred** — AI assistant chat interface with suggestion chips
+- **AskFred** — AI assistant that searches across all meeting transcripts, summaries, and action items to answer questions with source citations
 - **Tasks** — action items grouped by meeting, create/toggle/filter
 - **AI Skills** — discover, enable/disable, active skills list
 - **Analytics** — dashboard with stats, charts, duration distribution
@@ -293,4 +293,4 @@ Marcus: Thanks Sarah, ready to get started.
 - **Audio/Video** — media player is simulated (time advances via setInterval); no actual audio file loaded
 - **Live bot / real-time transcription** — out of scope per assignment; page exists as placeholder
 - **Integrations** — discovery page with mock data; no real third-party connections
-- **AskFred AI chat** — UI implemented with suggestion chips; no backend LLM processing
+- **AskFred** — uses extractive keyword search across meetings (no external LLM); answers include source meeting references

@@ -348,7 +348,10 @@ export function TopBar() {
           </button>
 
           {/* Notification bell */}
-          <button className="relative p-1.5 rounded-lg text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[var(--bg-hover)] transition-colors">
+          <button
+            onClick={() => { const { default: t } = require("react-hot-toast"); t("No new notifications", { icon: "🔔", duration: 2000, style: { borderRadius: "8px", fontSize: "13px" } }); }}
+            className="relative p-1.5 rounded-lg text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[var(--bg-hover)] transition-colors"
+          >
             <Bell size={16} />
             <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-[#ef4444]" />
           </button>
