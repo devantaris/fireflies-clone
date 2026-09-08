@@ -612,21 +612,43 @@ export function MeetingDetailClient({ meetingId }: Props) {
           </Link>
           <span className="text-[var(--text-4)]">/</span>
           <span className="text-[var(--text-1)] font-medium truncate">{meeting.title}</span>
-          <div className="relative shrink-0">
+        </div>
+
+        {/* Right: avatars + export + edit */}
+        <div className="flex items-center gap-2 shrink-0">
+          {displayParticipants.length > 0 && (
+            <div className="hidden sm:flex -space-x-1.5 items-center mr-1">
+              {displayParticipants.map((p) => (
+                <div
+                  key={p.id}
+                  title={p.name}
+                  className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white ring-2 ring-[var(--bg)] shrink-0"
+                  style={{ background: getAvatarColor(p.name) }}
+                >
+                  {getInitials(p.name)}
+                </div>
+              ))}
+              {extraCount > 0 && (
+                <div className="w-7 h-7 rounded-full bg-[var(--border)] flex items-center justify-center text-[10px] text-[var(--text-2)] ring-2 ring-[var(--bg)]">
+                  +{extraCount}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Export dropdown */}
+          <div className="relative">
             <button
               onClick={() => setShowExport(!showExport)}
-              className="text-[var(--text-4)] hover:text-[var(--text-2)]"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-[var(--text-2)] hover:text-[var(--text-1)] hover:bg-[var(--bg-hover)] transition-colors border border-[var(--border)] hover:border-[var(--border-strong)]"
             >
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <circle cx="7" cy="3" r="0.8" fill="currentColor" />
-                <circle cx="7" cy="7" r="0.8" fill="currentColor" />
-                <circle cx="7" cy="11" r="0.8" fill="currentColor" />
-              </svg>
+              <Download size={11} />
+              Export
             </button>
             {showExport && (
               <>
                 <div className="fixed inset-0 z-40" onClick={() => setShowExport(false)} />
-                <div className="absolute left-0 top-full mt-1 z-50 w-44 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] shadow-lg overflow-hidden py-1">
+                <div className="absolute right-0 top-full mt-1 z-50 w-44 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] shadow-lg overflow-hidden py-1">
                   <button
                     onClick={() => { exportMeetingPDF(meeting); setShowExport(false); toast.success("Exported as PDF"); }}
                     className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-[var(--text-2)] hover:bg-[var(--bg-hover)] transition-colors text-left"
@@ -649,29 +671,6 @@ export function MeetingDetailClient({ meetingId }: Props) {
               </>
             )}
           </div>
-        </div>
-
-        {/* Right: avatars + edit */}
-        <div className="flex items-center gap-3 shrink-0">
-          {displayParticipants.length > 0 && (
-            <div className="hidden sm:flex -space-x-1.5 items-center">
-              {displayParticipants.map((p) => (
-                <div
-                  key={p.id}
-                  title={p.name}
-                  className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white ring-2 ring-[var(--bg)] shrink-0"
-                  style={{ background: getAvatarColor(p.name) }}
-                >
-                  {getInitials(p.name)}
-                </div>
-              ))}
-              {extraCount > 0 && (
-                <div className="w-7 h-7 rounded-full bg-[var(--border)] flex items-center justify-center text-[10px] text-[var(--text-2)] ring-2 ring-[var(--bg)]">
-                  +{extraCount}
-                </div>
-              )}
-            </div>
-          )}
 
           <Link
             href={`/meetings/${meetingId}/edit`}
